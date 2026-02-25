@@ -1,0 +1,48 @@
+Rocket Name,BlueRav Volta
+Firmware,09afed1 11/05/2024 16:55:57
+Serial number,SN1738 BlueRav Volta
+Max Altitude,8792.92 feet
+Max velocity,833.36 feet/sec
+Pad altitude ASL,2967.06 feet
+Launch date,12-jun-25
+Launch time,16:30:38.314
+Time to first burnout,4.9 sec
+Time to Apo channel fire,27.0 sec
+Time to gyro overload,0.0 sec
+Time to third channel fire,27.0 sec
+Time to main channel fire,113.8 sec
+Time to fourth channel fire,113.8 sec
+Launch rod angle,6.0 deg
+Tilt angle at burnout,25.4 deg
+Roll rate at burnout,-582.2 deg/sec
+Thrust tilt efficiency,88.09%
+Number of ascent rolls,-23.255
+Horiz. velocity at apogee,210.0 feet/sec
+Inertial navigation max alt,9563.2 feet
+Max motor burn acceleration,38.4 Gs
+Peak drag deceleration,14.4 Gs
+Apo channel max accel,11.8 Gs
+Main channel max accel,46.4 Gs
+3rd channel max accel,11.8 Gs
+4th channel max accel,46.4 Gs
+Max landing accel,5.5 Gs
+Drogue descent rate,-125.1 feet/sec
+Main chute deploy altitude,1496.3 feet
+Main chute descent rate,-37.5 feet
+Landing Time,16:33:37.934
+Temperature on pad,111.8 F
+Max Temperature,111.8 F
+Min Temperature,105.67 F
+Battery voltage on pad,9.03 V
+Min Battery voltage,8.92 V
+Battery voltage at landing,9.0 V
+Build date,05-nov-24
+Build time,16:55:57.000
+Flight number,26
+Direction of 1st motion,0.9999,0.0105,-0.0010
+Gravity direction on pad,0.9952,-0.0639,-0.0742
+Low-G accel pad offset,-0.0090,0.0006,0.0007
+Hi-G accel pad offset,0.10,-0.34,-2.82
+Pad gyro rates (deg/sec),-0.41,0.72,1.63
+Pad Hi-G accel,1.09,-0.40,-2.89
+Pad Low-G Accel,0.99,-0.06,-0.07

@@ -8,7 +8,7 @@ In this part, the data and their physical units are defined, establishing data s
 * **Angular Velocity:** Radians per second ($rad/s$). Variable: `angVel` Type: `float`
 * **Magnetometer:** microteslas ($\mu T$). Variable: `mag` Type: `float`
 * **Pressure:** Pascals ($Pa$). Variable: `pressure` Type: `float`
-* **Altitude:** Meters ($m$). Variable: `alt` Type: `float`
+* **Altitude:** Meters ($m$). Variable: `altitude` Type: `float`
 * **Temperature:** Degrees Celsius ($^\circ C$). Variable: `temp` Type: `float`
 * **Humidity:** Percentage (%). Variable: `humidity` Type: `float`
 * **Time:** Seconds ($s$) since system startup. Variable: `timestamp` Type: `float`
@@ -50,12 +50,13 @@ struct StructBNO055{
     float BNO_mz;     // BNO055 magnetic field on the Z axis
 }
 ```
-* **BME Structure**
+* **BME280 Structure**
 ```cpp
-struct StructBME {
+struct StructBME280 {
     float temp;       // Temperature
     float humidity;   // Humidity
     float pressure;   // Pressure
+    float altitude;   // Altitude
     float timestamp;  // Timestamp
 };
 ```

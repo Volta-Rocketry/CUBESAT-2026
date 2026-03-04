@@ -5,17 +5,30 @@
 #include <Arduino.h>
 #include "MPU9250.h"
 #include <Wire.h>
+#include <SPI.h>
 #include <Adafruit_Sensor.h> 
 #include <Adafruit_BNO055.h>
+#include <Adafruit_BME280.h>
 #include <utility/imumaths.h>
 
-MPU9250 mpu;
-Adafruit_BNO055 bno;
+MPU9250 mpu;               // SPI ADREESS 0x68
+// MPU9250 mpu(SPI, MPU_CS);
+
+Adafruit_BNO055 bno;      // I2C ADDRESS 0x28
+
+
+Adafruit_BME280 bme;     // SPI ADRESS 0x76
+//Adafruit_BME280 bme(BME_CS); // hardware SPI
+//Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
+
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
+StructBME280 bmeData;
+
+
 void InitMPU9250() {
     // Code to initialize MPU9250 sensor
-    if (mpu.begin() != 0) {
+    if (mpu.begin() < 0) {
         CriticalError("MPU9250 initialization failed");
     } else {
         Serial.println("MPU9250 sensor initialized successfully.");
@@ -29,8 +42,13 @@ void InitBNO055() {
         Serial.println("BNO055 sensor initialized successfully.");
     };
 }
-void InitBME() {
-    // Code to initialize BME sensor
+void InitBME280() {
+    // Code to initialize BME280 sensor
+    if (!bme.begin()) {
+        CriticalError("BME280 initialization failed");
+    } else {
+        Serial.println("BME280 sensor initialized successfully.");
+    }
 }
 void InitUblox() {
     // Code to initialize Ublox sensor
@@ -38,9 +56,7 @@ void InitUblox() {
 void InitTransducers() {
     // Code to initialize transducers
 }
-void InitSolenoidValves() {
-    // Code to initialize solenoid valves
-}
+
 
 void calibrateSensors() {
     // Code to calibrate sensors
@@ -79,15 +95,17 @@ void ReadBNO055() {
     bnoData.BNO_my = mag.y();
     bnoData.BNO_mz = mag.z();
 }
-void ReadBME() {
+void ReadBME280() {
     // Code to read data from BME sensor
+    bmeData.timestamp = millis() / 1000.0;
+    bmeData.temp = bme.readTemperature();
+    bmeData.humidity = bme.readHumidity();
+    bmeData.pressure = bme.readPressure() / 100.0F;
+    // Altitude can be calculated using the pressure reading and a reference sea level pressure
 }
 void ReadUblox() {
     // Code to read data from Ublox sensor
 }
 void ReadTransducers() {
     // Code to read data from transducers
-}
-void ReadSolenoidValves() {
-    // Code to read data from solenoid valves
 }

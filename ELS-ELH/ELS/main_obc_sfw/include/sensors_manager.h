@@ -5,10 +5,9 @@
 
 void InitMPU9250();
 void InitBNO055();
-void InitBME();
+void InitBME280();
 void InitUblox();
 void InitTransducers();
-void InitSolenoidValves();
 
 void CalibrateSensors();
 
@@ -16,7 +15,6 @@ void ReadSensors();
 
 void ReadMPU9250();
 void ReadBNO055();
-void ReadBME();
+void ReadBME280();
 void ReadUblox();
 void ReadTransducers();
-void ReadSolenoidValves();

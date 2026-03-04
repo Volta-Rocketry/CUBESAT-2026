@@ -40,10 +40,11 @@ struct StructBNO055{
     float BNO_mz;     // BNO055 magnetic field on the Z axis
 };
 
-struct StructBME {
+struct StructBME280 {
     float temp;       // Temperature
     float humidity;   // Humidity
     float pressure;   // Pressure
+    float altitude;   // Altitude
     float timestamp;  // Timestamp
 };
 

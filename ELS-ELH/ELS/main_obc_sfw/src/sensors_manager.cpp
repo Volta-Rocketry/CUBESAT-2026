@@ -62,9 +62,6 @@ void calibrateSensors() {
     // Code to calibrate sensors
 }
 
-void readSensors() {
-    // Code to read data from sensors
-}
 
 void ReadMPU9250() {
     // Code to read data from MPU9250 sensor

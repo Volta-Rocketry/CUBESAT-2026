@@ -3,6 +3,6 @@
 #include <Arduino.h>
 
 void criticalError(const char* message) {
-    Serial.println(" [ERROR] critical : ");
+    Serial.print(" [ERROR] critical : ");
     Serial.println(message);
 }

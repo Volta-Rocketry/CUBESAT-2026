@@ -11,8 +11,6 @@ void InitTransducers();
 
 void CalibrateSensors();
 
-void ReadSensors();
-
 void ReadMPU9250();
 void ReadBNO055();
 void ReadBME280();

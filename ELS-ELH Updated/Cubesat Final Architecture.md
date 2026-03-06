@@ -69,16 +69,14 @@ Communication between the two OBCs it's given through UART.
 | OUTPUT | Control CH2 (RW motor 2)     | 1    | PWM      |
 | OUTPUT | Control CH3 (RCS Valve 1)    | 1    | PWM      |
 | OUTPUT | Control CH4 (RCS Valve 2)    | 1    | PWM      |
-| OUTPUT | Control CH5 (RCS Valve 3)    | 1    | PWM      |
-| OUTPUT | Control CH6 (RCS Valve 4)    | 1    | PWM      |
 | OUTPUT | Buzzer                       | 1    | PWM      |
 | OUTPUT | LEDs                         | 3    | PWM      |
 
 ### Summary
-| MCU      | UART | I2C | SPI | PWM  | Analog | Total Pins |
-|----------|------|-----|-----|------|--------|------------|
+| MCU      | UART | I2C | SPI | PWM  | Analog | Total Pins |  |
+|----------|------|-----|-----|------|--------|------------|--|
 | MAIN OBC | 3    | 2   | 2   | 2    | 1      | 23         |
-| CTR OBC  | 1    | 0   | 0   | 10   | 0      | 12         | 
+| CTR OBC  | 1    | 0   | 0   | 10   | 0      | 12         |//revisar//
 ---
 *NOTE 1:* Main OBC shall include bluethoot capabilities \
 *NOTE 2:* Control OBC shall be a control type MCU \
@@ -89,40 +87,42 @@ Communication between the two OBCs it's given through UART.
 ### CTR OBC
 | ITEM                            | Operating Voltage (V) | Operating Consumption (mA) | Total Power Consumption (W) | Expected Operating Time (s) | Time Justification                          | Total Energy (Wh) |
 | ------------------------------- | --------------------: | -------------------------: | --------------------------: | --------------------------: | ------------------------------------------- | --------------------: |
-| MCU       |                   3.3 |                         80 |                        0.26 |                     223 | Control active only post-ejection |    
-| Power Control CH1 (RW motor 1)  |                  12.0 |                        800 |                         9.6 |                     223 | Continuous roll stabilization post-ejection |             0.595 |
-| Power Control CH2 (RW motor 2)  |                  12.0 |                        800 |                         9.6 |                     223 | Continuous roll stabilization post-ejection |             0.595 |
-| Power Control CH3 (RCS Valve 1) |                  12.0 |                        640 |                         7.7 |                      22 | Intermittent roll corrections (~10% duty)   |            0.0470 |
-| Power Control CH4 (RCS Valve 2) |                  12.0 |                        640 |                         7.7 |                      22 | Intermittent roll corrections (~10% duty)   |            0.0470 |
-| Power Control CH5 (RCS Valve 3) |                  12.0 |                        640 |                         7.7 |                      22 | Intermittent roll corrections (~10% duty)   |            0.0470 |
-| Power Control CH6 (RCS Valve 4) |                  12.0 |                        640 |                         7.7 |                      22 | Intermittent roll corrections (~10% duty)   |            0.0470 |
-| Power Control (CAM)             |                   5.0 |                       1850 |                        9.25 |                     250 | Explicit requirement: full mission          |             0.642 |
-| Pressure transducer             |                   5.0 |                       10 |                        0.5 |                     223 | Control active only post-ejection          |             0.642 |
-| Buzzer                          |                   5.0 |                         50 |                        0.25 |                      20 | Distributed status beeps                    |           0.00139 |
-| LEDs (3×)                       |                   3.3 |                         60 |                        0.20 |                     250 | Continuous status indication                |            0.0139 |
+| MCU       |                 3.3 |                         80 |                         0.26 |                    720 | Control active only post-ejection |                      0.052 |
+| Power Control CH1 (RW motor 1)  |                  12.0 |                        800 |                         9.6 |                    300 | Continuous roll stabilization post-ejection |          0.8 |
+| Power Control CH2 (RW motor 2)  |                  12.0 |                        800 |                         9.6 |                    300 | Continuous roll stabilization post-ejection |          0.8 |
+| Power Control CH3 (RCS Valve 1) |                  12.0 |                        640 |                         7.7 |                    300 | Intermittent roll corrections (~10% duty)   |          0.064 |
+| Power Control CH4 (RCS Valve 2) |                  12.0 |                        640 |                         7.7 |                    300 | Intermittent roll corrections (~10% duty)   |          0.064 |
+| Power Control (CAM)             |                   5.0 |                       1850 |                       9.25 |                    720 | Always ON post-ejection          |              1.85 |
+| Pressure transducer             |                   5.0 |                       10 |                         0.05 |                    720 | Control active only post-ejection          |              0.01 |
+| Buzzer                          |                   5.0 |                         50 |                         0.25 |                     60 | Distributed status beeps                    |           0.004 |
+| LEDs (3×)                       |                   3.3 |                         60 |                         0.20 |                    720 | Continuous status indication                |           0.04 |
+
+*NOTE:* Operating time based on the launch vehicle's descent rate approximation.
 
 
 ### Main OBC
 | ITEM                 | Operating Voltage (V) | Operating Consumption (mA) | Total Power Consumption (W) | Expected Operating Time (s) | Time Justification                | Total Energy (Wh) |
 | -------------------- | --------------------: | -------------------------: | --------------------------: | --------------------------: | --------------------------------- | --------------------: |
-| MCU                  |                   3.3 |                        180 |                        0.60 |                     250 | Always ON                         |            0.0417 |
-| IMU 9DOF Fused       |                   3.3 |                         30 |                        0.10 |                     223 | Only useful post-ejection         |           0.00619 |
-| IMU 9DOF Raw         |                   3.3 |                         15 |                        0.05 |                     250 | Launch detection + backup         |           0.00347 |
-| Altimeter            |                   3.3 |                          5 |                       0.017 |                     250 | Launch, apogee, descent awareness |           0.00118 |
-| GPS                  |                   3.3 |                         45 |                        0.15 |                     223 | Post-ejection navigation          |           0.00929 |
-| Flash                |                   3.3 |                         30 |                        0.10 |                     250 | Primary flight data logger        |           0.00694 |
-| SD Card (active)     |                   3.3 |                        100 |                        0.33 |                      10 | Landing-only data dump            |           0.00092 |
-| Buzzer               |                   5.0 |                         50 |                        0.25 |                      20 | Distributed status beeps          |           0.00139 |
-| LEDs (3×)            |                   3.3 |                         60 |                        0.20 |                     250 | Continuous status indication      |            0.0139 |
+| MCU                  |                   3.3 |                        180 |                        0.60 |                    3600 | Always ON             |             0.60 |
+| IMU 9DOF Fused       |                   3.3 |                         30 |                         0.10 |                     720 | Only useful post-ejection    |           0.02 |
+| IMU 9DOF Raw         |                   3.3 |                         15 |                         0.05 |                    1800 | Launch detection + backup         |            0.025 |
+| Altimeter            |                   3.3 |                          5 |                         0.017 |                    1800 | Launch, apogee, descent awareness |                0.0085 |
+| GPS                  |                   3.3 |                         45 |                         0.15 |                     720 | Post-ejection navigation          |        0.03 |
+| Flash                |                   3.3 |                         30 |                         0.10 |                    3600 | Primary flight data logger        |              0.10 |
+| SD Card (active)     |                   3.3 |                        100 |                        0.33 |                      40 | Landing-only data dump            |          0.0037 |
+| Buzzer               |                   5.0 |                         50 |                         0.25 |                      60 | Distributed status beeps          |            0.004 |
+| LEDs (3×)            |                   3.3 |                         60 |                         0.20 |                    3600 | Continuous status indication      |            0.20 |
+
+*NOTE:* Operating time based on the launch vehicle mission states to be taken into account. Subject to adjustments.
 
 
 ### Raw Summary
 | CATEGORY                         | INCLUDED ELEMENTS                                                                                                   | Total Energy (Wh) | COMMENT                                                      |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------: | ------------------------------------------------------------ |
-| Actuation & Payload Channels | RW motors (×2), RCS valves (×2), Camera channel, SOL nichrome channel                                               |         ≈ 1.93 Wh | Dominant energy driver; camera + RW are primary contributors |
-| Computation, Sensors & ICs   | All MCUs (PMC, Main OBC, CTR OBC), IMUs, GPS, Altimeter, Flash, SD , Power Monitor ICs, LEDs, Buzzers |         ≈ 0.15 Wh | Control, sensing, monitoring, and housekeeping               |
+| Actuation & Camera | RW motors (×2), RCS valves (×2), Camera channel                                                |         ≈ 3.6 Wh | Dominant energy driver; camera + RW are primary contributors |
+| Computation & Sensors   | All MCUs (CTR,MAIN), IMUs, GPS, Altimeter, Flash, SD, Pressure transducer, LEDs, Buzzers |         ≈ 1,3 Wh | Control, sensing andmonitoring            |
 
 ### Final decision
-The total energy budget is divided into two independent battery domains with margins applied according to the dominant risks of each domain. The first domain, corresponding to actuation and payload channels (reaction wheels, RCS valves, camera channel), is active only during the mission phase after CubeSat ejection and is therefore dominated by short-duration, high-power operation. For this domain, the raw mission energy of approximately 1.93 Wh is increased by an allowance for EPS conduction and switching losses (≈10%), followed by a DC/DC conversion and wiring efficiency margin of 15%, and a system-level design margin of 30% to cover uncertainty in duty cycles and actuator usage. These combined margins result in a required battery capacity of approximately 3.0 Wh for the actuation and payload battery.
+The total energy budget is divided into two independent battery domains with margins applied according to the dominant risks of each domain. The first domain, corresponding to actuation and camera (reaction wheels, RCS valves, camera channel), is active only during the mission phase after CubeSat ejection and is therefore dominated by short-duration, high-power operation. For this domain, the raw mission energy of approximately 3.6 Wh is increased by an allowance for EPS conduction and switching losses (≈10%), followed by a DC/DC conversion and wiring efficiency margin of 15%, and a system-level design margin of 30% to cover uncertainty in duty cycles and actuator usage. These combined margins result in a required battery capacity of approximately **5.6 Wh** for the actuation and camera battery.
 
-The second domain supplies all computation, sensing, and housekeeping functions, including all MCUs, sensors, memory devices, LEDs, and buzzers, and is dominated by long-duration low-power operation during the PAD phase. For this domain, the base energy consists of approximately 0.15 Wh during the mission plus about 1.5 Wh consumed during a three-hour PAD period, with an additional small allowance for EPS quiescent currents and leakage. Margins applied to this domain include a 15% margin for DC/DC conversion and distribution losses, a 20% derating to account for temperature effects and battery aging, and a 30% design margin to cover variability in PAD duration and operational modes. After applying these margins, the resulting required battery capacity for the computation and sensor domain is approximately 3.2 Wh.
+The second domain supplies all computation and sensing functions, including all MCUs, sensors, memory devices, LEDs, and buzzers, and is dominated by long-duration low-power operation since the PAD phase. For this domain, the base energy consists of approximately 1,3 Wh consumed during a one-hour full mission period, with an additional small allowance for EPS quiescent currents and leakage. Margins applied to this domain include a 15% margin for DC/DC conversion and distribution losses, a 20% derating to account for temperature effects and battery aging, and a 30% design margin to cover variability in PAD duration and operational modes. After applying these margins, the resulting required battery capacity for the computation and sensor domain is approximately **2.2 Wh**.

@@ -169,4 +169,7 @@ flowchart LR
     MCU2 --> PT
     MCU2 --> BUZ
     MCU2 --> LED
+
 ```
+## FDIR Proposal
+In the ELH system, we have identified a possible use of FDIR based on the mission's CONOPS during the descent phase, while the control algorithms necessary for the cubesat's roll are being executed. In this case, a hypothetical scenario imagined by the team that could affect the mission would be an opening of the solenoid valves without having been commanded by the OBC CONTROL. This opening could be measured through the use of pressure transducers, detecting a pressure drop not in accordance with the forecast. In this case, a possible use of FDIR would be to cut off the electrical supply to the solenoid valves, so that they cannot continue operating, ensuring an important mission safety factor.

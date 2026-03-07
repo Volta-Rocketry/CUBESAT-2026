@@ -73,10 +73,10 @@ Communication between the two OBCs it's given through UART.
 | OUTPUT | LEDs                         | 3    | PWM      |
 
 ### Summary
-| MCU      | UART | I2C | SPI | PWM  | Analog | Total Pins |  |
-|----------|------|-----|-----|------|--------|------------|--|
+| MCU      | UART | I2C | SPI | PWM  | Analog | Total Pins |
+|----------|------|-----|-----|------|--------|------------|
 | MAIN OBC | 3    | 2   | 2   | 2    | 1      | 23         |
-| CTR OBC  | 1    | 0   | 0   | 10   | 0      | 12         |//revisar//
+| CTR OBC  | 1    | 0   | 0   | 8   | 0       | 10         |
 ---
 *NOTE 1:* Main OBC shall include bluethoot capabilities \
 *NOTE 2:* Control OBC shall be a control type MCU \
@@ -126,3 +126,47 @@ Communication between the two OBCs it's given through UART.
 The total energy budget is divided into two independent battery domains with margins applied according to the dominant risks of each domain. The first domain, corresponding to actuation and camera (reaction wheels, RCS valves, camera channel), is active only during the mission phase after CubeSat ejection and is therefore dominated by short-duration, high-power operation. For this domain, the raw mission energy of approximately 3.6 Wh is increased by an allowance for EPS conduction and switching losses (≈10%), followed by a DC/DC conversion and wiring efficiency margin of 15%, and a system-level design margin of 30% to cover uncertainty in duty cycles and actuator usage. These combined margins result in a required battery capacity of approximately **5.6 Wh** for the actuation and camera battery.
 
 The second domain supplies all computation and sensing functions, including all MCUs, sensors, memory devices, LEDs, and buzzers, and is dominated by long-duration low-power operation since the PAD phase. For this domain, the base energy consists of approximately 1,3 Wh consumed during a one-hour full mission period, with an additional small allowance for EPS quiescent currents and leakage. Margins applied to this domain include a 15% margin for DC/DC conversion and distribution losses, a 20% derating to account for temperature effects and battery aging, and a 30% design margin to cover variability in PAD duration and operational modes. After applying these margins, the resulting required battery capacity for the computation and sensor domain is approximately **2.2 Wh**.
+
+## Electrical Schematic Diagram 
+
+```mermaid
+flowchart LR
+    BAT1[Battery Pack 1]
+    BAT2[Battery Pack 2]
+    MCU1[MAIN MCU]
+    MCU2[CTR MCU]
+    IMU1[IMU 9DOF Fused]
+    IMU2[IMU 9DOF Raw]
+    ALT[Altimeter]
+    GPS[GPS]
+    FLASH[Flash Module]
+    SD[SD Card]
+    PT[Pressure Transducer]
+    CAM[Camera]
+    BUZ[Buzzers]
+    LED[LEDs]
+    CH1[RW motor 1]
+    CH2[RW motor 2]
+    CH3[RCS Valve 1]
+    CH4[RCS Valve 2]
+
+    BAT1 --> MCU1
+    MCU1 --> IMU1
+    MCU1 --> IMU2
+    MCU1 --> ALT
+    MCU1 --> GPS
+    MCU1 --> FLASH
+    MCU1 --> SD
+    MCU1 --> BUZ
+    MCU1 --> LED
+
+    BAT2 --> MCU2
+    MCU2 --> CH1
+    MCU2 --> CH2
+    MCU2 --> CH3
+    MCU2 --> CH4
+    MCU2 --> CAM
+    MCU2 --> PT
+    MCU2 --> BUZ
+    MCU2 --> LED
+```

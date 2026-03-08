@@ -127,7 +127,7 @@ The total energy budget is divided into two independent battery domains with mar
 
 The second domain supplies all computation and sensing functions, including all MCUs, sensors, memory devices, LEDs, and buzzers, and is dominated by long-duration low-power operation since the PAD phase. For this domain, the base energy consists of approximately 1,3 Wh consumed during a one-hour full mission period, with an additional small allowance for EPS quiescent currents and leakage. Margins applied to this domain include a 15% margin for DC/DC conversion and distribution losses, a 20% derating to account for temperature effects and battery aging, and a 30% design margin to cover variability in PAD duration and operational modes. After applying these margins, the resulting required battery capacity for the computation and sensor domain is approximately **2.2 Wh**.
 
-## Electrical Schematic Diagram 
+## Hierarchical Schematic Diagram 
 
 ```mermaid
 flowchart LR
@@ -143,8 +143,10 @@ flowchart LR
     SD[SD Card]
     PT[Pressure Transducer]
     CAM[Camera]
-    BUZ[Buzzers]
-    LED[LEDs]
+    BUZ[Buzzer]
+    BUZ2[Buzzer]
+    LED[LED]
+    LED2[LED]
     CH1[RW motor 1]
     CH2[RW motor 2]
     CH3[RCS Valve 1]
@@ -167,8 +169,8 @@ flowchart LR
     MCU2 --> CH4
     MCU2 --> CAM
     MCU2 --> PT
-    MCU2 --> BUZ
-    MCU2 --> LED
+    MCU2 --> BUZ2
+    MCU2 --> LED2
 
 ```
 ## FDIR Proposal

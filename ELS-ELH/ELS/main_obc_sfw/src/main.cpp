@@ -12,10 +12,9 @@ void setup() {
   Serial.println("ELS-02 INITIALIZED");
   InitMPU9250();
   InitBNO055();
-  InitBME();
+  InitBME280();
   InitUblox();
   InitTransducers();
-  InitSolenoidValves();
 }
 
 void loop() {

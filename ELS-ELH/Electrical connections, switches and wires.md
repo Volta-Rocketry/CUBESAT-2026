@@ -12,6 +12,32 @@ The diagram is in this same folder in JPG format.
 
 ![Electrical Schematic Diagram ](./Electrical_Diagram.jpg)
 
+### Meaning of each abbreviation
+| Abbreviation | Meaning | 
+| :--- | :--- | 
+| BAT1 | Battery Pack 1 | 
+| BAT2 | Battery Pack 1 | 
+| BAT3 | Battery Pack 2 | 
+| BAT4 | Battery Pack 2 | 
+| UED1 | Unknown Energy Distributor 1 | 
+| UED2 | Unknown Energy Distributor 2 | 
+| MS1 | Master Switch 1 | 
+| MS2 | Master Switch 2 | 
+| RBF1 | Remove Before Fly 1 | 
+| RBF2 | Remove Before Fly 2 | 
+| KS | Kill Switch | 
+| BOOST | Booster | 
+| R1 | Regulator 1 | 
+| R2 | Regulator 2 | 
+| CAM | Camera | 
+| PT | Pressure Transducer |
+| RW(1,2) | Reaction Wheels |
+| RCS(1,2) | Electroválvulas |
+| LS1 | Level Shifter 1 | 
+| LS2 | Level Shifter 2 | 
+| MF(1-8) | Mosfets | 
+| B(1-14) | Borneras |
+
 ### Master Switch
 This switch is used as redundancy for the rbf switch. If it were not there, the system's power supply would depend on it (RBF), which is very volatile and would pose many risks. It (MASTER) is used for security functions.
 
@@ -23,12 +49,6 @@ These switches are located in the actuator area and allow power to pass only whe
 
 ### MOSFETS
 These are electronic switches located in each actuator, there are two MOSFETs per actuator, both connected in series, for a total of eight. Each “column” has four, and each will be controlled by a different OBC: the main OBC will manage the power supply, and the control OBC will manage the actuators' activation.
-
-# Configuración de Hardware - Sistema de Cohetería Experimental 2026
-
-Este documento detalla el "Pin Budget" final para los dos ordenadores de a bordo (OBC). Se ha implementado una arquitectura de **Seguridad en Serie (Armado y Disparo)** para todos los actuadores de 12V.
-
----
 
 ## Pin Budget (Preliminar)
 ### 1. MAIN OBC: ESP32-S3 (DevKitC-1)

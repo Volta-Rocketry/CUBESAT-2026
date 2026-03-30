@@ -10,7 +10,7 @@ A system with three types of switches is proposed for the electronic structure o
 The diagram is in this same folder in JPG format.
 
 
-![Electrical Schematic Diagram ](./Electrical_Diagram.jpg)
+![Electrical Schematic Diagram](./Electrical_Diagram.jpg)
 
 ### Meaning of each abbreviation
 | Abbreviation | Meaning | 
@@ -55,32 +55,34 @@ These are electronic switches located in each actuator, there are two MOSFETs pe
 
 | Categoría | Ítem | Pin (GPIO) |
 | :--- | :--- | :--- |
-| COM | UART1 TX (CTR OBC) | 43 | 
-| COM | UART1 RX (CTR OBC) | 44 | 
-| COM | UART2 TX (CAM) | 15 | 
-| COM | UART2 RX (CAM) | 16 |
-| COM | UART3 TX (GPS) | 17 | 
-| COM | UART3 RX (GPS) | 18 |
-| I2C1 | SDA (IMU Fused) | 4 | 
-| I2C1 | SCL (IMU Fused) | 5 | 
-| I2C2 | SDA (ADC) | 6 | 
-| I2C2 | SCL (ADC) | 7 | 
-| SPI1 | SCK (Flash/ALT) | 12 | 
-| SPI1 | MOSI (Flash/ALT) | 11 | 
-| SPI1 | MISO (Flash/ALT) | 13 |
-| CS1 | CS (Flash) | 10 | 
-| CS1 | CS (ALT) | 14 | 
-| SPI2 | SCK (IMU Raw/SD) | 36 | 
-| SPI2 | MOSI (IMU Raw/SD) | 35 | 
-| SPI2 | MISO (IMU Raw/SD) | 37 |
-| CS2 | CS (IMU Raw) | 47 | 
-| CS2 | CS (SD) | 48 | 
-| OUTPUT | Buzzer | 2 | 
-| OUTPUT | LEDs x3 | 38, 39, 40 | 
-| OUTPUT | MOSFET 1 (RW1) | 21 | 
-| OUTPUT | MOSFET 2 (RW2) | 41 | 
-| OUTPUT | MOSFET 3 (RCS1) | 42 | 
-| OUTPUT | MOSFET 4 (RCS2) | 9 | 
+| COM | UART1 TX (CTR OBC) | 25 | 
+| COM | UART1 RX (CTR OBC) | 34 | 
+| COM | UART2 TX (CAM) | 26 | 
+| COM | UART2 RX (CAM) | 35 |
+| COM | UART3 TX (GPS) | 32 | 
+| COM | UART3 RX (GPS) | 36 |
+| I2C1 | SDA (IMU Fused) | 21 | 
+| I2C1 | SCL (IMU Fused) | 22 | 
+| I2C2 | SDA (ADC) | 16 | 
+| I2C2 | SCL (ADC) | 17 | 
+| SPI1 | SCK (Flash/ALT) | 18 | 
+| SPI1 | MOSI (Flash/ALT) | 23 | 
+| SPI1 | MISO (Flash/ALT) | 19 |
+| CS1 | CS (Flash) | 5 | 
+| CS1 | CS (ALT) | 15 | 
+| SPI2 | SCK (IMU Raw/SD) | 14 | 
+| SPI2 | MOSI (IMU Raw/SD) | 13 | 
+| SPI2 | MISO (IMU Raw/SD) | 12 |
+| CS2 | CS (IMU Raw) | 27 | 
+| CS2 | CS (SD) | 2 | 
+| OUTPUT | MOSFET 1 (RCS1) | 33 | 
+| OUTPUT | MOSFET 2 (RCS2) | 4 | 
+
+*Notes*
+- The LEDs and buzzer were removed due to a lack of pins.
+- Pins 2, 5, 12, and 15 are bootstrap pins.
+- Pin 14 can emit a small signal when the microcontroller starts up.
+- Pins 34, 35, and 36 are input-only.
 
 ### 2. CTR OBC: TEENSY 4.1
 
@@ -90,10 +92,8 @@ These are electronic switches located in each actuator, there are two MOSFETs pe
 | COM | UART1 RX (MAIN OBC) | 0 | 
 | OUTPUT | Buzzer | 6 | 
 | OUTPUT | LEDs x3 | 9, 10, 11 | 
-| OUTPUT | MOSFET 5 (RW1) | 2 | 
-| OUTPUT | MOSFET 6 (RW2) | 3 | 
-| OUTPUT | MOSFET 7 (RCS1) | 4 | 
-| OUTPUT | MOSFET 8 (RCS2) | 5 | 
+| OUTPUT | MOSFET 3 (RCS1) | 2 | 
+| OUTPUT | MOSFET 4 (RCS2) | 3 | 
 
 
 

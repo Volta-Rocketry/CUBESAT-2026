@@ -2,10 +2,36 @@
 
 #include <stdint.h>
 
-#define LED_PIN 2
-#define BLINK_S 0.5
 // Baud Rate
 #define BAUD_RATE 115200
+
+// MPU PIN DEFINITIONS
+#define MPU_SCK 36
+#define MPU_MOSI 35
+#define MPU_MISO 37
+#define MPU_CS 47
+
+// BME PIN DEFINITIONS
+#define BME_SDA 4
+#define BME_SCL 5
+
+// BNO PIN DEFINITIONS
+#define BNO_SCK 12
+#define BNO_MOSI 11
+#define BNO_MISO 13
+#define BNO_CS 14
+
+// UBLOX PIN DEFINITIONS
+#define UBLOX_TX 18
+#define UBLOX_RX 17
+
+// TRANSDUCER PIN DEFINITION
+
+// LED PIN DEFINITIONS
+
+// BUZZER PIN DEFINITIONS
+
+
 
 
 struct StructMPU9250{
@@ -49,10 +75,16 @@ struct StructBME280 {
 };
 
 struct StructUblox {
-    float timestamp;  // Timestamp
-    float lat;        // Latitude
-    float lon;        // Longitude
-    float alt;        // Altitude
-    float speed;      // Speed
+    float timestamp;   // Timestamp
+    uint32_t timeGPS;  // GPS time
+    uint32_t dateGPS;  // GPS date
+    double lat;        // Latitude
+    double lon;        // Longitude
+    float alt;         // Altitude above mean sea level
+    float speed;       // Speed
+    float course;      // Course over ground
+    uint8_t satellites;// Number of satellites in view
+    float hdop;        // Horizontal Dilution of Precision
+    bool valid;        // Validity of the GPS data
 };
 

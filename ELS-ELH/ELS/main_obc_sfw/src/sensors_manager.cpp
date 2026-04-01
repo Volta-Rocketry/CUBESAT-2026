@@ -10,14 +10,15 @@
 #include <Adafruit_BNO055.h>
 #include <Adafruit_BME280.h>
 #include <utility/imumaths.h>
+//#include <TinyGPSplus.h> 
 
-MPU9250 mpu;               // SPI ADREESS 0x68
+MPU9250 mpu(SPI, 47);               // SPI ADREESS 0x68
 // MPU9250 mpu(SPI, MPU_CS);
 
 Adafruit_BNO055 bno;      // I2C ADDRESS 0x28
 
 
-Adafruit_BME280 bme;     // SPI ADRESS 0x76
+Adafruit_BME280 bme(14);     // SPI ADRESS 0x76
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 //Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
 
@@ -29,7 +30,7 @@ StructBME280 bmeData;
 void InitMPU9250() {
     // Code to initialize MPU9250 sensor
     if (mpu.begin() < 0) {
-        CriticalError("MPU9250 initialization failed");
+        criticalError("MPU9250 initialization failed");
     } else {
         Serial.println("MPU9250 sensor initialized successfully.");
     };
@@ -37,7 +38,7 @@ void InitMPU9250() {
 void InitBNO055() {
     // Code to initialize BNO055 sensor
     if (!bno.begin()) {
-        CriticalError("BNO055 initialization failed");
+        criticalError("BNO055 initialization failed");
     } else {
         Serial.println("BNO055 sensor initialized successfully.");
     };
@@ -45,7 +46,7 @@ void InitBNO055() {
 void InitBME280() {
     // Code to initialize BME280 sensor
     if (!bme.begin()) {
-        CriticalError("BME280 initialization failed");
+        criticalError("BME280 initialization failed");
     } else {
         Serial.println("BME280 sensor initialized successfully.");
     }

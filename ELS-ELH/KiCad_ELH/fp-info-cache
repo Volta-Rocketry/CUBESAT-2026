@@ -1,4 +1,4 @@
-27236757747030099
+27243862369619333
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62206,8 +62206,8 @@ ADS1115
 
 
 0
-12
-12
+10
+10
 ELH_Library
 BME280
 
@@ -62223,12 +62223,33 @@ BNO055
 10
 10
 ELH_Library
+Bornera 2P
+
+
+0
+2
+2
+ELH_Library
+ESP32 DEVKIT V1
+
+
+0
+30
+30
+ELH_Library
 ESP32-S3-DevKitC-1
 
 
 0
 44
 44
+ELH_Library
+IRLZ44N
+
+
+0
+3
+3
 ELH_Library
 MPU9250
 
@@ -62264,6 +62285,13 @@ W25Q128
 0
 6
 6
+ELH_Library
+XL6009 Boost
+
+
+0
+4
+4
 Ferrite_THT
 LairdTech_28C0236-0JW-10
 Ferrite, vertical, LairdTech 28C0236-0JW-10, https://assets.lairdtech.com/home/brandworld/files/28C0236-0JW-10.pdf, JW Miller core https://www.bourns.com/products/magnetic-products/j.w.-miller-through-hole-ferrite-beads-emi-filters

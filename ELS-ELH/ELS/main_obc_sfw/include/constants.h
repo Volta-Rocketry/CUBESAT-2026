@@ -26,10 +26,18 @@
 #define UBLOX_RX 17
 
 // TRANSDUCER PIN DEFINITION
+#define TRANSDUCER_PIN 16
+
+// ACTUATOR PIN DEFINITION
+#define ACTUATOR_PIN 15
 
 // LED PIN DEFINITIONS
+#define LED_RED_PIN 38
+#define LED_GREEN_PIN 39
+#define LED_BLUE_PIN 40
 
 // BUZZER PIN DEFINITIONS
+#define BUZZER_PIN 2
 
 
 
@@ -88,3 +96,7 @@ struct StructUblox {
     bool valid;        // Validity of the GPS data
 };
 
+struct StructTransducers {
+    float timestamp;  // Timestamp
+    float transducer; // Transducer reading
+};

@@ -10,7 +10,7 @@
 #include <Adafruit_BNO055.h>
 #include <Adafruit_BME280.h>
 #include <utility/imumaths.h>
-//#include <TinyGPSplus.h> 
+#include <TinyGPSplus.h> 
 
 MPU9250 mpu(SPI, 47);               // SPI ADREESS 0x68
 // MPU9250 mpu(SPI, MPU_CS);
@@ -25,7 +25,8 @@ Adafruit_BME280 bme(14);     // SPI ADRESS 0x76
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
 StructBME280 bmeData;
-
+StructUblox ubloxData;
+StructTransducers transducerData;
 
 void InitMPU9250() {
     // Code to initialize MPU9250 sensor
@@ -56,6 +57,14 @@ void InitUblox() {
 }
 void InitTransducers() {
     // Code to initialize transducers
+    pinMode(TRANSDUCER_PIN, INPUT);
+    Serial.println("Transducers initialized successfully.");
+}
+
+void InitActuators() {
+    // Code to initialize actuators
+    pinMode(ACTUATOR_PIN, OUTPUT);
+    Serial.println("Actuators initialized successfully.");
 }
 
 
@@ -106,4 +115,28 @@ void ReadUblox() {
 }
 void ReadTransducers() {
     // Code to read data from transducers
+}
+
+
+void OpenActuatorsVoltage() {
+    // Code to send voltage to actuators
+    int blink_count = 0;
+    float previous_secs = 0;
+    bool led_state = LOW; 
+    float secs_actuators = millis() / 1000.0;
+    digitalWrite(ACTUATOR_PIN, HIGH);
+    if (blink_count < 6) {
+        if (secs_actuators - previous_secs >= 1.0) {
+            previous_secs = secs_actuators;
+            led_state = !led_state;
+            digitalWrite(LED_RED_PIN, led_state);
+            digitalWrite(LED_GREEN_PIN, led_state);
+
+            blink_count++;
+        }
+    }
+}
+void CloseActuatorsVoltage() {
+    // Code to stop voltage to actuators
+    digitalWrite(ACTUATOR_PIN, LOW);
 }

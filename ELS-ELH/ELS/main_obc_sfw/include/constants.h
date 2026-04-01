@@ -2,8 +2,12 @@
 
 #include <stdint.h>
 
+
 // Baud Rate
 #define BAUD_RATE 115200
+
+// GPS Baud Rate
+#define GPS_BAUD 4800
 
 // MPU PIN DEFINITIONS
 #define MPU_SCK 36

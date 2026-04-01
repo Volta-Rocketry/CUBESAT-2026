@@ -11,6 +11,7 @@
 #include <Adafruit_BME280.h>
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
+#include <SoftwareSerial.h>
 
 MPU9250 mpu(SPI,MPU_CS);               // SPI ADREESS 0x68
 // MPU9250 mpu(SPI, MPU_CS);
@@ -21,6 +22,8 @@ Adafruit_BNO055 bno;      // I2C ADDRESS 0x28
 Adafruit_BME280 bme(BME_CS);     // SPI ADRESS 0x76
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 //Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
+
+TinyGPSPlus gps;
 
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
@@ -54,6 +57,23 @@ void InitBME280() {
 }
 void InitUblox() {
     // Code to initialize Ublox sensor
+    SoftwareSerial ss(UBLOX_RX, UBLOX_TX);
+    ss.begin(GPS_BAUD);
+
+    unsigned long startTime = millis();
+    bool GPSInitialized = false;
+
+    while (millis() - startTime < 3000) {
+        if (ss.available() > 0) {
+            GPSInitialized = true; 
+            break;
+        }
+    }
+    if (!GPSInitialized) {
+        CriticalError("Ublox initialization failed");
+    } else {
+        Serial.println("Ublox sensor initialized successfully.");
+    }
 }
 void InitTransducers() {
     // Code to initialize transducers

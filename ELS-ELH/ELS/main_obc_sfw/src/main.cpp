@@ -3,10 +3,12 @@
 #include "sensors_manager.h"
 #include "error_warning.h"
 #include "LEDs_Buzzer_&_signals.h"
+#include <SoftwareSerial.h>
 
 float previousSecs = 0;
 float previousTelemetry = 0;
 float currentSecs;
+
 
 void setup() {
   Serial.begin(BAUD_RATE);

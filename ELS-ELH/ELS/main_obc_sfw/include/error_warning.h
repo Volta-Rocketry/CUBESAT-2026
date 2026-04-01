@@ -1,3 +1,3 @@
 # pragma once
 
-void criticalError(const char* message);
+void CriticalError(const char* message);

@@ -13,17 +13,17 @@ void InitLEDBuzzer() {
 }
 
 void InitLedPCB() {
-    int blink_count = 0;
-    float previous_secs = 0;
-    bool led_state = LOW;
-    float secs_PCB = millis() / 1000.0;
-    if (blink_count < 6) {
-        if (secs_PCB - previous_secs >= 1.0) {
-            previous_secs = secs_PCB;
-            led_state = !led_state;
-            digitalWrite(LED_RED_PIN, led_state);
+    int blinkCount = 0;
+    float previousSecs = 0;
+    bool ledState = LOW;
+    float secsPCB = millis() / 1000.0;
+    if (blinkCount < 6) {
+        if (secsPCB - previousSecs >= 1.0) {
+            previousSecs = secsPCB;
+            ledState = !ledState;
+            digitalWrite(LED_RED_PIN, ledState);
 
-            blink_count++;
+            blinkCount++;
         }
     }
 }

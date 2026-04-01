@@ -12,13 +12,13 @@
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
 
-MPU9250 mpu(SPI, 47);               // SPI ADREESS 0x68
+MPU9250 mpu(SPI,MPU_CS);               // SPI ADREESS 0x68
 // MPU9250 mpu(SPI, MPU_CS);
 
 Adafruit_BNO055 bno;      // I2C ADDRESS 0x28
 
 
-Adafruit_BME280 bme(14);     // SPI ADRESS 0x76
+Adafruit_BME280 bme(BME_CS);     // SPI ADRESS 0x76
 //Adafruit_BME280 bme(BME_CS); // hardware SPI
 //Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
 
@@ -26,12 +26,12 @@ StructMPU9250 mpuData;
 StructBNO055 bnoData;
 StructBME280 bmeData;
 StructUblox ubloxData;
-StructTransducers transducerData;
+StructTransducer transducerData;
 
 void InitMPU9250() {
     // Code to initialize MPU9250 sensor
     if (mpu.begin() < 0) {
-        criticalError("MPU9250 initialization failed");
+        CriticalError("MPU9250 initialization failed");
     } else {
         Serial.println("MPU9250 sensor initialized successfully.");
     };
@@ -39,7 +39,7 @@ void InitMPU9250() {
 void InitBNO055() {
     // Code to initialize BNO055 sensor
     if (!bno.begin()) {
-        criticalError("BNO055 initialization failed");
+        CriticalError("BNO055 initialization failed");
     } else {
         Serial.println("BNO055 sensor initialized successfully.");
     };
@@ -47,7 +47,7 @@ void InitBNO055() {
 void InitBME280() {
     // Code to initialize BME280 sensor
     if (!bme.begin()) {
-        criticalError("BME280 initialization failed");
+        CriticalError("BME280 initialization failed");
     } else {
         Serial.println("BME280 sensor initialized successfully.");
     }
@@ -115,24 +115,30 @@ void ReadUblox() {
 }
 void ReadTransducers() {
     // Code to read data from transducers
+    float transducerValue = analogRead(TRANSDUCER_PIN);
+    float voltage = transducerValue * (3.3 / 4095.0);
+    float pressureTransducer = voltage * 100.0; // Example conversion, adjust is needed
+    transducerData.timestamp = millis() / 1000.0;
+    transducerData.voltage = voltage;
+    transducerData.pressureTransducer = pressureTransducer;
 }
 
 
 void OpenActuatorsVoltage() {
     // Code to send voltage to actuators
-    int blink_count = 0;
-    float previous_secs = 0;
-    bool led_state = LOW; 
+    int blinkCount = 0;
+    float previousSecs = 0;
+    bool ledState = LOW; 
     float secs_actuators = millis() / 1000.0;
     digitalWrite(ACTUATOR_PIN, HIGH);
-    if (blink_count < 6) {
-        if (secs_actuators - previous_secs >= 1.0) {
-            previous_secs = secs_actuators;
-            led_state = !led_state;
-            digitalWrite(LED_RED_PIN, led_state);
-            digitalWrite(LED_GREEN_PIN, led_state);
+    if (blinkCount < 6) {
+        if (secs_actuators - previousSecs >= 1.0) {
+            previousSecs = secs_actuators;
+            ledState = !ledState;
+            digitalWrite(LED_RED_PIN, ledState);
+            digitalWrite(LED_GREEN_PIN, ledState);
 
-            blink_count++;
+            blinkCount++;
         }
     }
 }

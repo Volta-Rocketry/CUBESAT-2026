@@ -11,15 +11,15 @@
 #define MPU_MISO 37
 #define MPU_CS 47
 
-// BME PIN DEFINITIONS
-#define BME_SDA 4
-#define BME_SCL 5
-
 // BNO PIN DEFINITIONS
-#define BNO_SCK 12
-#define BNO_MOSI 11
-#define BNO_MISO 13
-#define BNO_CS 14
+#define BNO_SDA 4
+#define BNO_SCL 5
+
+// BME PIN DEFINITIONS
+#define BME_SCK 12
+#define BME_MOSI 11
+#define BME_MISO 13
+#define BME_CS 14
 
 // UBLOX PIN DEFINITIONS
 #define UBLOX_TX 18
@@ -96,7 +96,8 @@ struct StructUblox {
     bool valid;        // Validity of the GPS data
 };
 
-struct StructTransducers {
+struct StructTransducer {
     float timestamp;  // Timestamp
-    float transducer; // Transducer reading
+    float voltage;    // Transducer reading
+    float pressureTransducer;   // Transducer reading
 };

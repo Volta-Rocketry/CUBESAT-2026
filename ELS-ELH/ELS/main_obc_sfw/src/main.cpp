@@ -4,13 +4,13 @@
 #include "error_warning.h"
 #include "LEDs_Buzzer_&_signals.h"
 
-float previous_secs = 0;
-float previous_telemetry = 0;
-float current_secs;
+float previousSecs = 0;
+float previousTelemetry = 0;
+float currentSecs;
 
 void setup() {
   Serial.begin(BAUD_RATE);
-  Serial.println("ELS-02 INITIALIZED");
+  Serial.println("ELS INITIALIZED");
   InitLEDBuzzer();
   InitMPU9250();
   InitBNO055();
@@ -22,7 +22,7 @@ void setup() {
 }
 
 void loop() {
-  current_secs = millis() / 1000.0;
+  currentSecs = millis() / 1000.0;
   InitLedPCB();
 
 }

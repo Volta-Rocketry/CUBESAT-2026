@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include "constants.h"
 
-void criticalError(const char* messages) {
+void CriticalError(const char* messages) {
     Serial.print(" [ERROR] critical : ");
     Serial.println(messages);
     while (true) {

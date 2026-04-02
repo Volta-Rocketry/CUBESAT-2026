@@ -1,4 +1,4 @@
-27243862369619333
+27247412679135488
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62251,6 +62251,13 @@ IRLZ44N
 3
 3
 ELH_Library
+LED
+
+
+0
+2
+2
+ELH_Library
 MPU9250
 
 
@@ -62264,6 +62271,13 @@ MicroSD Module
 0
 6
 6
+ELH_Library
+PCF8574
+
+
+0
+13
+13
 ELH_Library
 Teensy 4.1
 

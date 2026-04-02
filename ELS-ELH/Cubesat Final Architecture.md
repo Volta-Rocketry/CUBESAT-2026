@@ -167,7 +167,7 @@ In the ELH system, we have identified a possible use of FDIR based on the missio
 | Power Control CH1 (RCS Valve 1) |                  12.0 |                        640 |                         7.7 |                    300 | Intermittent roll corrections (~10% duty)   |          0.064 |
 | Power Control CH2 (RCS Valve 2) |                  12.0 |                        640 |                         7.7 |                    300 | Intermittent roll corrections (~10% duty)   |          0.064 |
 | Power Control (CAM)             |                   5.0 |                       1850 |                       9.25 |                    720 | Always ON post-ejection          |              1.85 |
-| Buzzer                          |                   5.0 |                         50 |                         0.25 |                     60 | Distributed status beeps                    |           0.004 |
+| Buzzer                          |                   3.3 |                         50 |                         0.165 |                     60 | Distributed status beeps                    |         0.00264 |
 | LEDs (3×)                       |                   3.3 |                         60 |                         0.20 |                    720 | Continuous status indication                |           0.04 |
 
 *NOTE:* Operating time based on the launch vehicle's descent rate approximation.
@@ -183,7 +183,7 @@ In the ELH system, we have identified a possible use of FDIR based on the missio
 | GPS                  |                   3.3 |                         45 |                         0.15 |                     720 | Post-ejection navigation          |           0.03 |
 | Flash                |                   3.3 |                         30 |                         0.10 |                    3600 | Primary flight data logger        |           0.10 |
 | SD Card (active)     |                   3.3 |                        100 |                         0.33 |                      40 | Landing-only data dump            |         0.0037 |
-| Buzzer               |                   5.0 |                         50 |                         0.25 |                      60 | Distributed status beeps          |          0.004 |
+| Buzzer               |                   3.3 |                         50 |                        0.165 |                      60 | Distributed status beeps          |       0.00264 |
 | LEDs (3×)            |                   3.3 |                         60 |                         0.20 |                    3600 | Continuous status indication      |           0.20 |
 | Pressure transducer  |                   5.0 |                         10 |                         0.05 |                    720 | Control active only post-eject     |           0.01 |
 | ADC (P. Transducer)  |                   5.0 |                         10 |                         0.05 |                    720 | Control active only post-ejection  |           0.01 |

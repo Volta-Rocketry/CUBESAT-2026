@@ -123,20 +123,21 @@ These are electronic switches located in each actuator, there are two MOSFETs pe
 | SPI1 | SCK (Flash/ALT) | 18 | 
 | SPI1 | MOSI (Flash/ALT) | 23 | 
 | SPI1 | MISO (Flash/ALT) | 19 |
+| CS1 | CS (Flash) | 15 | 
 | SPI2 | SCK (IMU Raw/SD) | 16 | 
 | SPI2 | MOSI (IMU Raw/SD) | 17 | 
 | SPI2 | MISO (IMU Raw/SD) | 27 |
-| OUTPUT | MOSFET 1 (RCS1) | 33 | 
-| OUTPUT | MOSFET 2 (RCS2) | 4 | 
+| CS1 | CS (ALT) | 33 | 
+| CS2 | CS (IMU Raw) | 4 | 
+
 
 ### 1.1 PCF8574
 | Categoría | Ítem | Pin |
 | :--- | :--- | :--- |
 | COM | SDA (MAIN OBC) | SDA | 
 | COM | SCL (MAIN OBC) | SCL | 
-| CS1 | CS (Flash) | P0 | 
-| CS1 | CS (ALT) | P1 | 
-| CS2 | CS (IMU Raw) | P2 | 
+| OUTPUT | MOSFET 1 (RCS1) | P1 | 
+| OUTPUT | MOSFET 2 (RCS2) | P2 | 
 | CS2 | CS (SD) | P3 | 
 | OUTPUT | Buzzer | P4 | 
 | OUTPUT | LEDs x3 | P5, P6, P7 | 

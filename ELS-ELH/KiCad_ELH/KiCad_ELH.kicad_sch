@@ -7271,7 +7271,7 @@
 		(uuid "70a93586-f044-4026-8962-bcb48a55de8d")
 	)
 	(no_connect
-		(at 167.64 118.11)
+		(at 175.26 90.17)
 		(uuid "711a9fce-5049-4bc8-a4d7-912c066c2ae2")
 	)
 	(no_connect
@@ -8462,16 +8462,6 @@
 		)
 		(uuid "fd1f1b12-dc5a-4376-92f0-1cc11ad75538")
 	)
-	(label "CS_IMURaw"
-		(at 180.34 90.17 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "009494c5-3400-45b9-a636-c4ff0e593ae0")
-	)
 	(label "BUZZER1"
 		(at 185.42 90.17 90)
 		(effects
@@ -8542,6 +8532,16 @@
 		)
 		(uuid "16e936a6-c31b-46bf-93ce-36dd54179160")
 	)
+	(label "CS_IMURaw"
+		(at 167.64 123.19 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "25ad9c0b-c9df-4c52-aab9-610e2cc7e5d3")
+	)
 	(label "SPI1_MISO"
 		(at 31.75 177.8 180)
 		(effects
@@ -8581,6 +8581,16 @@
 			(justify left bottom)
 		)
 		(uuid "2f9acc7f-cb5e-4434-a25a-adc1e1737901")
+	)
+	(label "CS_FLASH"
+		(at 167.64 118.11 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "3752125b-8629-4986-84f7-09f749737b45")
 	)
 	(label "UART1_RX"
 		(at 262.89 120.65 0)
@@ -8641,26 +8651,6 @@
 			(justify left bottom)
 		)
 		(uuid "4344fa46-ceca-4447-aba0-04ba02ad07b1")
-	)
-	(label "CS_FLASH"
-		(at 175.26 90.17 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "43e5cf2f-07cb-402c-86da-82a3c9f39f65")
-	)
-	(label "MOS1"
-		(at 190.5 133.35 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "4715bb22-8146-453b-a43a-3eabb24073a3")
 	)
 	(label "UART2_RX"
 		(at 190.5 138.43 0)
@@ -8802,6 +8792,16 @@
 		)
 		(uuid "88a547f1-51ab-4446-b1ea-d5f42533e6aa")
 	)
+	(label "CS_ALT"
+		(at 190.5 133.35 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8b746c25-6dc9-4b1c-ab7d-25be5fd7b1f9")
+	)
 	(label "UART2_TX"
 		(at 264.16 38.1 0)
 		(effects
@@ -8811,6 +8811,16 @@
 			(justify left bottom)
 		)
 		(uuid "8b9de479-efc6-4a1c-8617-8d0d33456a47")
+	)
+	(label "MOS2"
+		(at 180.34 90.17 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8c1bf819-b5e1-4309-ab22-de1fb8b0c4cc")
 	)
 	(label "SPI1_SCK"
 		(at 167.64 133.35 180)
@@ -8901,16 +8911,6 @@
 			(justify right bottom)
 		)
 		(uuid "9e89c538-0236-4ee0-81ce-e61c7e4781ae")
-	)
-	(label "CS_ALT"
-		(at 177.8 90.17 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a281ec1d-2233-4f16-8cc4-b1256a600dc8")
 	)
 	(label "SPI1_MOSI"
 		(at 167.64 148.59 180)
@@ -9092,16 +9092,6 @@
 		)
 		(uuid "e2bd3eb0-89cd-48d6-9ecf-3da157bff22a")
 	)
-	(label "MOS2"
-		(at 167.64 123.19 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "e3ba75b1-4689-4f37-96e5-e49f4e2c3d2a")
-	)
 	(label "CS_SD"
 		(at 182.88 90.17 90)
 		(effects
@@ -9141,6 +9131,16 @@
 			(justify right bottom)
 		)
 		(uuid "f19acfba-9917-4f1c-b073-5f340bf19d8c")
+	)
+	(label "MOS1"
+		(at 177.8 90.17 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f1ff5f85-4a87-4532-89e7-52e3f768266e")
 	)
 	(label "LED3"
 		(at 193.04 90.17 90)

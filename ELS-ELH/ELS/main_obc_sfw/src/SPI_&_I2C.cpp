@@ -9,6 +9,8 @@ SPIClass vspi(VSPI);
 SPIClass hspi(HSPI);
 
 void InitSPI() {
+
+    SPI.begin(MPU_SCK, MPU_MISO, MPU_MOSI, -1);
     // Initialize VSPI
     vspi.begin(MPU_SCK, MPU_MISO, MPU_MOSI,-1);
 

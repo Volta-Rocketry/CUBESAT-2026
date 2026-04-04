@@ -9,25 +9,41 @@
 // GPS Baud Rate
 #define GPS_BAUD 4800
 
+// Pressure where the altitude is calculated
+#define BME_PRESSURE_LEVEL 101325  // Standard sea level pressure in Pascals
+// Probably should be defined, but now we will use the standard sea level pressure as a reference for altitude calculations. This can be adjusted based on the specific location and conditions of the satellite's operation.
+
 // MPU PIN DEFINITIONS
-#define MPU_SCK 36
-#define MPU_MOSI 35
-#define MPU_MISO 37
-#define MPU_CS 47
+#define MPU_SCK 16
+#define MPU_MOSI 17
+#define MPU_MISO 27
+#define MPU_CS 4
 
 // BNO PIN DEFINITIONS
-#define BNO_SDA 4
-#define BNO_SCL 5
+#define BNO_SDA 21
+#define BNO_SCL 22
 
 // BME PIN DEFINITIONS
-#define BME_SCK 12
-#define BME_MOSI 11
-#define BME_MISO 13
-#define BME_CS 14
+#define BME_SCK 18
+#define BME_MOSI 23
+#define BME_MISO 19
+#define BME_CS 33
 
 // UBLOX PIN DEFINITIONS
-#define UBLOX_TX 18
-#define UBLOX_RX 17
+#define UBLOX_TX 36
+#define UBLOX_RX 32
+
+// FLASH PIN DEFINITIONS
+#define FLASH_SCK 18
+#define FLASH_MOSI 23
+#define FLASH_MISO 19 
+#define FLASH_CS 15
+
+// SD PIN DEFINITIONS
+#define SD_SCK 16
+#define SD_MOSI 17
+#define SD_MISO 27
+#define SD_CS  3// esta definido en el expansor
 
 // TRANSDUCER PIN DEFINITION
 #define TRANSDUCER_PIN 16
@@ -36,14 +52,14 @@
 #define ACTUATOR_PIN 15
 
 // LED PIN DEFINITIONS
-#define LED_RED_PIN 38
-#define LED_GREEN_PIN 39
-#define LED_BLUE_PIN 40
+// Estan en el expansor
+#define LED_RED_PIN 5
+#define LED_GREEN_PIN 6
+#define LED_BLUE_PIN 7
 
 // BUZZER PIN DEFINITIONS
-#define BUZZER_PIN 2
-
-
+// Esta definido en el expansor
+#define BUZZER_PIN 4
 
 
 struct StructMPU9250{
@@ -79,20 +95,29 @@ struct StructBNO055{
 };
 
 struct StructBME280 {
+    float timestamp;  // Timestamp
     float temp;       // Temperature
     float humidity;   // Humidity
     float pressure;   // Pressure
     float altitude;   // Altitude
-    float timestamp;  // Timestamp
 };
 
 struct StructUblox {
     float timestamp;   // Timestamp
-    uint32_t timeGPS;  // GPS time
-    uint32_t dateGPS;  // GPS date
-    double lat;        // Latitude
-    double lon;        // Longitude
-    float alt;         // Altitude above mean sea level
+
+    // GPS time
+    uint8_t hour;      // GPS hour
+    uint8_t minute;    // GPS minute
+    uint8_t second;    // GPS second
+
+    // GPS date
+    uint16_t year;     // GPS year
+    uint8_t month;     // GPS month
+    uint8_t day;       // GPS day
+
+    double latitude;   // Latitude
+    double longitude;  // Longitude
+    float altitude;    // Altitude above mean sea level
     float speed;       // Speed
     float course;      // Course over ground
     uint8_t satellites;// Number of satellites in view

@@ -31,10 +31,11 @@ StructBME280 bmeData;
 StructUblox ubloxData;
 StructTransducer transducerData;
 
+// Sensor initialization functions
 void InitMPU9250() {
     // Code to initialize MPU9250 sensor
     if (mpu.begin() < 0) {
-        CriticalError("MPU9250 initialization failed");
+        CriticalErrorSensor("MPU9250 initialization failed");
     } else {
         Serial.println("MPU9250 sensor initialized successfully.");
     };
@@ -42,7 +43,7 @@ void InitMPU9250() {
 void InitBNO055() {
     // Code to initialize BNO055 sensor
     if (!bno.begin()) {
-        CriticalError("BNO055 initialization failed");
+        CriticalErrorSensor("BNO055 initialization failed");
     } else {
         Serial.println("BNO055 sensor initialized successfully.");
     };
@@ -50,7 +51,7 @@ void InitBNO055() {
 void InitBME280() {
     // Code to initialize BME280 sensor
     if (!bme.begin()) {
-        CriticalError("BME280 initialization failed");
+        CriticalErrorSensor("BME280 initialization failed");
     } else {
         Serial.println("BME280 sensor initialized successfully.");
     }
@@ -70,7 +71,7 @@ void InitUblox() {
         }
     }
     if (!GPSInitialized) {
-        CriticalError("Ublox initialization failed");
+        CriticalErrorSensor("Ublox initialization failed");
     } else {
         Serial.println("Ublox sensor initialized successfully.");
     }
@@ -78,21 +79,28 @@ void InitUblox() {
 void InitTransducers() {
     // Code to initialize transducers
     pinMode(TRANSDUCER_PIN, INPUT);
+    if (analogRead(TRANSDUCER_PIN) <= 0 || analogRead(TRANSDUCER_PIN) >= 4095) {
+        CriticalErrorSensor("Transducers Error");
+    }
     Serial.println("Transducers initialized successfully.");
 }
 
 void InitActuators() {
     // Code to initialize actuators
     pinMode(ACTUATOR_PIN, OUTPUT);
+    if (digitalRead(ACTUATOR_PIN) == HIGH) {
+        CriticalErrorSensor("Actuators initialization failed");
+    }
     Serial.println("Actuators initialized successfully.");
 }
 
-
+// Sensor calibration functions
 void calibrateSensors() {
     // Code to calibrate sensors
 }
 
 
+// Sensor reading functions
 void ReadMPU9250() {
     // Code to read data from MPU9250 sensor
     mpuData.timestamp = millis() / 1000.0;
@@ -127,12 +135,44 @@ void ReadBME280() {
     bmeData.timestamp = millis() / 1000.0;
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();
-    bmeData.pressure = bme.readPressure() / 100.0F;
-    // Altitude can be calculated using the pressure reading and a reference sea level pressure
+    bmeData.pressure = bme.readPressure();
+    bmeData.altitude = bme.readAltitude(BME_PRESSURE_LEVEL);
 }
 void ReadUblox() {
     // Code to read data from Ublox sensor
+    ubloxData.timestamp = millis() / 1000.0;
+    if (gps.time.isUpdated()) {
+        ubloxData.hour = gps.time.hour();
+        ubloxData.minute = gps.time.minute();
+        ubloxData.second = gps.time.second();
+    }
+    if (gps.date.isUpdated()) {
+        ubloxData.year = gps.date.year();
+        ubloxData.month = gps.date.month();
+        ubloxData.day = gps.date.day();
+    }
+    if (gps.location.isUpdated()) {
+        ubloxData.latitude = gps.location.lat();
+        ubloxData.longitude = gps.location.lng();
+    }
+    if (gps.altitude.isUpdated()) {
+        ubloxData.altitude = gps.altitude.meters();
+    }
+    if (gps.speed.isUpdated()) {
+        ubloxData.speed = gps.speed.mps();
+    }
+    if (gps.course.isUpdated()) {
+        ubloxData.course = gps.course.deg();
+    }
+    if (gps.satellites.isUpdated()) {
+        ubloxData.satellites = gps.satellites.value();
+    }
+    if (gps.hdop.isUpdated()) {
+        ubloxData.hdop = gps.hdop.hdop();
+    }
+    ubloxData.valid = gps.location.isValid();
 }
+
 void ReadTransducers() {
     // Code to read data from transducers
     float transducerValue = analogRead(TRANSDUCER_PIN);
@@ -143,7 +183,7 @@ void ReadTransducers() {
     transducerData.pressureTransducer = pressureTransducer;
 }
 
-
+// Actuator control functions
 void OpenActuatorsVoltage() {
     // Code to send voltage to actuators
     int blinkCount = 0;

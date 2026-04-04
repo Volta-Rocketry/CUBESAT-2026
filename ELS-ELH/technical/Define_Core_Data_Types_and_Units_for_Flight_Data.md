@@ -12,3 +12,4 @@ In this part, the data and their physical units are defined, enabling consistent
 * **Temperature:** Degrees Celsius ($^\circ C$). Variable: `temp` Type: `float`
 * **Humidity:** Percentage (%). Variable: `humidity` Type: `float`
 * **Time:** Seconds ($s$) since system startup. Variable: `timestamp` Type: `float`
+* **Speed** Meters per second ($m/s$). Variable: `speed` Type: `float`

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "constants.h"
+#include "SPI_&_I2C.h"
 #include "sensors_manager.h"
 #include "error_warning.h"
 #include "LEDs_Buzzer_&_signals.h"
@@ -14,6 +15,7 @@ void setup() {
   Serial.begin(BAUD_RATE);
   Serial.println("ELS INITIALIZED");
   InitLEDBuzzer();
+  InitSPI();
   InitMPU9250();
   InitBNO055();
   InitBME280();

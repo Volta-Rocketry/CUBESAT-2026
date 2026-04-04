@@ -23,10 +23,12 @@ void setup() {
   InitTransducers();
   InitActuators();
   CloseActuatorsVoltage();
+  flight_computer_init();
 }
 
 void loop() {
   currentSecs = millis() / 1000.0;
   InitLedPCB();
+  flight_computer_update();
 
 }

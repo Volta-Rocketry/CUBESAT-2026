@@ -9,10 +9,6 @@
 // GPS Baud Rate
 #define GPS_BAUD 4800
 
-// Pressure where the altitude is calculated
-#define BME_PRESSURE_LEVEL 101325  // Standard sea level pressure in Pascals
-// Probably should be defined, but now we will use the standard sea level pressure as a reference for altitude calculations. This can be adjusted based on the specific location and conditions of the satellite's operation.
-
 // MPU PIN DEFINITIONS
 #define MPU_SCK 16
 #define MPU_MOSI 17
@@ -30,8 +26,8 @@
 #define BME_CS 33
 
 // UBLOX PIN DEFINITIONS
-#define UBLOX_TX 36
-#define UBLOX_RX 32
+#define UBLOX_TX 32
+#define UBLOX_RX 36
 
 // FLASH PIN DEFINITIONS
 #define FLASH_SCK 18
@@ -76,6 +72,8 @@ struct StructMPU9250{
     float MPU_mx;     // MPU9250 magnetic field on the X axis
     float MPU_my;     // MPU9250 magnetic field on the Y axis
     float MPU_mz;     // MPU9250 magnetic field on the Z axis
+    // Chip temperature
+    float MPU_temp;   // MPU9250 chip temperature
 };
 
 struct StructBNO055{
@@ -129,4 +127,33 @@ struct StructTransducer {
     float timestamp;  // Timestamp
     float voltage;    // Transducer reading
     float pressureTransducer;   // Transducer reading
+};
+
+
+// Calibration data structure
+struct CalibrationDataMPU {
+    // MPU9250 calibration data
+    float mpuGyroBiasX;
+    float mpuGyroBiasY;
+    float mpuGyroBiasZ;
+    float mpuAccBiasX;
+    float mpuAccBiasY;
+    float mpuAccBiasZ;
+
+    // Temperature errors
+    float tempRef;
+    float gyroTCO;
+    float accTCO;
+};
+
+struct CalibrationDataBNO {
+    // BNO055 calibration data
+    uint8_t bnoSystemStatus;
+    uint8_t bnoGyroStatus;
+    uint8_t bnoAccStatus;
+    uint8_t bnoMagStatus;
+};
+
+struct CalibrationDataBME {
+
 };

@@ -17,8 +17,8 @@ void InitLedPCB() {
     float previousSecs = 0;
     bool ledState = LOW;
     float secsPCB = millis() / 1000.0;
-    if (blinkCount < 6) {
-        if (secsPCB - previousSecs >= 1.0) {
+    while (blinkCount < 6) {
+        if (secsPCB - previousSecs >= 1.0) { // While en lugar de if
             previousSecs = secsPCB;
             ledState = !ledState;
             digitalWrite(LED_RED_PIN, ledState);

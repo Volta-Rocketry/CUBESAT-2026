@@ -12,17 +12,11 @@
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
 #include <SoftwareSerial.h>
+#include <Preferences.h>
 
-MPU9250 mpu(SPI,MPU_CS);               // SPI ADREESS 0x68
-// MPU9250 mpu(SPI, MPU_CS);
-
-Adafruit_BNO055 bno;      // I2C ADDRESS 0x28
-
-
-Adafruit_BME280 bme(BME_CS);     // SPI ADRESS 0x76
-//Adafruit_BME280 bme(BME_CS); // hardware SPI
-//Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
-
+MPU9250 mpu(SPI,MPU_CS);
+Adafruit_BNO055 bno;
+Adafruit_BME280 bme(BME_CS);
 TinyGPSPlus gps;
 
 StructMPU9250 mpuData;
@@ -30,6 +24,12 @@ StructBNO055 bnoData;
 StructBME280 bmeData;
 StructUblox ubloxData;
 StructTransducer transducerData;
+
+CalibrationDataMPU mpuCalib;
+CalibrationDataBNO bnoCalib;
+CalibrationDataBME bmeCalib;
+
+Preferences preferences;
 
 // Sensor initialization functions
 void InitMPU9250() {
@@ -96,23 +96,120 @@ void InitActuators() {
 
 // Sensor calibration functions
 void calibrateSensors() {
-    // Code to calibrate sensors
+    // Calibrate MPU9250
+    // Variables temporales para el proceso de calibración
+    float gSumX = 0, gSumY = 0, gSumZ = 0;
+    float aSumX = 0, aSumY = 0, aSumZ = 0;
+    float tsum = 0;
+    int numReadings = 0;
+    const int MAX_MU = 100;
+    bool giroCalibrado = false;
+    float previousCalibSec = 0;
+    while (numReadings < MAX_MU) {
+        float calibSec = millis() / 1000.0;
+        if (calibSec - previousCalibSec >= 0.1) {
+            previousCalibSec = calibSec;
+             if (mpu.readSensor() == 0) {
+                gSumX += mpu.getGyroX_rads();
+                gSumY += mpu.getGyroY_rads();
+                gSumZ += mpu.getGyroZ_rads();
+                aSumX += mpu.getAccelX_mss();
+                aSumY += mpu.getAccelY_mss();
+                aSumZ += mpu.getAccelZ_mss();
+
+                tsum += mpu.getTemperature_C();
+
+                numReadings++;
+            }
+        }
+    }
+    mpuCalib.mpuGyroBiasX = gSumX / float(numReadings);
+    mpuCalib.mpuGyroBiasY = gSumY / float(numReadings);
+    mpuCalib.mpuGyroBiasZ = gSumZ / float(numReadings);
+    mpuCalib.mpuAccBiasX = aSumX / float(numReadings);
+    mpuCalib.mpuAccBiasY = aSumY / float(numReadings);
+    mpuCalib.mpuAccBiasZ = aSumZ / float(numReadings) - 9.80665;
+
+    // Calibración de temperatura
+    mpuCalib.tempRef = tsum / float(numReadings);
+    mpuCalib.gyroTCO = 0.000872; // 0.5 deg/s * (pi / 180)= 0.00872665 rad/s
+    mpuCalib.accTCO = 0.0147;  // 1.5 mg = 0.0015 G * 9.80665 = 0.0147 m/s^2
+
+    // correcion de errores utilizando el magnetometro
+
+    // Get calibration from BNO055
+    bool calibrated = false;
+    bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
+    if (bno.isFullyCalibrated() && !calibrated) {
+        Serial.println("BNO055 sensor fully calibrated.");
+        adafruit_bno055_offsets_t newOffsets;
+        preferences.begin("bno_data", false);
+        bno.getSensorOffsets(newOffsets);
+        preferences.putBytes("bno_offsets", &newOffsets, sizeof(newOffsets));
+        preferences.end();
+        Serial.println("BNO055 calibration data saved to preferences.");
+        calibrated = true;
+    }
+    if (!bno.isFullyCalibrated()) {
+        preferences.begin("bno_data", true);
+        size_t dataLength = preferences.getBytesLength("bno_offsets");
+        if (dataLength > 0 ){
+            adafruit_bno055_offsets_t savedOffsets;
+            preferences.getBytes("bno_offsets", &savedOffsets, sizeof(savedOffsets));
+            bno.setSensorOffsets(savedOffsets);
+            Serial.println("BNO055 calibration data loaded.");
+        } else {
+            Serial.println("No BNO055 calibration data found.");
+        }
+        preferences.end();
+    }
 }
 
 
 // Sensor reading functions
 void ReadMPU9250() {
     // Code to read data from MPU9250 sensor
+    // temperatura correcion
+    // Correcion del error es:
+    // Dato corregido = Dato medido - (Bias + TCO * (Temperatura actual - Temperatura de referencia))
+    // TCO (Temperature Coefficient of Offset) sale del datasheet
+    float deltaT = (mpu.getTemperature_C() - mpuCalib.tempRef);
+
     mpuData.timestamp = millis() / 1000.0;
-    mpuData.MPU_ax = mpu.getAccelX_mss();
-    mpuData.MPU_ay = mpu.getAccelY_mss();
-    mpuData.MPU_az = mpu.getAccelZ_mss();
-    mpuData.MPU_gx = mpu.getGyroX_rads();
-    mpuData.MPU_gy = mpu.getGyroY_rads();
-    mpuData.MPU_gz = mpu.getGyroZ_rads();
+
+    mpuData.MPU_ax = mpu.getAccelX_mss(); // - (mpuCalib.mpuAccBiasX + (mpuCalib.accTCO * deltaT));
+    mpuData.MPU_ay = mpu.getAccelY_mss(); // - (mpuCalib.mpuAccBiasY + (mpuCalib.accTCO * deltaT));
+    mpuData.MPU_az = mpu.getAccelZ_mss(); // - (mpuCalib.mpuAccBiasZ + (mpuCalib.accTCO * deltaT));
+
+    mpuData.MPU_gx = mpu.getGyroX_rads(); // - (mpuCalib.mpuGyroBiasX + (mpuCalib.gyroTCO * deltaT));
+    mpuData.MPU_gy = mpu.getGyroY_rads(); // - (mpuCalib.mpuGyroBiasY + (mpuCalib.gyroTCO * deltaT));
+    mpuData.MPU_gz = mpu.getGyroZ_rads(); // - (mpuCalib.mpuGyroBiasZ + (mpuCalib.gyroTCO * deltaT));
+
     mpuData.MPU_mx = mpu.getMagX_uT();
     mpuData.MPU_my = mpu.getMagY_uT();
     mpuData.MPU_mz = mpu.getMagZ_uT();
+
+    Serial.println("MPU9250 data read successfully.");
+    Serial.print("Accel X=");
+    Serial.print(mpuData.MPU_ax);
+    Serial.print(", Y=");
+    Serial.print(mpuData.MPU_ay);
+    Serial.print(", Z=");
+    Serial.println(mpuData.MPU_az);
+
+    Serial.print("Gyro X=");
+    Serial.print(mpuData.MPU_gx);
+    Serial.print(", Y=");
+    Serial.print(mpuData.MPU_gy);
+    Serial.print(", Z=");
+    Serial.println(mpuData.MPU_gz);
+
+    Serial.print("Mag X=");
+    Serial.print(mpuData.MPU_mx);
+    Serial.print(", Y=");
+    Serial.print(mpuData.MPU_my);
+    Serial.print(", Z=");
+    Serial.println(mpuData.MPU_mz);
 }
 void ReadBNO055() {
     // Code to read data from BNO055 sensor
@@ -129,6 +226,28 @@ void ReadBNO055() {
     bnoData.BNO_mx = mag.x();
     bnoData.BNO_my = mag.y();
     bnoData.BNO_mz = mag.z();
+
+    Serial.println("BNO055 data read successfully.");
+    Serial.print("Linear Accel X=");
+    Serial.print(bnoData.BNO_ax);
+    Serial.print(", Y=");
+    Serial.print(bnoData.BNO_ay);
+    Serial.print(", Z=");
+    Serial.println(bnoData.BNO_az);
+
+    Serial.print("Gyro X=");
+    Serial.print(bnoData.BNO_gx);
+    Serial.print(", Y=");
+    Serial.print(bnoData.BNO_gy);
+    Serial.print(", Z=");
+    Serial.println(bnoData.BNO_gz);
+
+    Serial.print("Mag X=");
+    Serial.print(bnoData.BNO_mx);
+    Serial.print(", Y=");
+    Serial.print(bnoData.BNO_my);
+    Serial.print(", Z=");
+    Serial.println(bnoData.BNO_mz);
 }
 void ReadBME280() {
     // Code to read data from BME sensor
@@ -136,7 +255,16 @@ void ReadBME280() {
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();
     bmeData.pressure = bme.readPressure();
-    bmeData.altitude = bme.readAltitude(BME_PRESSURE_LEVEL);
+    bmeData.altitude = bme.readAltitude(101325); // Using standard sea level pressure as reference
+
+    Serial.println("BME280 data read successfully.");
+    Serial.print("Temperature=");
+    Serial.print(bmeData.temp);
+    Serial.print(" °C, Humidity=");
+    Serial.print(bmeData.humidity);
+    Serial.print(" %, Pressure=");
+    Serial.print(bmeData.pressure);
+    Serial.println(" Pa");
 }
 void ReadUblox() {
     // Code to read data from Ublox sensor
@@ -171,6 +299,36 @@ void ReadUblox() {
         ubloxData.hdop = gps.hdop.hdop();
     }
     ubloxData.valid = gps.location.isValid();
+
+    Serial.println("Ublox data read successfully.");
+    Serial.print("Time=");
+    Serial.print(ubloxData.hour);
+    Serial.print(":");
+    Serial.print(ubloxData.minute);
+    Serial.print(":");
+    Serial.print(ubloxData.second);
+    Serial.print(", Date=");
+    Serial.print(ubloxData.year);
+    Serial.print("-");
+    Serial.print(ubloxData.month);
+    Serial.print("-");
+    Serial.print(ubloxData.day);
+    Serial.print(", Latitude=");
+    Serial.print(ubloxData.latitude, 6);
+    Serial.print(", Longitude=");
+    Serial.print(ubloxData.longitude, 6);
+    Serial.print(", Altitude=");
+    Serial.print(ubloxData.altitude);
+    Serial.print(" m, Speed="); 
+    Serial.print(ubloxData.speed);
+    Serial.print(" m/s, Course=");
+    Serial.print(ubloxData.course);
+    Serial.print(" deg, Satellites=");
+    Serial.print(ubloxData.satellites);
+    Serial.print(", HDOP=");
+    Serial.print(ubloxData.hdop);
+    Serial.print(", Valid=");
+    Serial.println(ubloxData.valid ? "Yes" : "No");
 }
 
 void ReadTransducers() {
@@ -191,7 +349,7 @@ void OpenActuatorsVoltage() {
     bool ledState = LOW; 
     float secs_actuators = millis() / 1000.0;
     digitalWrite(ACTUATOR_PIN, HIGH);
-    if (blinkCount < 6) {
+    while (blinkCount < 6) {
         if (secs_actuators - previousSecs >= 1.0) {
             previousSecs = secs_actuators;
             ledState = !ledState;

@@ -14,19 +14,20 @@ float currentSecs;
 void setup() {
   Serial.begin(BAUD_RATE);
   Serial.println("ELS INITIALIZED");
-  InitLEDBuzzer();
-  InitSPI();
-  InitMPU9250();
   InitBNO055();
   InitBME280();
   InitUblox();
-  InitTransducers();
-  InitActuators();
-  CloseActuatorsVoltage();
+  InitMPU9250();
 }
 
 void loop() {
   currentSecs = millis() / 1000.0;
-  InitLedPCB();
+  if (currentSecs - previousTelemetry >= 1.0) {
+    previousTelemetry = currentSecs;
+    ReadMPU9250();
+    ReadBNO055();
+    ReadBME280();
+    ReadUblox();
+  }
 
 }

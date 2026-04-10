@@ -6,10 +6,12 @@
 void CriticalErrorSensor(const char* messages) {
     Serial.print(" [ERROR] critical : ");
     Serial.println(messages);
+    /*
     while (true) {
         digitalWrite(LED_RED_PIN, HIGH);
         digitalWrite(BUZZER_PIN, HIGH);
     }
+    */
 }
 
 void ErrorSPI(const char* messages) {

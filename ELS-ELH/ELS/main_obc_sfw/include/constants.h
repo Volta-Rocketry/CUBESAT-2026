@@ -90,6 +90,11 @@ struct StructBNO055{
     float BNO_mx;     // BNO055 magnetic field on the X axis
     float BNO_my;     // BNO055 magnetic field on the Y axis
     float BNO_mz;     // BNO055 magnetic field on the Z axis
+    // Quaternions
+    float BNO_qw;     // BNO055 quaternion W component
+    float BNO_qx;     // BNO055 quaternion X component
+    float BNO_qy;     // BNO055 quaternion Y component
+    float BNO_qz;     // BNO055 quaternion Z component
 };
 
 struct StructBME280 {

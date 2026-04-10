@@ -158,10 +158,11 @@ void calibrateSensors() {
             preferences.getBytes("bno_offsets", &savedOffsets, sizeof(savedOffsets));
             bno.setSensorOffsets(savedOffsets);
             Serial.println("BNO055 calibration data loaded.");
-        } else {
-            Serial.println("No BNO055 calibration data found.");
+            preferences.end();
+        } 
+    else {
+        Serial.println("No BNO055 calibration data found.");
         }
-        preferences.end();
     }
 }
 
@@ -226,6 +227,11 @@ void ReadBNO055() {
     bnoData.BNO_mx = mag.x();
     bnoData.BNO_my = mag.y();
     bnoData.BNO_mz = mag.z();
+     imu::Quaternion quat = bno.getQuat();
+    bnoData.BNO_qw = quat.w();
+    bnoData.BNO_qx = quat.x();
+    bnoData.BNO_qy = quat.y();
+    bnoData.BNO_qz = quat.z();
 
     Serial.println("BNO055 data read successfully.");
     Serial.print("Linear Accel X=");
@@ -248,6 +254,14 @@ void ReadBNO055() {
     Serial.print(bnoData.BNO_my);
     Serial.print(", Z=");
     Serial.println(bnoData.BNO_mz);
+    Serial.print("Quaternion W=");
+    Serial.print(bnoData.BNO_qw);
+    Serial.print(", X=");
+    Serial.print(bnoData.BNO_qx);
+    Serial.print(", Y=");
+    Serial.print(bnoData.BNO_qy);
+    Serial.print(", Z=");
+    Serial.println(bnoData.BNO_qz);
 }
 void ReadBME280() {
     // Code to read data from BME sensor

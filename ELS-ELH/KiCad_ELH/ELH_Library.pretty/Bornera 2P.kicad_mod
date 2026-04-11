@@ -1,0 +1,133 @@
+(footprint "Bornera 2P"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 5.08 2.08 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "5b1402b1-dbdc-4482-a753-07ec33fb63c5")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "Bornera 2P"
+		(at 5.08 3.58 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "bc735d0e-9223-439f-a892-f95f4368ea7a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "65c95764-5916-4226-8078-11aecf22eec0")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "1e23a9b2-9830-4175-abf6-2d9958ab72a2")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start 0 0)
+		(end 10.1 7.9)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "d291eabf-562f-4ca4-bdf5-3d697762428e")
+	)
+	(fp_rect
+		(start -0.25 -0.25)
+		(end 10.35 8.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "35b6154c-438b-418f-ba9b-00dcf0a88952")
+	)
+	(fp_text user "Bornera"
+		(at 2.05 7.75 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "1aa406eb-4f9f-456b-a889-8aadb6c89ebc")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.2)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "${REFERENCE}"
+		(at 5.08 5.08 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "80ec7185-49db-451a-8316-86e4403855ca")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" thru_hole oval
+		(at 2.54 4.5)
+		(size 2.54 1.5)
+		(drill 1.2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "d684c631-3f28-4c01-9b26-e4dfab347545")
+	)
+	(pad "2" thru_hole oval
+		(at 7.62 4.5)
+		(size 2.54 1.5)
+		(drill 1.2)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(uuid "2f2dadd8-7ded-4699-b9c8-22cb2e47583c")
+	)
+	(embedded_fonts no)
+	(model "C:/Users/sofia/Downloads/2 PIN - DG306-5 - PITCH 5 mm.stp"
+		(offset
+			(xyz 2.6 -4.5 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 90)
+		)
+	)
+)

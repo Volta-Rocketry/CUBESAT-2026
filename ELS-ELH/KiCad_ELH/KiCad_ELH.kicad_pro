@@ -548,6 +548,30 @@
           "label": "Descripción",
           "name": "Description",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Cdad",
+          "name": "${QUANTITY}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Device",
+          "name": "Sim.Device",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Pins",
+          "name": "Sim.Pins",
+          "show": false
         }
       ],
       "filter_string": "",
@@ -601,6 +625,10 @@
     [
       "d2c6e293-9221-4377-94b4-35f6301c1d6b",
       "Root"
+    ],
+    [
+      "73f5bdd3-ab2f-461f-9449-f421f65d6867",
+      "sensors"
     ]
   ],
   "text_variables": {}

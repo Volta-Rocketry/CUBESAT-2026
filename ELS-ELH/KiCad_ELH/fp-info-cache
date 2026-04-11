@@ -1,4 +1,4 @@
-27247412679135488
+27259852126842225
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62202,6 +62202,20 @@ One digit LED 7 segment SA39-11 SC39-11 SA39-12 SC39-12
 10
 10
 ELH_Library
+2Pin Header
+
+
+0
+2
+2
+ELH_Library
+3Pin Header
+
+
+0
+3
+3
+ELH_Library
 ADS1115
 
 
@@ -62258,6 +62272,20 @@ LED
 2
 2
 ELH_Library
+LM1117T
+
+
+0
+3
+3
+ELH_Library
+MP1584
+
+
+0
+4
+4
+ELH_Library
 MPU9250
 
 
@@ -62272,12 +62300,33 @@ MicroSD Module
 6
 6
 ELH_Library
+NAU7802
+
+
+0
+10
+10
+ELH_Library
 PCF8574
 
 
 0
 13
 13
+ELH_Library
+TB6612FNG
+
+
+0
+16
+16
+ELH_Library
+TXS0108E
+
+
+0
+20
+20
 ELH_Library
 Teensy 4.1
 

@@ -104,4 +104,15 @@
 			(xyz -90 -0 90)
 		)
 	)
+	(model "D:/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/Bornera.stp"
+		(offset
+			(xyz 2.5 -4.5 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 90)
+		)
+	)
 )

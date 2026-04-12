@@ -211,4 +211,15 @@
 			(xyz -90 -0 -0)
 		)
 	)
+	(model "D:/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/LM1117T-ADJ_NOPB.STEP"
+		(offset
+			(xyz 0 0 4.5)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
 )

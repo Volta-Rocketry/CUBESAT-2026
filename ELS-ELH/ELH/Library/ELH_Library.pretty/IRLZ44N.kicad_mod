@@ -142,4 +142,15 @@
 			(xyz -90 -0 -0)
 		)
 	)
+	(model "D:/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/irlz44n.stp"
+		(offset
+			(xyz 5 0 12)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
 )

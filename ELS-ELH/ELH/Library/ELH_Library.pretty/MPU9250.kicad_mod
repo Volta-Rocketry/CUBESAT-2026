@@ -433,4 +433,15 @@
 			(xyz -0 -0 -0)
 		)
 	)
+	(model "D:/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/MPU9255.step"
+		(offset
+			(xyz 1 -24 3)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 -0)
+		)
+	)
 )

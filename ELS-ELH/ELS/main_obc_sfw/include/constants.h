@@ -7,7 +7,7 @@
 #define BAUD_RATE 115200
 
 // GPS Baud Rate
-#define GPS_BAUD 4800
+#define GPS_BAUD 9600
 
 // MPU PIN DEFINITIONS
 #define MPU_SCK 16
@@ -57,6 +57,12 @@
 // Esta definido en el expansor
 #define BUZZER_PIN 4
 
+// flight computer definitions
+#define PIN_BUTTON 34
+#define PIN_CS_SD SD_CS
+#define LAUNCH_ACCEL_THRESHOLD_MS2 29.43f  // cambiar de 3g a una menor que pueda acelear el dron de prueba
+#define FAST_SAMPLE_INTERVAL_MS 10
+#define SLOW_SAMPLE_INTERVAL_MS 1000
 
 struct StructMPU9250{
     float timestamp;  // Timestamp
@@ -149,6 +155,16 @@ struct CalibrationDataMPU {
     float tempRef;
     float gyroTCO;
     float accTCO;
+
+    // Hard iron offsets
+    float mpuMagOffsetX;
+    float mpuMagOffsetY;
+    float mpuMagOffsetZ;
+
+    // Soft iron
+    float mpuMagScaleX;
+    float mpuMagScaleY;
+    float mpuMagScaleZ;
 };
 
 struct CalibrationDataBNO {
@@ -160,5 +176,7 @@ struct CalibrationDataBNO {
 };
 
 struct CalibrationDataBME {
+    // BME280 calibration data
+    float bmePresRef;  // Pressure reference for altitude calculation
 
 };

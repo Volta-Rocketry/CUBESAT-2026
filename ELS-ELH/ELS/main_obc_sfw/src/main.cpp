@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "constants.h"
-#include "SPI_&_I2C.h"
 #include "sensors_manager.h"
 #include "error_warning.h"
 #include "LEDs_Buzzer_&_signals.h"

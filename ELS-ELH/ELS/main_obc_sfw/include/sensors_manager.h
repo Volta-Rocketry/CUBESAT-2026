@@ -11,6 +11,7 @@ void InitTransducers();
 void InitActuators();
 
 void CalibrateSensors();
+void CalibratMagnetometer();
 
 void ReadMPU9250();
 void ReadBNO055();

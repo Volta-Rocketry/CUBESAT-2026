@@ -58,14 +58,14 @@ void InitBME280() {
 }
 void InitUblox() {
     // Code to initialize Ublox sensor
-    SoftwareSerial ss(UBLOX_RX, UBLOX_TX);
-    ss.begin(GPS_BAUD);
+    SoftwareSerial gpsS(UBLOX_RX, UBLOX_TX);
+    gpsS.begin(GPS_BAUD);
 
     unsigned long startTime = millis();
     bool GPSInitialized = false;
 
     while (millis() - startTime < 3000) {
-        if (ss.available() > 0) {
+        if (gpsS.available() > 0) {
             GPSInitialized = true; 
             break;
         }
@@ -96,18 +96,20 @@ void InitActuators() {
 
 // Sensor calibration functions
 void calibrateSensors() {
-    // Calibrate MPU9250
     // Variables temporales para el proceso de calibración
     float gSumX = 0, gSumY = 0, gSumZ = 0;
     float aSumX = 0, aSumY = 0, aSumZ = 0;
     float tsum = 0;
+    float pSum = 0;
+    bool GPSConected = false;
     int numReadings = 0;
-    const int MAX_MU = 100;
+    const int MAX_MU = 1000;
     bool giroCalibrado = false;
     float previousCalibSec = 0;
+    // Data collection loop for calibration
     while (numReadings < MAX_MU) {
         float calibSec = millis() / 1000.0;
-        if (calibSec - previousCalibSec >= 0.1) {
+        if (calibSec - previousCalibSec >= 0.15) {
             previousCalibSec = calibSec;
              if (mpu.readSensor() == 0) {
                 gSumX += mpu.getGyroX_rads();
@@ -119,10 +121,14 @@ void calibrateSensors() {
 
                 tsum += mpu.getTemperature_C();
 
+                pSum += bme.readPressure();
+
                 numReadings++;
             }
         }
     }
+
+    // MPU9250 calibration
     mpuCalib.mpuGyroBiasX = gSumX / float(numReadings);
     mpuCalib.mpuGyroBiasY = gSumY / float(numReadings);
     mpuCalib.mpuGyroBiasZ = gSumZ / float(numReadings);
@@ -164,8 +170,66 @@ void calibrateSensors() {
         Serial.println("No BNO055 calibration data found.");
         }
     }
+
+    // BME280 calibration
+    bmeCalib.bmePresRef = pSum / float(numReadings);
+
+    // GPS connection check
+    SoftwareSerial gpsS(UBLOX_RX, UBLOX_TX);
+    gpsS.begin(GPS_BAUD);
+    while (gpsS.available() > 0) {
+        gps.encode(gpsS.read());
+    }
+    if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
+        GPSConected = true;
+        Serial.println("GPS connected successfully.");
+    } else if (!GPSConected) {
+        Serial.println("GPS connection failed during calibration.");
+    }
 }
 
+void CalibratMagnetometer() {
+    float magMin[3] = {32767, 32767, 32767};
+    float magMax[3] = {-32768, -32768, -32768};
+
+    float previousCalibMagSec = 0;
+    bool calibrated = false;
+    while (!calibrated) {
+        float calibMagSec = millis() / 1000.0;
+        if (calibMagSec - previousCalibMagSec >= 0.1) {
+            previousCalibMagSec = calibMagSec;
+            if (mpu.readSensor() == 0) {
+                float mx = mpu.getMagX_uT();
+                float my = mpu.getMagY_uT();
+                float mz = mpu.getMagZ_uT();
+
+                if (mx < magMin[0]) magMin[0] = mx;
+                if (my < magMin[1]) magMin[1] = my;
+                if (mz < magMin[2]) magMin[2] = mz;
+
+                if (mx > magMax[0]) magMax[0] = mx;
+                if (my > magMax[1]) magMax[1] = my;
+                if (mz > magMax[2]) magMax[2] = mz;
+            }
+            if (previousCalibMagSec == 30){
+                calibrated = true;
+            }
+        }
+    }
+    mpuCalib.mpuMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
+    mpuCalib.mpuMagOffsetY = (magMax[1] + magMin[1]) / 2.0;
+    mpuCalib.mpuMagOffsetZ = (magMax[2] + magMin[2]) / 2.0;
+
+    float radioX = (magMax[0] - magMin[0]) / 2.0;
+    float radioY = (magMax[1] - magMin[1]) / 2.0;
+    float radioZ = (magMax[2] - magMin[2]) / 2.0;
+
+    float radioPromedio = (radioX + radioY + radioZ) / 3.0;
+
+    mpuCalib.mpuMagScaleX = radioPromedio / radioX;
+    mpuCalib.mpuMagScaleY = radioPromedio / radioY;
+    mpuCalib.mpuMagScaleZ = radioPromedio / radioZ;
+}
 
 // Sensor reading functions
 void ReadMPU9250() {
@@ -270,6 +334,7 @@ void ReadBME280() {
     bmeData.humidity = bme.readHumidity();
     bmeData.pressure = bme.readPressure();
     bmeData.altitude = bme.readAltitude(101325); // Using standard sea level pressure as reference
+   //bmeData.altitude = bme.readAltitude(bmeCalib.bmePresRef / 100.0);
 
     Serial.println("BME280 data read successfully.");
     Serial.print("Temperature=");

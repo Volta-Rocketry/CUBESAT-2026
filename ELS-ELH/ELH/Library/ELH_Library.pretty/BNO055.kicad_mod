@@ -442,7 +442,7 @@
 		(uuid "a57123e6-a61b-4cf9-a53d-909a81423828")
 	)
 	(embedded_fonts no)
-	(model "C:/Users/sofia/Downloads/Adafruit BNO055 STEMMA QT.step"
+	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/Adafruit BNO055 STEMMA QT.step"
 		(offset
 			(xyz 12.7 -10.15 1)
 		)

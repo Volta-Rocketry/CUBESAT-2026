@@ -93,7 +93,7 @@
 		(uuid "2f2dadd8-7ded-4699-b9c8-22cb2e47583c")
 	)
 	(embedded_fonts no)
-	(model "C:/Users/sofia/Downloads/2 PIN - DG306-5 - PITCH 5 mm.stp"
+	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/Bornera.stp"
 		(offset
 			(xyz 2.6 -4.5 0)
 		)

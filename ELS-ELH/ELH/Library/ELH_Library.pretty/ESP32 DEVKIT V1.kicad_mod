@@ -717,7 +717,7 @@
 		(uuid "c1acab9c-1100-4176-98f2-3b689040419d")
 	)
 	(embedded_fonts no)
-	(model "C:/Users/sofia/Downloads/ESP32-DEVKIT-V1--3DModel-STEP-269445.STEP"
+	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/ESP32-DEVKIT-V1.step"
 		(offset
 			(xyz -0.5 0.1 1)
 		)

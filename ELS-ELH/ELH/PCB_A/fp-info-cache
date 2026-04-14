@@ -1,4 +1,4 @@
-27259861840790313
+27263414113364593
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62279,6 +62279,13 @@ LM1117T
 3
 3
 ELH_Library
+LM2596
+
+
+0
+4
+4
+ELH_Library
 MP1584
 
 
@@ -62313,6 +62320,13 @@ PCF8574
 0
 13
 13
+ELH_Library
+TAR-MT3608
+
+
+0
+4
+4
 ELH_Library
 TB6612FNG
 

@@ -237,7 +237,7 @@ void flight_computer_init() {
         (float)(FLASH_TOTAL_BYTES / sizeof(FastFlightPacket)) / 6000.0f);
 
     digitalWrite(LED_BLUE_PIN, HIGH);
-    g_state = STATE_ASCENT; //Para prueba (cambiar a STATE_PAD para vuelo)
+    g_state = STATE_IDLE; //Para prueba (cambiar a STATE_PAD para vuelo)
     Serial.println("[DAQ] MODO PRUEBA: grabando en STATE_ASCENT. Presionar boton para descargar.");
 }
 

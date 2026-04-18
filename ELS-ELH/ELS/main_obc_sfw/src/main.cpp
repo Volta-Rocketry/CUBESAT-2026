@@ -22,7 +22,7 @@ void setup() {
   InitUblox();
   //InitMPU9250();
 
-  //flight_computer_init();
+  flight_computer_init();
 
   Serial.println("CUBESAT INITIALIZED");
 }
@@ -31,7 +31,7 @@ void loop() {
   currentMilis = millis();
   if (currentMilis - previousTelemetry >= 1000) {
     previousTelemetry = currentMilis;
-    //ReadMPU9250();
+    ReadMPU9250();
     ReadBNO055();
     ReadBME280();
     ReadUblox();

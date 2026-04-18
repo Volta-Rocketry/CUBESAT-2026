@@ -6473,6 +6473,10 @@
 		(uuid "6c965b61-1b6a-46bf-8d15-17b0b197613a")
 	)
 	(no_connect
+		(at 49.53 135.89)
+		(uuid "76e3e781-7804-4cfd-8bd5-54d9d912c674")
+	)
+	(no_connect
 		(at 93.98 34.29)
 		(uuid "78c85d1c-c395-4c89-910a-639e99c1cb38")
 	)
@@ -6507,10 +6511,6 @@
 	(no_connect
 		(at 240.03 49.53)
 		(uuid "ac277806-ee61-43f8-b2b5-a7bb99b5c6bb")
-	)
-	(no_connect
-		(at 49.53 135.89)
-		(uuid "ac7ea229-d352-457e-8b86-d3c1b0f9f247")
 	)
 	(no_connect
 		(at 166.37 43.18)

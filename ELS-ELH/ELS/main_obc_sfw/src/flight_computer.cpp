@@ -262,14 +262,14 @@ void flight_computer_update() {
             ReadUblox();
             ReadMPU9250();
             ReadBNO055();
-
+/*
             Serial.printf("[IDLE] OK, Actuators inhibided, BME280 T: %.2fC P: %.2fPa A: %.2fm, Ublox Lat: %.6f Lon: %.6f Alt: %.2fm Spd: %.2fm/s, MPU9250 Accel: (%.2f, %.2f, %.2f) m/s², BNO055 Accel: (%.2f, %.2f, %.2f) m/s²\n",
                 bmeData.temp, bmeData.pressure, bmeData.altitude,
                 ubloxData.latitude, ubloxData.longitude, ubloxData.altitude, ubloxData.speed,
                 mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
                 bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az
             );
-
+*/
             Serial.print("Escribe un comando: ");
 
             if (Serial.available() > 0) {

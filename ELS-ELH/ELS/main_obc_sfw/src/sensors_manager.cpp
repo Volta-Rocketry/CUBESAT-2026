@@ -32,8 +32,6 @@ CalibrationDataBME bmeCalib;
 
 Preferences preferences;
 
-int numCalib = 0;
-
 // Sensor initialization functions
 void InitMPU9250() {
     // Code to initialize MPU9250 sensor
@@ -177,7 +175,6 @@ void calibrateSensors() {
 */
     // BME280 calibration
     bmeCalib.bmePresRef = pSum / float(numReadings);
-    numCalib = 1;
 
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
@@ -187,7 +184,6 @@ void calibrateSensors() {
     if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
         GPSConected = true;
         Serial.println("GPS connected successfully.");
-        numCalib = 2;
     } else if (!GPSConected) {
         Serial.println("GPS connection failed during calibration.");
     }
@@ -259,27 +255,6 @@ void ReadMPU9250() {
     mpuData.MPU_my = mpu.getMagY_uT();
     mpuData.MPU_mz = mpu.getMagZ_uT();
 
-    Serial.println("MPU9250 data read successfully.");
-    Serial.print("Accel X=");
-    Serial.print(mpuData.MPU_ax);
-    Serial.print(", Y=");
-    Serial.print(mpuData.MPU_ay);
-    Serial.print(", Z=");
-    Serial.println(mpuData.MPU_az);
-
-    Serial.print("Gyro X=");
-    Serial.print(mpuData.MPU_gx);
-    Serial.print(", Y=");
-    Serial.print(mpuData.MPU_gy);
-    Serial.print(", Z=");
-    Serial.println(mpuData.MPU_gz);
-
-    Serial.print("Mag X=");
-    Serial.print(mpuData.MPU_mx);
-    Serial.print(", Y=");
-    Serial.print(mpuData.MPU_my);
-    Serial.print(", Z=");
-    Serial.println(mpuData.MPU_mz);
 }
 void ReadBNO055() {
     // Code to read data from BNO055 sensor
@@ -301,36 +276,6 @@ void ReadBNO055() {
     bnoData.BNO_qx = quat.x();
     bnoData.BNO_qy = quat.y();
     bnoData.BNO_qz = quat.z();
-
-    Serial.println("BNO055 data read successfully.");
-    Serial.print("Linear Accel X=");
-    Serial.print(bnoData.BNO_ax);
-    Serial.print(", Y=");
-    Serial.print(bnoData.BNO_ay);
-    Serial.print(", Z=");
-    Serial.println(bnoData.BNO_az);
-
-    Serial.print("Gyro X=");
-    Serial.print(bnoData.BNO_gx);
-    Serial.print(", Y=");
-    Serial.print(bnoData.BNO_gy);
-    Serial.print(", Z=");
-    Serial.println(bnoData.BNO_gz);
-
-    Serial.print("Mag X=");
-    Serial.print(bnoData.BNO_mx);
-    Serial.print(", Y=");
-    Serial.print(bnoData.BNO_my);
-    Serial.print(", Z=");
-    Serial.println(bnoData.BNO_mz);
-    Serial.print("Quaternion W=");
-    Serial.print(bnoData.BNO_qw);
-    Serial.print(", X=");
-    Serial.print(bnoData.BNO_qx);
-    Serial.print(", Y=");
-    Serial.print(bnoData.BNO_qy);
-    Serial.print(", Z=");
-    Serial.println(bnoData.BNO_qz);
 }
 void ReadBME280() {
     // Code to read data from BME sensor
@@ -341,15 +286,6 @@ void ReadBME280() {
     bmeData.pressure = bme.readPressure();
     bmeData.altitude = bme.readAltitude(pressurePad); // Using standard sea level pressure as reference
    //bmeData.altitude = bme.readAltitude(bmeCalib.bmePresRef / 100.0);
-
-    Serial.println("BME280 data read successfully.");
-    Serial.print("Temperature=");
-    Serial.print(bmeData.temp);
-    Serial.print(" °C, Humidity=");
-    Serial.print(bmeData.humidity);
-    Serial.print(" %, Pressure=");
-    Serial.print(bmeData.pressure);
-    Serial.println(" Pa");
 }
 void ReadUblox() {
     // Code to read data from Ublox sensor
@@ -387,36 +323,6 @@ void ReadUblox() {
         ubloxData.hdop = gps.hdop.hdop();
     }
     ubloxData.valid = gps.location.isValid();
-
-    Serial.println("Ublox data read successfully.");
-    Serial.print("Time=");
-    Serial.print(ubloxData.hour);
-    Serial.print(":");
-    Serial.print(ubloxData.minute);
-    Serial.print(":");
-    Serial.print(ubloxData.second);
-    Serial.print(", Date=");
-    Serial.print(ubloxData.year);
-    Serial.print("-");
-    Serial.print(ubloxData.month);
-    Serial.print("-");
-    Serial.print(ubloxData.day);
-    Serial.print(", Latitude=");
-    Serial.print(ubloxData.latitude, 6);
-    Serial.print(", Longitude=");
-    Serial.print(ubloxData.longitude, 6);
-    Serial.print(", Altitude=");
-    Serial.print(ubloxData.altitude);
-    Serial.print(" m, Speed="); 
-    Serial.print(ubloxData.speed);
-    Serial.print(" m/s, Course=");
-    Serial.print(ubloxData.course);
-    Serial.print(" deg, Satellites=");
-    Serial.print(ubloxData.satellites);
-    Serial.print(", HDOP=");
-    Serial.print(ubloxData.hdop);
-    Serial.print(", Valid=");
-    Serial.println(ubloxData.valid ? "Yes" : "No");
 }
 
 void ReadTransducers() {

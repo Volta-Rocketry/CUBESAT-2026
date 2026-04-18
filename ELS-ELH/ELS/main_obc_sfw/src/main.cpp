@@ -26,7 +26,10 @@ void setup() {
 
   Serial.println("CUBESAT INITIALIZED");
 
+<<<<<<< HEAD
   //CalibrateSensors();
+=======
+>>>>>>> 54d894018a46c21ac23b99584255bc2df93a43bf
 }
 
 void loop() {
@@ -38,5 +41,8 @@ void loop() {
     ReadBME280();
     ReadUblox();
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 54d894018a46c21ac23b99584255bc2df93a43bf
 }

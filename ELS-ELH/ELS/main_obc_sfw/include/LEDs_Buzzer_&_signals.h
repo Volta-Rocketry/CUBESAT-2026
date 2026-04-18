@@ -2,6 +2,6 @@
 
 #include "constants.h"
 
-void InitLEDBuzzer();
+void InitLEDBuzzerButton();
 
 void InitLedPCB();

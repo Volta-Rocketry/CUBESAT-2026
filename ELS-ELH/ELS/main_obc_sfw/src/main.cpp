@@ -3,26 +3,34 @@
 #include "sensors_manager.h"
 #include "error_warning.h"
 #include "LEDs_Buzzer_&_signals.h"
+#include "flight_computer.h"
 #include <SoftwareSerial.h>
 
-float previousSecs = 0;
-float previousTelemetry = 0;
-float currentSecs;
+uint32_t previousTelemetry = 0;
+uint32_t currentMilis;
 
 
 void setup() {
   Serial.begin(BAUD_RATE);
-  Serial.println("ELS INITIALIZED");
+
+  InitLEDBuzzerButton();
+
+  InitLedPCB();
+
   InitBNO055();
   InitBME280();
   InitUblox();
   InitMPU9250();
+
+  flight_computer_init();
+
+  Serial.println("CUBESAT INITIALIZED");
 }
 
 void loop() {
-  currentSecs = millis() / 1000.0;
-  if (currentSecs - previousTelemetry >= 1.0) {
-    previousTelemetry = currentSecs;
+  currentMilis = millis();
+  if (currentMilis - previousTelemetry >= 1000) {
+    previousTelemetry = currentMilis;
     ReadMPU9250();
     ReadBNO055();
     ReadBME280();

@@ -105,12 +105,12 @@ void calibrateSensors() {
     int numReadings = 0;
     const int MAX_MU = 1000;
     bool giroCalibrado = false;
-    float previousCalibSec = 0;
+    uint32_t previousCalibMilis = 0;
     // Data collection loop for calibration
     while (numReadings < MAX_MU) {
-        float calibSec = millis() / 1000.0;
-        if (calibSec - previousCalibSec >= 0.15) {
-            previousCalibSec = calibSec;
+        uint32_t calibMilis = millis();
+        if (calibMilis - previousCalibMilis >= 150) {
+            previousCalibMilis = calibMilis;
              if (mpu.readSensor() == 0) {
                 gSumX += mpu.getGyroX_rads();
                 gSumY += mpu.getGyroY_rads();

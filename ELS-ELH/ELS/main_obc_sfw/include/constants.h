@@ -39,7 +39,7 @@
 #define SD_SCK 16
 #define SD_MOSI 17
 #define SD_MISO 27
-#define SD_CS  3// esta definido en el expansor
+#define SD_CS  25 // esta definido en el expansor como el 3
 
 // TRANSDUCER PIN DEFINITION
 #define TRANSDUCER_PIN 16
@@ -65,7 +65,7 @@
 #define SLOW_SAMPLE_INTERVAL_MS 1000
 
 struct StructMPU9250{
-    float timestamp;  // Timestamp
+    uint32_t timestamp;  // Timestamp
     // Acceleration
     float MPU_ax;     // MPU9250 acceleration on the X axis
     float MPU_ay;     // MPU9250 acceleration on the Y axis
@@ -83,36 +83,36 @@ struct StructMPU9250{
 };
 
 struct StructBNO055{
-    float timestamp;  // Timestamp
+    uint32_t timestamp; // Timestamp
     // Acceleration
-    float BNO_ax;     // BNO055 acceleration on the X axis
-    float BNO_ay;     // BNO055 acceleration on the Y axis
-    float BNO_az;     // BNO055 acceleration on the Z axis
+    float BNO_ax;       // BNO055 acceleration on the X axis
+    float BNO_ay;       // BNO055 acceleration on the Y axis
+    float BNO_az;       // BNO055 acceleration on the Z axis
     // Angular velocity
-    float BNO_gx;     // BNO055 angular velocity on the X axis
-    float BNO_gy;     // BNO055 angular velocity on the Y axis
-    float BNO_gz;     // BNO055 angular velocity on the Z axis
+    float BNO_gx;       // BNO055 angular velocity on the X axis
+    float BNO_gy;       // BNO055 angular velocity on the Y axis
+    float BNO_gz;       // BNO055 angular velocity on the Z axis
     // Magnetic field
-    float BNO_mx;     // BNO055 magnetic field on the X axis
-    float BNO_my;     // BNO055 magnetic field on the Y axis
-    float BNO_mz;     // BNO055 magnetic field on the Z axis
+    float BNO_mx;       // BNO055 magnetic field on the X axis
+    float BNO_my;       // BNO055 magnetic field on the Y axis
+    float BNO_mz;       // BNO055 magnetic field on the Z axis
     // Quaternions
-    float BNO_qw;     // BNO055 quaternion W component
-    float BNO_qx;     // BNO055 quaternion X component
-    float BNO_qy;     // BNO055 quaternion Y component
-    float BNO_qz;     // BNO055 quaternion Z component
+    float BNO_qw;       // BNO055 quaternion W component
+    float BNO_qx;       // BNO055 quaternion X component
+    float BNO_qy;       // BNO055 quaternion Y component
+    float BNO_qz;       // BNO055 quaternion Z component
 };
 
 struct StructBME280 {
-    float timestamp;  // Timestamp
-    float temp;       // Temperature
-    float humidity;   // Humidity
-    float pressure;   // Pressure
-    float altitude;   // Altitude
+    uint32_t timestamp;  // Timestamp
+    float temp;          // Temperature
+    float humidity;      // Humidity
+    float pressure;      // Pressure
+    float altitude;      // Altitude
 };
 
 struct StructUblox {
-    float timestamp;   // Timestamp
+    uint32_t timestamp;   // Timestamp
 
     // GPS time
     uint8_t hour;      // GPS hour

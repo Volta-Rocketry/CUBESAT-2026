@@ -15,8 +15,6 @@ static uint32_t g_flash_write_addr = 0;
 static uint8_t g_page_buf[FLASH_PAGE_SIZE];
 static uint16_t g_page_buf_idx = 0;
 
-FastFlightPacket FFP;
-SlowFlightPacket SFP;
 
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
@@ -27,10 +25,8 @@ StructTransducer transducerData;
 static uint16_t crc16(const uint8_t* data, size_t len) {
     uint16_t crc = 0xFFFF;
     for (size_t i = 0; i < len; i++) {
-        crc ^= (uint16_t)data[i] << 8;   /* Mezcla el byte con el byte alto del CRC */
+        crc ^= (uint16_t)data[i] << 8;
         for (int b = 0; b < 8; b++) {
-            /* Si bit 15 = 1: desplaza y aplica el polinomio (reducción modular).
-             * Si bit 15 = 0: solo desplaza.                                 */
             crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : (crc << 1);
         }
     }
@@ -67,26 +63,30 @@ static void page_buf_write(const uint8_t* data, uint16_t len) {
 }
 
 static void record_fast_packet() {
-    FFP.packet_id = 0x01;
-    FFP.timestamp_ms = millis();
-    FFP.mpu = mpuData; 
-    FFP.bno = bnoData;
-    FFP.transducer = transducerData;
+    FastFlightPacket fast_pkt;
+    memset(&fast_pkt, 0, sizeof(FastFlightPacket));
+    fast_pkt.packet_id = 0x01;
+    fast_pkt.timestamp_ms = millis();
+    fast_pkt.mpu = mpuData; 
+    fast_pkt.bno = bnoData;
+    fast_pkt.transducer = transducerData;
 
-    FFP.checksum = crc16((uint8_t*)&FFP, sizeof(FastFlightPacket) - sizeof(uint16_t));
+    fast_pkt.checksum = crc16((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
 
-    page_buf_write((uint8_t*)&FFP, sizeof(FastFlightPacket));
+    page_buf_write((uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
 }
 
 static void record_slow_packet() {
-    SFP.packet_id = 0x02;
-    SFP.timestamp_ms = millis();
-    SFP.bme = bmeData;
-    SFP.gps = ubloxData;
+    SlowFlightPacket slow_pkt;
+    memset(&slow_pkt, 0, sizeof(SlowFlightPacket));
+    slow_pkt.packet_id = 0x02;
+    slow_pkt.timestamp_ms = millis();
+    slow_pkt.bme = bmeData;
+    slow_pkt.gps = ubloxData;
 
-    SFP.checksum = crc16((uint8_t*)&SFP, sizeof(SlowFlightPacket) - sizeof(uint16_t));
+    slow_pkt.checksum = crc16((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
 
-    page_buf_write((uint8_t*)&SFP, sizeof(SlowFlightPacket));
+    page_buf_write((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
 }
 
 static void download_flash_to_sd() {
@@ -211,12 +211,6 @@ static void download_flash_to_sd() {
 
 void flight_computer_init() {
 
-    digitalWrite(LED_RED_PIN, LOW);
-    digitalWrite(LED_GREEN_PIN, LOW);
-    digitalWrite(LED_BLUE_PIN, LOW);
-
-    pinMode(PIN_BUTTON, INPUT_PULLUP); // se puede agregar a la inicializaion de los leds
-
     if (!flash_init()) {
         CriticalErrorSensor("W25Q128 no detectada. Verificar HSPI y FLASH_CS.");
     }
@@ -248,6 +242,7 @@ void flight_computer_init() {
 
 void flight_computer_update() {
 
+    // camelCase
     static uint32_t last_fast_sample = 0;
     static uint32_t last_slow_sample = 0;
     static uint32_t accel_start_ms   = 0; 
@@ -262,7 +257,7 @@ void flight_computer_update() {
     switch (g_state) {
 
     case STATE_IDLE: 
-        // Los print deben ser en el bluethooth, ademas sugerencias de que mas comandos se puedan agregar en la prueba
+
         digitalWrite(LED_BLUE_PIN, HIGH);
 
         CloseActuatorsVoltage();
@@ -279,7 +274,7 @@ void flight_computer_update() {
                 ubloxData.latitude, ubloxData.longitude, ubloxData.altitude, ubloxData.speed,
                 mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
                 bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az
-            );  // se debe imprimir en el bluetooth
+            );
 
             if (Serial.available() > 0) {
                 String cmd = Serial.readStringUntil('\n');

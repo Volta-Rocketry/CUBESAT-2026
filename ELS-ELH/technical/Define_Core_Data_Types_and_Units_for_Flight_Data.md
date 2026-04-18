@@ -11,5 +11,5 @@ In this part, the data and their physical units are defined, enabling consistent
 * **Altitude:** Meters ($m$). Variable: `altitude` Type: `float`
 * **Temperature:** Degrees Celsius ($^\circ C$). Variable: `temp` Type: `float`
 * **Humidity:** Percentage (%). Variable: `humidity` Type: `float`
-* **Time:** Seconds ($s$) since system startup. Variable: `timestamp` Type: `float`
+* **Time:** Miliseconds ($ms$) since system startup. Variable: `timestamp` Type: `uint32_t`
 * **Speed** Meters per second ($m/s$). Variable: `speed` Type: `float`

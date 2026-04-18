@@ -15,12 +15,13 @@ static uint32_t g_flash_write_addr = 0;
 static uint8_t g_page_buf[FLASH_PAGE_SIZE];
 static uint16_t g_page_buf_idx = 0;
 
-
+/*
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
 StructBME280 bmeData;
 StructUblox ubloxData;
 StructTransducer transducerData;
+*/
 
 static uint16_t crc16(const uint8_t* data, size_t len) {
     uint16_t crc = 0xFFFF;

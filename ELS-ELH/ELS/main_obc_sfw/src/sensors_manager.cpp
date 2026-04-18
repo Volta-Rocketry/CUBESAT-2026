@@ -11,13 +11,14 @@
 #include <Adafruit_BME280.h>
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
-#include <SoftwareSerial.h>
+#include <HardwareSerial.h>
 #include <Preferences.h>
 
 MPU9250 mpu(SPI,MPU_CS);
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS);
 TinyGPSPlus gps;
+HardwareSerial gpsSerial(2);
 
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
@@ -58,14 +59,13 @@ void InitBME280() {
 }
 void InitUblox() {
     // Code to initialize Ublox sensor
-    SoftwareSerial gpsS(UBLOX_RX, UBLOX_TX);
-    gpsS.begin(GPS_BAUD);
+    gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
 
     unsigned long startTime = millis();
     bool GPSInitialized = false;
 
     while (millis() - startTime < 3000) {
-        if (gpsS.available() > 0) {
+        if (gpsSerial.available() > 0) {
             GPSInitialized = true; 
             break;
         }
@@ -175,10 +175,9 @@ void calibrateSensors() {
     bmeCalib.bmePresRef = pSum / float(numReadings);
 
     // GPS connection check
-    SoftwareSerial gpsS(UBLOX_RX, UBLOX_TX);
-    gpsS.begin(GPS_BAUD);
-    while (gpsS.available() > 0) {
-        gps.encode(gpsS.read());
+    gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
+    while (gpsSerial.available() > 0) {
+        gps.encode(gpsSerial.read());
     }
     if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
         GPSConected = true;
@@ -240,7 +239,7 @@ void ReadMPU9250() {
     // TCO (Temperature Coefficient of Offset) sale del datasheet
     float deltaT = (mpu.getTemperature_C() - mpuCalib.tempRef);
 
-    mpuData.timestamp = millis() / 1000.0;
+    mpuData.timestamp = millis();
 
     mpuData.MPU_ax = mpu.getAccelX_mss(); // - (mpuCalib.mpuAccBiasX + (mpuCalib.accTCO * deltaT));
     mpuData.MPU_ay = mpu.getAccelY_mss(); // - (mpuCalib.mpuAccBiasY + (mpuCalib.accTCO * deltaT));
@@ -278,7 +277,7 @@ void ReadMPU9250() {
 }
 void ReadBNO055() {
     // Code to read data from BNO055 sensor
-    bnoData.timestamp = millis() / 1000.0;
+    bnoData.timestamp = millis();
     imu::Vector<3> lin_accel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
     bnoData.BNO_ax = lin_accel.x();
     bnoData.BNO_ay = lin_accel.y();
@@ -329,7 +328,7 @@ void ReadBNO055() {
 }
 void ReadBME280() {
     // Code to read data from BME sensor
-    bmeData.timestamp = millis() / 1000.0;
+    bmeData.timestamp = millis();
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();
     bmeData.pressure = bme.readPressure();
@@ -347,7 +346,10 @@ void ReadBME280() {
 }
 void ReadUblox() {
     // Code to read data from Ublox sensor
-    ubloxData.timestamp = millis() / 1000.0;
+    ubloxData.timestamp = millis();
+    while (gpsSerial.available() > 0) {
+        gps.encode(gpsSerial.read());
+    }
     if (gps.time.isUpdated()) {
         ubloxData.hour = gps.time.hour();
         ubloxData.minute = gps.time.minute();

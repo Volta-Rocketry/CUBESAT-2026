@@ -64,6 +64,7 @@
 #define FAST_SAMPLE_INTERVAL_MS 10
 #define SLOW_SAMPLE_INTERVAL_MS 1000
 
+
 struct StructMPU9250{
     uint32_t timestamp;  // Timestamp
     // Acceleration
@@ -180,3 +181,9 @@ struct CalibrationDataBME {
     float bmePresRef;  // Pressure reference for altitude calculation
 
 };
+
+extern StructMPU9250 mpuData;
+extern StructBNO055 bnoData;
+extern StructBME280 bmeData;
+extern StructUblox ubloxData;
+extern StructTransducer transducerData;

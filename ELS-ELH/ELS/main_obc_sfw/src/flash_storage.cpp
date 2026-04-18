@@ -12,7 +12,8 @@
 
 #define PIN_CS_FLASH FLASH_CS
 
-extern SPIClass hspi;
+// extern SPIClass hspi;
+SPIClass hspi(HSPI);
 
 static void flash_wait_busy() {
     digitalWrite(PIN_CS_FLASH, LOW);

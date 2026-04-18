@@ -15,13 +15,6 @@ static uint32_t g_flash_write_addr = 0;
 static uint8_t g_page_buf[FLASH_PAGE_SIZE];
 static uint16_t g_page_buf_idx = 0;
 
-/*
-StructMPU9250 mpuData;
-StructBNO055 bnoData;
-StructBME280 bmeData;
-StructUblox ubloxData;
-StructTransducer transducerData;
-*/
 
 static uint16_t crc16(const uint8_t* data, size_t len) {
     uint16_t crc = 0xFFFF;
@@ -276,6 +269,8 @@ void flight_computer_update() {
                 mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
                 bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az
             );
+
+            Serial.print("Escribe un comando: ");
 
             if (Serial.available() > 0) {
                 String cmd = Serial.readStringUntil('\n');

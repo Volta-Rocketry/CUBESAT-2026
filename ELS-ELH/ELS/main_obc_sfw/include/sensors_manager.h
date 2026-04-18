@@ -3,6 +3,8 @@
 #include "constants.h"
 #include "error_warning.h"
 
+extern int numCalib;
+
 void InitMPU9250();
 void InitBNO055();
 void InitBME280();

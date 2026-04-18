@@ -25,16 +25,20 @@ void setup() {
   //flight_computer_init();
 
   Serial.println("CUBESAT INITIALIZED");
+
+  CalibrateSensors();
 }
 
 void loop() {
   currentMilis = millis();
-  if (currentMilis - previousTelemetry >= 1000) {
-    previousTelemetry = currentMilis;
-    //ReadMPU9250();
-    ReadBNO055();
-    ReadBME280();
-    ReadUblox();
+  if (numCalib == 2) {
+    if (currentMilis - previousTelemetry >= 1000) {
+      previousTelemetry = currentMilis;
+      //ReadMPU9250();
+      ReadBNO055();
+      ReadBME280();
+      ReadUblox();
+  }
   }
 
 }

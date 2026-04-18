@@ -32,6 +32,8 @@ CalibrationDataBME bmeCalib;
 
 Preferences preferences;
 
+int numCalib = 0;
+
 // Sensor initialization functions
 void InitMPU9250() {
     // Code to initialize MPU9250 sensor
@@ -111,6 +113,7 @@ void calibrateSensors() {
         uint32_t calibMilis = millis();
         if (calibMilis - previousCalibMilis >= 150) {
             previousCalibMilis = calibMilis;
+            /*
              if (mpu.readSensor() == 0) {
                 gSumX += mpu.getGyroX_rads();
                 gSumY += mpu.getGyroY_rads();
@@ -120,15 +123,16 @@ void calibrateSensors() {
                 aSumZ += mpu.getAccelZ_mss();
 
                 tsum += mpu.getTemperature_C();
+                }
+                */
+            pSum += bme.readPressure();
 
-                pSum += bme.readPressure();
-
-                numReadings++;
-            }
+            numReadings++;
         }
     }
 
     // MPU9250 calibration
+    /*
     mpuCalib.mpuGyroBiasX = gSumX / float(numReadings);
     mpuCalib.mpuGyroBiasY = gSumY / float(numReadings);
     mpuCalib.mpuGyroBiasZ = gSumZ / float(numReadings);
@@ -140,9 +144,9 @@ void calibrateSensors() {
     mpuCalib.tempRef = tsum / float(numReadings);
     mpuCalib.gyroTCO = 0.000872; // 0.5 deg/s * (pi / 180)= 0.00872665 rad/s
     mpuCalib.accTCO = 0.0147;  // 1.5 mg = 0.0015 G * 9.80665 = 0.0147 m/s^2
-
+*/
     // correcion de errores utilizando el magnetometro
-
+/*
     // Get calibration from BNO055
     bool calibrated = false;
     bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
@@ -170,9 +174,10 @@ void calibrateSensors() {
         Serial.println("No BNO055 calibration data found.");
         }
     }
-
+*/
     // BME280 calibration
     bmeCalib.bmePresRef = pSum / float(numReadings);
+    numCalib = 1;
 
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
@@ -182,6 +187,7 @@ void calibrateSensors() {
     if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
         GPSConected = true;
         Serial.println("GPS connected successfully.");
+        numCalib = 2;
     } else if (!GPSConected) {
         Serial.println("GPS connection failed during calibration.");
     }
@@ -328,11 +334,12 @@ void ReadBNO055() {
 }
 void ReadBME280() {
     // Code to read data from BME sensor
+    float pressurePad = bmeCalib.bmePresRef / 100.0; 
     bmeData.timestamp = millis();
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();
     bmeData.pressure = bme.readPressure();
-    bmeData.altitude = bme.readAltitude(101325); // Using standard sea level pressure as reference
+    bmeData.altitude = bme.readAltitude(pressurePad); // Using standard sea level pressure as reference
    //bmeData.altitude = bme.readAltitude(bmeCalib.bmePresRef / 100.0);
 
     Serial.println("BME280 data read successfully.");

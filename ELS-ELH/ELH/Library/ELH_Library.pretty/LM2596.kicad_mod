@@ -66,6 +66,28 @@
 		(layer "F.SilkS")
 		(uuid "b11f49f0-96d9-4073-8f92-cf1fc38cf208")
 	)
+	(fp_circle
+		(center 7.3 2.7)
+		(end 9.5 2.7)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "d5b6040a-5c79-4877-be0f-461469917419")
+	)
+	(fp_circle
+		(center 36.3 18.3)
+		(end 38.5 18.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "6fadf659-e7d3-4b81-811a-91b23c05838c")
+	)
 	(fp_rect
 		(start -0.25 -0.25)
 		(end 43.85 21.25)

@@ -1,4 +1,4 @@
-27263414113364593
+27265191436691843
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62258,6 +62258,13 @@ ESP32-S3-DevKitC-1
 44
 44
 ELH_Library
+GY-87
+
+
+0
+8
+8
+ELH_Library
 IRLZ44N
 
 
@@ -62346,8 +62353,8 @@ Teensy 4.1
 
 
 0
-65
-65
+48
+48
 ELH_Library
 Ublox Neo-6m
 

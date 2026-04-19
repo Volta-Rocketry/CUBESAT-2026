@@ -2,25 +2,27 @@
 
 #include <Arduino.h>
 #include "constants.h"
+#include <Adafruit_PCF8574.h>
+
+extern Adafruit_PCF8574 pcf;
+
 
 void CriticalErrorSensor(const char* messages) {
-    Serial.print(" [ERROR] critical : ");
+    Serial.print("Critical [ERROR]: ");
     Serial.println(messages);
-    /*
-    while (true) {
-        digitalWrite(LED_RED_PIN, HIGH);
-        digitalWrite(BUZZER_PIN, HIGH);
+    uint16_t previousErrorCountMilis = millis();
+    uint8_t blinkCount = 0;
+    bool state = LOW;
+    while (blinkCount < 6) {
+        uint16_t ErrorCountMilis = millis();
+        if (ErrorCountMilis - previousErrorCountMilis >= 500) {
+            previousErrorCountMilis = ErrorCountMilis;
+            state = !state;
+            pcf.digitalWrite(LED_RED_PIN, state);
+            pcf.digitalWrite(BUZZER_PIN, !state);
+            blinkCount++;
+        }
     }
-    */
-}
 
-void ErrorSPI(const char* messages) {
-    Serial.print(" [ERROR] SPI : ");
-    Serial.println(messages);
-    while (true) {
-        digitalWrite(LED_RED_PIN, HIGH);
-        digitalWrite(LED_BLUE_PIN, HIGH);
-        digitalWrite(BUZZER_PIN, HIGH);
-    }
 }
 

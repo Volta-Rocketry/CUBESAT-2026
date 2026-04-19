@@ -48,8 +48,6 @@
 #define ACTUATOR1_PIN 6
 #define ACTUATOR2_PIN 7
 
-
-
 // LED PIN DEFINITIONS
 // Estan en el expansor
 #define LED_RED_PIN 5

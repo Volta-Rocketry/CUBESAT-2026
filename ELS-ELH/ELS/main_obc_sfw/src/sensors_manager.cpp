@@ -22,7 +22,7 @@ Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS);
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
-Adafruit_PCF8574 pcf;
+extern Adafruit_PCF8574 pcf;
 
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
@@ -64,9 +64,25 @@ void InitExtencionBoard() {
 
         Serial.println("PCF8574 pins configured successfully.");
 
-        digitalWrite(BUZZER_PIN, LOW);
+        // Prueba de encendido secuencial de LEDs y buzzer para verificar su funcionamiento y cual es cada uno
+        /*
+        pcf.digitalWrite(LED_BLUE_PIN, HIGH);
+        Serial.println("LED azul encendido");
         delay(1000);
-        digitalWrite(BUZZER_PIN, HIGH);
+        pcf.digitalWrite(LED_BLUE_PIN, LOW);
+        pcf.digitalWrite(LED_GREEN_PIN, HIGH);
+        Serial.println("LED verde encendido");
+        delay(1000);
+        pcf.digitalWrite(LED_GREEN_PIN, LOW);
+        pcf.digitalWrite(LED_RED_PIN, HIGH);
+        Serial.println("LED rojo encendido");
+        delay(1000);
+        pcf.digitalWrite(LED_RED_PIN, LOW);
+        pcf.digitalWrite(BUZZER_PIN, LOW);
+        Serial.println("Buzzer encendido");
+        delay(1000);
+        pcf.digitalWrite(BUZZER_PIN, HIGH);
+        */
 
     }
 }
@@ -97,16 +113,20 @@ void InitBME280() {
     }
 }
 void InitUblox() {
-    // Code to initialize Ublox sensor
-    gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
+    gpsSerial.begin(GPS_BAUD, SERIAL_8N1, UBLOX_RX, UBLOX_TX);
 
     unsigned long startTime = millis();
     bool GPSInitialized = false;
-
+    while (gpsSerial.available() > 0) {
+        gpsSerial.read();
+    }
     while (millis() - startTime < 3000) {
         if (gpsSerial.available() > 0) {
-            GPSInitialized = true; 
-            break;
+            char c = gpsSerial.read(); 
+            if (c == '$') { 
+                GPSInitialized = true; 
+                break;
+            }
         }
     }
     if (!GPSInitialized) {

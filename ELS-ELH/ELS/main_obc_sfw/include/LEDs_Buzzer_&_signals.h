@@ -2,6 +2,5 @@
 
 #include "constants.h"
 
-void InitLEDBuzzerButton();
-
-void InitLedPCB();
+void InitPCB();
+void PlayBuzzerTone(long frequency, long duration);

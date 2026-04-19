@@ -39,13 +39,16 @@
 #define SD_SCK 16
 #define SD_MOSI 17
 #define SD_MISO 27
-#define SD_CS  25 // esta definido en el expansor como el 3
+#define SD_CS  3
 
 // TRANSDUCER PIN DEFINITION
 #define TRANSDUCER_PIN 16
 
 // ACTUATOR PIN DEFINITION
-#define ACTUATOR_PIN 15
+#define ACTUATOR1_PIN 6
+#define ACTUATOR2_PIN 7
+
+
 
 // LED PIN DEFINITIONS
 // Estan en el expansor
@@ -54,7 +57,6 @@
 #define LED_BLUE_PIN 7
 
 // BUZZER PIN DEFINITIONS
-// Esta definido en el expansor
 #define BUZZER_PIN 4
 
 // flight computer definitions

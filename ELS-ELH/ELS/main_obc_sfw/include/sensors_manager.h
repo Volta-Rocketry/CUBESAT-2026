@@ -3,7 +3,9 @@
 #include "constants.h"
 #include "error_warning.h"
 
-// extern int numCalib;
+extern int numCalib;
+
+void InitExtencionBoard();
 
 void InitMPU9250();
 void InitBNO055();

@@ -4,33 +4,72 @@
 #include "error_warning.h"
 #include <Arduino.h>
 #include "MPU9250.h"
+#include <Adafruit_BNO055.h>
+#include <Adafruit_BME280.h>
+#include <Adafruit_PCF8574.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_Sensor.h> 
-#include <Adafruit_BNO055.h>
-#include <Adafruit_BME280.h>
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
 #include <HardwareSerial.h>
 #include <Preferences.h>
 
 MPU9250 mpu(SPI,MPU_CS);
+
+
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS);
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
+Adafruit_PCF8574 pcf;
 
 StructMPU9250 mpuData;
 StructBNO055 bnoData;
 StructBME280 bmeData;
 StructUblox ubloxData;
-StructTransducer transducerData;
 
 CalibrationDataMPU mpuCalib;
 CalibrationDataBNO bnoCalib;
 CalibrationDataBME bmeCalib;
 
 Preferences preferences;
+
+int numCalib = 0;
+
+void InitExtencionBoard() {
+    Wire.begin(21, 22);
+    Wire.setTimeOut(100);
+    delay(100); 
+
+    if (!pcf.begin(0x20, &Wire)) {
+        CriticalErrorSensor("PCF8574 initialization failed");
+    } else {
+        Serial.println("PCF8574 I/O expander initialized successfully.");
+        pcf.pinMode(ACTUATOR1_PIN, OUTPUT);
+        pcf.pinMode(ACTUATOR2_PIN, OUTPUT);
+        pcf.pinMode(SD_CS, OUTPUT);
+        pcf.pinMode(BUZZER_PIN, OUTPUT);
+        pcf.pinMode(LED_RED_PIN, OUTPUT);
+        pcf.pinMode(LED_GREEN_PIN, OUTPUT);
+        pcf.pinMode(LED_BLUE_PIN, OUTPUT);
+
+        // Aseguramos que los PINES inicien apagados por seguridad
+        pcf.digitalWrite(ACTUATOR1_PIN, LOW);
+        pcf.digitalWrite(ACTUATOR2_PIN, LOW);
+        pcf.digitalWrite(BUZZER_PIN, HIGH);
+        pcf.digitalWrite(LED_RED_PIN, LOW);
+        pcf.digitalWrite(LED_GREEN_PIN, LOW);
+        pcf.digitalWrite(LED_BLUE_PIN, LOW);
+
+        Serial.println("PCF8574 pins configured successfully.");
+
+        digitalWrite(BUZZER_PIN, LOW);
+        delay(1000);
+        digitalWrite(BUZZER_PIN, HIGH);
+
+    }
+}
 
 // Sensor initialization functions
 void InitMPU9250() {
@@ -76,26 +115,19 @@ void InitUblox() {
         Serial.println("Ublox sensor initialized successfully.");
     }
 }
-void InitTransducers() {
-    // Code to initialize transducers
-    pinMode(TRANSDUCER_PIN, INPUT);
-    if (analogRead(TRANSDUCER_PIN) <= 0 || analogRead(TRANSDUCER_PIN) >= 4095) {
-        CriticalErrorSensor("Transducers Error");
-    }
-    Serial.println("Transducers initialized successfully.");
-}
 
 void InitActuators() {
     // Code to initialize actuators
-    pinMode(ACTUATOR_PIN, OUTPUT);
-    if (digitalRead(ACTUATOR_PIN) == HIGH) {
+    pinMode(ACTUATOR1_PIN, OUTPUT);
+    pinMode(ACTUATOR2_PIN, OUTPUT);
+    if (digitalRead(ACTUATOR1_PIN) == HIGH || digitalRead(ACTUATOR2_PIN) == HIGH) {
         CriticalErrorSensor("Actuators initialization failed");
     }
     Serial.println("Actuators initialized successfully.");
 }
 
 // Sensor calibration functions
-void calibrateSensors() {
+void CalibrateSensors() {
     // Variables temporales para el proceso de calibración
     float gSumX = 0, gSumY = 0, gSumZ = 0;
     float aSumX = 0, aSumY = 0, aSumZ = 0;
@@ -107,11 +139,12 @@ void calibrateSensors() {
     bool giroCalibrado = false;
     uint32_t previousCalibMilis = 0;
     // Data collection loop for calibration
+/*
     while (numReadings < MAX_MU) {
         uint32_t calibMilis = millis();
         if (calibMilis - previousCalibMilis >= 150) {
             previousCalibMilis = calibMilis;
-            /*
+            
              if (mpu.readSensor() == 0) {
                 gSumX += mpu.getGyroX_rads();
                 gSumY += mpu.getGyroY_rads();
@@ -122,13 +155,13 @@ void calibrateSensors() {
 
                 tsum += mpu.getTemperature_C();
                 }
-                */
+                
             pSum += bme.readPressure();
 
             numReadings++;
         }
     }
-
+*/
     // MPU9250 calibration
     /*
     mpuCalib.mpuGyroBiasX = gSumX / float(numReadings);
@@ -143,11 +176,11 @@ void calibrateSensors() {
     mpuCalib.gyroTCO = 0.000872; // 0.5 deg/s * (pi / 180)= 0.00872665 rad/s
     mpuCalib.accTCO = 0.0147;  // 1.5 mg = 0.0015 G * 9.80665 = 0.0147 m/s^2
 */
-    // correcion de errores utilizando el magnetometro
 /*
     // Get calibration from BNO055
     bool calibrated = false;
     bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
+    Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
     if (bno.isFullyCalibrated() && !calibrated) {
         Serial.println("BNO055 sensor fully calibrated.");
         adafruit_bno055_offsets_t newOffsets;
@@ -173,8 +206,38 @@ void calibrateSensors() {
         }
     }
 */
+    while (!bno.isFullyCalibrated()) {
+        bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
+        Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
+        Serial.println("Calibrating BNO055... Please follow the calibration procedure.");
+        if (bnoCalib.bnoGyroStatus < 3){
+            Serial.println("Calibrate Gyroscope: Keep the sensor stationary on a flat surface.");
+        }
+        else if (bnoCalib.bnoGyroStatus == 3){
+            Serial.println("Gyroscope calibrated.");
+        }
+        else if (bnoCalib.bnoMagStatus < 3){
+            Serial.println("Calibrate Magnetometer: Move the sensor in a figure-eight pattern.");
+        }
+        else if (bnoCalib.bnoMagStatus == 3){
+            Serial.println("Magnetometer calibrated.");
+        } 
+        if (bnoCalib.bnoAccStatus < 3){
+            Serial.println("Calibrate Accelerometer: Move the sensor in different positions.");
+        }
+        else if (bnoCalib.bnoAccStatus == 3){
+            Serial.println("Accelerometer calibrated.");
+        }
+        delay(1000);
+    }
+    if (bno.isFullyCalibrated()){
+        Serial.println("BNO055 sensor fully calibrated.");
+    }
+    /*
     // BME280 calibration
     bmeCalib.bmePresRef = pSum / float(numReadings);
+    Serial.println("BME280 calibration completed successfully.");
+    numCalib = 1;
 
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
@@ -183,10 +246,12 @@ void calibrateSensors() {
     }
     if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
         GPSConected = true;
+        numCalib = 2;
         Serial.println("GPS connected successfully.");
     } else if (!GPSConected) {
         Serial.println("GPS connection failed during calibration.");
     }
+        */
 }
 
 void CalibratMagnetometer() {
@@ -325,15 +390,6 @@ void ReadUblox() {
     ubloxData.valid = gps.location.isValid();
 }
 
-void ReadTransducers() {
-    // Code to read data from transducers
-    float transducerValue = analogRead(TRANSDUCER_PIN);
-    float voltage = transducerValue * (3.3 / 4095.0);
-    float pressureTransducer = voltage * 100.0; // Example conversion, adjust is needed
-    transducerData.timestamp = millis() / 1000.0;
-    transducerData.voltage = voltage;
-    transducerData.pressureTransducer = pressureTransducer;
-}
 
 // Actuator control functions
 void OpenActuatorsVoltage() {
@@ -342,7 +398,8 @@ void OpenActuatorsVoltage() {
     float previousSecs = 0;
     bool ledState = LOW; 
     float secs_actuators = millis() / 1000.0;
-    digitalWrite(ACTUATOR_PIN, HIGH);
+    digitalWrite(ACTUATOR1_PIN, HIGH);
+    digitalWrite(ACTUATOR2_PIN, HIGH);
     while (blinkCount < 6) {
         if (secs_actuators - previousSecs >= 1.0) {
             previousSecs = secs_actuators;
@@ -356,5 +413,6 @@ void OpenActuatorsVoltage() {
 }
 void CloseActuatorsVoltage() {
     // Code to stop voltage to actuators
-    digitalWrite(ACTUATOR_PIN, LOW);
+    digitalWrite(ACTUATOR1_PIN, LOW);
+    digitalWrite(ACTUATOR2_PIN, LOW);
 }

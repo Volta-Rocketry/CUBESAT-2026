@@ -11,38 +11,12 @@ uint32_t currentMilis;
 
 
 void setup() {
-  Serial.begin(BAUD_RATE);
+    Serial.begin(BAUD_RATE);
+    InitExtencionBoard();
 
-  //InitLEDBuzzerButton();
-
-  //InitLedPCB();
-
-  InitBNO055();
-  InitBME280();
-  InitUblox();
-  //InitMPU9250();
-
-  flight_computer_init();
-
-  Serial.println("CUBESAT INITIALIZED");
-
-<<<<<<< HEAD
-  //CalibrateSensors();
-=======
->>>>>>> 54d894018a46c21ac23b99584255bc2df93a43bf
+    Serial.println("CUBESAT-1 Flight Computer Starting...");
 }
 
 void loop() {
-  currentMilis = millis();
-  if (currentMilis - previousTelemetry >= 1000) {
-    previousTelemetry = currentMilis;
-    ReadMPU9250();
-    ReadBNO055();
-    ReadBME280();
-    ReadUblox();
-  }
-<<<<<<< HEAD
 
-=======
->>>>>>> 54d894018a46c21ac23b99584255bc2df93a43bf
 }

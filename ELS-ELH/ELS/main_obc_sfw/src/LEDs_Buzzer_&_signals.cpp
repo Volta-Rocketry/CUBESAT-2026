@@ -2,33 +2,68 @@
 
 #include <Arduino.h>
 #include "constants.h"
+#include <Adafruit_PCF8574.h>
 
-void InitLEDBuzzerButton() {
-    // Code to initialize LEDs and buzzer
-    pinMode(LED_RED_PIN, OUTPUT);
-    pinMode(LED_GREEN_PIN, OUTPUT);
-    pinMode(LED_BLUE_PIN, OUTPUT);
-    pinMode(BUZZER_PIN, OUTPUT);
-    pinMode(PIN_BUTTON, INPUT_PULLUP);
-    Serial.println("LEDs and buzzer initialized successfully.");
-    digitalWrite(LED_RED_PIN, LOW);
-    digitalWrite(LED_GREEN_PIN, LOW);  
-    digitalWrite(LED_BLUE_PIN, LOW);
-    digitalWrite(BUZZER_PIN, LOW);
-}
+extern Adafruit_PCF8574 pcf;
 
-void InitLedPCB() {
-    int blinkCount = 0;
-    uint32_t previousMilis = 0;
+void InitPCB() {
+    uint8_t blinkCount = 0;
     bool ledState = LOW;
-    uint32_t milisPCB = millis();
+    uint16_t previousMilis = millis();
     while (blinkCount < 6) {
-        if (milisPCB - previousMilis >= 1000) {
-            previousMilis = milisPCB;
+        uint16_t currentMilis = millis();
+        if (currentMilis - previousMilis >= 1000) {
+            previousMilis = currentMilis;
             ledState = !ledState;
-            digitalWrite(LED_BLUE_PIN, ledState);
+            pcf.digitalWrite(LED_BLUE_PIN, ledState);
 
             blinkCount++;
         }
     }
+    Serial.println("PCB initialized successfully.");
 }
+/*
+void PlayBuzzerTone(long frequence, long duration){
+    static unsigned long startMilis = 0, lastMicros = 0;
+    static long halfPeriod = 0;
+    static bool state = HIGH;
+
+    if (frequence > 0) {
+        halfPeriod = 1000000 / (frequence * 2);
+        startMilis = millis();
+        return; 
+    }
+    else if (duration == 0) {
+        return; 
+    }
+
+    if (millis() - startMilis >= duration) {
+        duration = 0;
+        pcf.digitalWrite(BUZZER_PIN, HIGH); 
+        return;
+    }
+
+    if (micros() - lastMicros >= halfPeriod) {
+        lastMicros = micros();
+        state = !state;
+        pcf.digitalWrite(BUZZER_PIN, state);
+    }
+}
+    */
+
+    void PlayBuzzerTone(long frequency, long duration) {
+    if (frequency == 0) return;
+    long halfPeriod = 1000000L / (frequency * 2);
+    long loops = (duration * 1000L) / (halfPeriod * 2);
+    for (long i = 0; i < loops; i++) {
+
+        pcf.digitalWrite(BUZZER_PIN, LOW);
+        delayMicroseconds(halfPeriod);
+        
+        pcf.digitalWrite(BUZZER_PIN, HIGH);
+        delayMicroseconds(halfPeriod);
+    }
+    
+    pcf.digitalWrite(BUZZER_PIN, HIGH);
+}
+

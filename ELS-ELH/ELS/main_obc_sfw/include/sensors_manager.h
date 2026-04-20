@@ -13,7 +13,8 @@ void InitBMP180();
 void InitBNO055();
 void InitBME280();
 void InitUblox();
-void InitActuators();
+void InitActuators1();
+void InitActuators2();
 
 void CalibrateSensors();
 void CalibratMagnetometer();
@@ -25,5 +26,7 @@ void ReadBNO055();
 void ReadBME280();
 void ReadUblox();
 
-void OpenActuatorsVoltage();
-void CloseActuatorsVoltage();
+void OpenActuators1Voltage();
+void CloseActuators1Voltage();
+void OpenActuators2Voltage();
+void CloseActuators2Voltage();

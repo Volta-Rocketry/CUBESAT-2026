@@ -20,7 +20,6 @@
 
 extern BluetoothSerial SerialBT;
 MPU6050 mpu(Wire);
-//DFRobot_QMC5883 compass;
 Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS);
@@ -84,6 +83,7 @@ void InitMPU6050(){
         CriticalErrorSensor("MPU6050 initialization failed");
     } else {
         Serial.println("MPU6050 sensor initialized successfully.");
+        SerialBT.println("MPU6050 sensor initialized successfully.");
     };
 }
 void InitQMC5883L(){
@@ -92,6 +92,7 @@ void InitQMC5883L(){
     Wire.write(0x02); 
     if (Wire.endTransmission() != 0) {
         CriticalErrorSensor("Failed to open MPU6050 Bypass");
+        SerialBT.println("Failed to open MPU6050 Bypass");
         return;
     }
 
@@ -108,6 +109,7 @@ void InitQMC5883L(){
         CriticalErrorSensor("QMC5883L not found on 0x0D");
     } else {
         Serial.println("QMC5883L initialized successfully.");
+        SerialBT.println("QMC5883L initialized successfully.");
     }
 }
 void InitBMP180(){
@@ -115,6 +117,7 @@ void InitBMP180(){
 	    CriticalErrorSensor("BMP180 initialization failed");
     } else {
         Serial.println("BMP180 sensor initialized successfully.");
+        SerialBT.println("BMP180 sensor initialized successfully.");
     };
 }
 void InitBNO055() {
@@ -123,6 +126,7 @@ void InitBNO055() {
         CriticalErrorSensor("BNO055 initialization failed");
     } else {
         Serial.println("BNO055 sensor initialized successfully.");
+        SerialBT.println("BNO055 sensor initialized successfully.");
     };
 }
 void InitBME280() {
@@ -131,6 +135,7 @@ void InitBME280() {
         CriticalErrorSensor("BME280 initialization failed");
     } else {
         Serial.println("BME280 sensor initialized successfully.");
+        SerialBT.println("BME280 sensor initialized successfully.");
     }
 }
 void InitUblox() {
@@ -154,19 +159,9 @@ void InitUblox() {
         CriticalErrorSensor("Ublox initialization failed");
     } else {
         Serial.println("Ublox sensor initialized successfully.");
+        SerialBT.println("Ublox sensor initialized successfully.");
     }
 }
-
-void InitActuators() {
-    // Code to initialize actuators
-    pinMode(ACTUATOR1_PIN, OUTPUT);
-    pinMode(ACTUATOR2_PIN, OUTPUT);
-    if (digitalRead(ACTUATOR1_PIN) == HIGH || digitalRead(ACTUATOR2_PIN) == HIGH) {
-        CriticalErrorSensor("Actuators initialization failed");
-    }
-    Serial.println("Actuators initialized successfully.");
-}
-
 // Sensor calibration functions
 void CalibrateSensors() {
     // Variables temporales para el proceso de calibración
@@ -179,8 +174,10 @@ void CalibrateSensors() {
     int numReadings = 0;
     const int MAX_MU = 1000;
     uint32_t previousCalibMilis = millis();
-    // Data collection loop for calibration
 
+    // Data collection loop for calibration
+    Serial.println("Calibration loop");
+    SerialBT.println("Calibration loop");
     while (numReadings < MAX_MU) {
         uint32_t calibMilis = millis();
         if (calibMilis - previousCalibMilis >= 150) {
@@ -203,6 +200,8 @@ void CalibrateSensors() {
 
             numReadings++;
         }
+        SerialBT.print("Numbers of readings: ");
+        SerialBT.println(numReadings);
     }
 
     // MPU6050 calibration
@@ -217,6 +216,8 @@ void CalibrateSensors() {
     mpuCalib.tempRef = tSum / float(numReadings);
     mpuCalib.gyroTCO = 0.5; // 0.5 deg/s 
     mpuCalib.accTCO = 0.0015;  // 1.5 mg = 0.0015 G
+
+    Serial.println("MPU6050 calibration completed successfully.");
 
     // BMP180 calibration
     bmpCalib.bmpPresRef = pSumBMP / float(numReadings);
@@ -286,8 +287,9 @@ void CalibrateSensors() {
     // BME280 calibration
     bmeCalib.bmePresRef = pSumBME / float(numReadings);
     Serial.println("BME280 calibration completed successfully.");
+    SerialBT.println("BME280 calibration completed successfully.");
     // numCalib = 1;
-/*
+
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
     while (gpsSerial.available() > 0) {
@@ -295,12 +297,13 @@ void CalibrateSensors() {
     }
     if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
         GPSConected = true;
-        numCalib = 2;
+        // numCalib = 2;
         Serial.println("GPS connected successfully.");
+        SerialBT.println("GPS connected successfully.");
     } else if (!GPSConected) {
         Serial.println("GPS connection failed during calibration.");
+        SerialBT.println("GPS connection failed during calibration.");
     }
-        */
 }
 
 void CalibratMagnetometer() {
@@ -351,7 +354,11 @@ void CalibratMagnetometer() {
     qmcCalib.qmcMagScaleX = radioPromedio / radioX;
     qmcCalib.qmcMagScaleY = radioPromedio / radioY;
     qmcCalib.qmcMagScaleZ = radioPromedio / radioZ;
+
+    Serial.println("Magnetometer connected successfully.");
+    SerialBT.println("Magnetometer connected successfully.");
 }
+
 
 // Sensor reading functions
 void ReadMPU6050(){
@@ -387,7 +394,6 @@ void ReadMPU6050(){
     mpuData.MPU_gy = gy_deg * 0.0174533;
     mpuData.MPU_gz = gz_deg * 0.0174533;
     */
-
 }
 void ReadQMC5883L(){
     Wire.beginTransmission(0x0D);
@@ -496,27 +502,48 @@ void ReadUblox() {
 
 
 // Actuator control functions
-void OpenActuatorsVoltage() {
+void OpenActuators1Voltage() {
     // Code to send voltage to actuators
     int blinkCount = 0;
-    float previousSecs = 0;
+    uint32_t previousMillis = millis();
     bool ledState = LOW; 
-    float secs_actuators = millis() / 1000.0;
-    digitalWrite(ACTUATOR1_PIN, HIGH);
-    digitalWrite(ACTUATOR2_PIN, HIGH);
+    pcf.digitalWrite(ACTUATOR1_PIN, HIGH);
     while (blinkCount < 6) {
-        if (secs_actuators - previousSecs >= 1.0) {
-            previousSecs = secs_actuators;
+        uint32_t actuatorsMillis = millis();
+        if (actuatorsMillis - previousMillis >= 1.0) {
+            previousMillis = actuatorsMillis;
             ledState = !ledState;
-            digitalWrite(LED_RED_PIN, ledState);
-            digitalWrite(LED_GREEN_PIN, ledState);
+            pcf.digitalWrite(LED_RED_PIN, ledState);
+            pcf.digitalWrite(LED_GREEN_PIN, ledState);
 
             blinkCount++;
         }
     }
 }
-void CloseActuatorsVoltage() {
+void CloseActuators1Voltage() {
     // Code to stop voltage to actuators
-    digitalWrite(ACTUATOR1_PIN, LOW);
-    digitalWrite(ACTUATOR2_PIN, LOW);
+    pcf.digitalWrite(ACTUATOR1_PIN, LOW);
+}
+
+void OpenActuators2Voltage() {
+    // Code to send voltage to actuators
+    int blinkCount = 0;
+    uint32_t previousMillis = millis();
+    bool ledState = LOW; 
+    pcf.digitalWrite(ACTUATOR2_PIN, HIGH);
+    while (blinkCount < 6) {
+        uint32_t actuatorsMillis = millis();
+        if (actuatorsMillis - previousMillis >= 1.0) {
+            previousMillis = actuatorsMillis;
+            ledState = !ledState;
+            pcf.digitalWrite(LED_RED_PIN, ledState);
+            pcf.digitalWrite(LED_GREEN_PIN, ledState);
+
+            blinkCount++;
+        }
+    }
+}
+void CloseActuators2Voltage() {
+    // Code to stop voltage to actuators
+    pcf.digitalWrite(ACTUATOR2_PIN, LOW);
 }

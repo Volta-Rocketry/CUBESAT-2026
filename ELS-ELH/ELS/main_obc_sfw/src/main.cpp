@@ -26,7 +26,7 @@ void setup() {
     InitBNO055();
     InitBME280();
     InitUblox();
-
+    
     Serial.println("CUBESAT-1 Flight Computer Starting...");
     InitPCB();
 }
@@ -42,12 +42,24 @@ void loop() {
             String command = SerialBT.readStringUntil('\n');
             command.trim();
             Serial.println(command);
-            if (command == "AA") {
+            if (command == "LED") {
                 pcf.digitalWrite(LED_BLUE_PIN, HIGH);
                 SerialBT.println("LED blue");
                 Serial.println("LED BLUE");
             }
-        }
+            else if (command == "A1"){
+                OpenActuators1Voltage();
+            }
+            else if (command == "A2"){
+                OpenActuators2Voltage();
+            }
+            else if (command == "C1"){
+                CloseActuators1Voltage();
+            }
+            else if (command == "C2"){
+                CloseActuators2Voltage();
+            }
     }
     delay(2000);
+    }
 }

@@ -45,8 +45,8 @@
 #define TRANSDUCER_PIN 16
 
 // ACTUATOR PIN DEFINITION
-#define ACTUATOR1_PIN 6
-#define ACTUATOR2_PIN 7
+#define ACTUATOR1_PIN 1
+#define ACTUATOR2_PIN 2
 
 // LED PIN DEFINITIONS
 // Estan en el expansor

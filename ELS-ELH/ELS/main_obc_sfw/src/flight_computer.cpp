@@ -250,8 +250,6 @@ void flight_computer_update() {
 
         digitalWrite(LED_BLUE_PIN, HIGH);
 
-        CloseActuatorsVoltage();
-
         if (now - last_slow_sample >= 1000) {
             last_slow_sample = now;
             ReadBME280();
@@ -320,8 +318,6 @@ void flight_computer_update() {
         break;
 
     case STATE_PAD:
-
-        CloseActuatorsVoltage();
 
         if (now - last_slow_sample >= 10000) {
             last_slow_sample = now;
@@ -419,8 +415,6 @@ void flight_computer_update() {
         break;
 
     case STATE_CONTROL:
-
-        OpenActuatorsVoltage();
 
         if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
             last_fast_sample = now;

@@ -15,7 +15,8 @@ typedef struct __attribute__((packed)) {
 typedef struct __attribute__((packed)) {
     uint8_t packet_id;    
     uint32_t timestamp_ms;  
-    StructBME280 bme;        
+    StructBME280 bme;
+    StructBMP180 bmpData;        
     StructUblox gps;           
     uint16_t checksum;      
 } SlowFlightPacket;

@@ -27,10 +27,10 @@ void setup() {
     InitBNO055();
     flash_init();
     if (!flash_init()) {
-        Serial.print("FAAAAKKKKK")
+        Serial.print("FAAAAKKKKK");
     }
     else {
-        Serial.print("SE INICIO")
+        Serial.print("SE INICIO");
     }
     InitBME280();
     InitUblox();

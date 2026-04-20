@@ -72,26 +72,6 @@ void InitExtencionBoard() {
 
         Serial.println("PCF8574 pins configured successfully.");
 
-        // Prueba de encendido secuencial de LEDs y buzzer para verificar su funcionamiento y cual es cada uno
-        /*
-        pcf.digitalWrite(LED_BLUE_PIN, HIGH);
-        Serial.println("LED azul encendido");
-        delay(1000);
-        pcf.digitalWrite(LED_BLUE_PIN, LOW);
-        pcf.digitalWrite(LED_GREEN_PIN, HIGH);
-        Serial.println("LED verde encendido");
-        delay(1000);
-        pcf.digitalWrite(LED_GREEN_PIN, LOW);
-        pcf.digitalWrite(LED_RED_PIN, HIGH);
-        Serial.println("LED rojo encendido");
-        delay(1000);
-        pcf.digitalWrite(LED_RED_PIN, LOW);
-        pcf.digitalWrite(BUZZER_PIN, LOW);
-        Serial.println("Buzzer encendido");
-        delay(1000);
-        pcf.digitalWrite(BUZZER_PIN, HIGH);
-        */
-
     }
 }
 

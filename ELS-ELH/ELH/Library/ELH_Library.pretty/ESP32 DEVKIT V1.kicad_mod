@@ -261,50 +261,6 @@
 		(uuid "fdeeb018-e5e2-4232-b3be-6ddc36f05e85")
 	)
 	(fp_circle
-		(center -12.7 -24.13)
-		(end -12.7 -22.86)
-		(stroke
-			(width 0.1)
-			(type default)
-		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "5c3f6e0d-9b85-4795-830a-b30927c84969")
-	)
-	(fp_circle
-		(center -12.7 24.13)
-		(end -12.7 25.4)
-		(stroke
-			(width 0.1)
-			(type default)
-		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "94c1cabb-f859-4487-9d0d-fee26801eafd")
-	)
-	(fp_circle
-		(center 11.43 -24.13)
-		(end 11.43 -22.86)
-		(stroke
-			(width 0.1)
-			(type default)
-		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "3486aea4-1abb-4f74-9109-9cdd4771b31e")
-	)
-	(fp_circle
-		(center 11.43 24.13)
-		(end 11.43 25.4)
-		(stroke
-			(width 0.1)
-			(type default)
-		)
-		(fill no)
-		(layer "F.SilkS")
-		(uuid "811a9d8f-19ec-4a13-84f4-ec12e13b15d4")
-	)
-	(fp_circle
 		(center 14.35 15.515)
 		(end 14.25 15.515)
 		(stroke
@@ -314,6 +270,50 @@
 		(fill no)
 		(layer "F.SilkS")
 		(uuid "b2cb846d-7daf-4e04-bc1d-7b8a348cf638")
+	)
+	(fp_circle
+		(center -12.7 -24.13)
+		(end -12.7 -22.86)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "5c3f6e0d-9b85-4795-830a-b30927c84969")
+	)
+	(fp_circle
+		(center -12.7 24.13)
+		(end -12.7 25.4)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "94c1cabb-f859-4487-9d0d-fee26801eafd")
+	)
+	(fp_circle
+		(center 11.43 -24.13)
+		(end 11.43 -22.86)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "3486aea4-1abb-4f74-9109-9cdd4771b31e")
+	)
+	(fp_circle
+		(center 11.43 24.13)
+		(end 11.43 25.4)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "811a9d8f-19ec-4a13-84f4-ec12e13b15d4")
 	)
 	(fp_line
 		(start -14.98 -25.725)

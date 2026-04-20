@@ -256,4 +256,15 @@
 		(uuid "6c0d4d6a-6978-4535-9b58-e3b8410cc862")
 	)
 	(embedded_fonts no)
+	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/GY87_10DOF_IMU.step"
+		(offset
+			(xyz -140.5 94 3)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -0 -0 -0)
+		)
+	)
 )

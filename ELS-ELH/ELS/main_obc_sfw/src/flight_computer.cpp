@@ -82,6 +82,7 @@ static void record_slow_packet() {
     page_buf_write((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
 }
 
+/*
 static void download_flash_to_sd() {
 
     if (g_flash_write_addr == 0) {
@@ -198,14 +199,85 @@ static void download_flash_to_sd() {
     digitalWrite(LED_BLUE_PIN, LOW);
     digitalWrite(LED_GREEN_PIN, HIGH);
 }
+*/
+
+void verify_flash_content() {
+    Serial.println("\n--- INICIANDO VERIFICACIÓN DE FLASH ---");
+    
+    if (g_flash_write_addr == 0) {
+        Serial.println("[!] La Flash está vacía (puntero en 0).");
+        return;
+    }
+
+    Serial.printf("[INFO] Datos totales escritos: %lu bytes\n", g_flash_write_addr);
+    Serial.println("----------------------------------------");
+
+    uint32_t current_addr = 0;
+    uint32_t count_fast = 0;
+    uint32_t count_slow = 0;
+    uint32_t count_corrupt = 0;
+
+    while (current_addr < g_flash_write_addr) {
+        uint8_t id = 0;
+        // Leemos solo el primer byte para identificar el tipo de paquete
+        flash_read(current_addr, &id, 1);
+
+        if (id == 0x01) { // Paquete Rápido (MPU + BNO)
+            FastFlightPacket p;
+            flash_read(current_addr, (uint8_t*)&p, sizeof(FastFlightPacket));
+            
+            // Verificación de CRC
+            uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
+            bool ok = (p.checksum == crc_calc);
+
+            Serial.printf("[FAST] Addr: 0x%06lX | TS: %lu | AccelX: %.2f | CRC: %s\n", 
+                          current_addr, p.timestamp_ms, p.mpu.MPU_ax, ok ? "OK" : "ERROR");
+            
+            if (!ok) count_corrupt++;
+            count_fast++;
+            current_addr += sizeof(FastFlightPacket);
+        } 
+        else if (id == 0x02) { // Paquete Lento (BME + GPS)
+            SlowFlightPacket p;
+            flash_read(current_addr, (uint8_t*)&p, sizeof(SlowFlightPacket));
+            
+            uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
+            bool ok = (p.checksum == crc_calc);
+
+            Serial.printf("[SLOW] Addr: 0x%06lX | TS: %lu | Pres: %.2f | GPS_Lat: %.6f | CRC: %s\n", 
+                          current_addr, p.timestamp_ms, p.bme.pressure, p.gps.latitude, ok ? "OK" : "ERROR");
+
+            if (!ok) count_corrupt++;
+            count_slow++;
+            current_addr += sizeof(SlowFlightPacket);
+        } 
+        else {
+            // Si encontramos algo que no es 0x01 ni 0x02, es ruido o error de alineación
+            Serial.printf("[?] Byte desconocido en 0x%06lX: 0x%02X (Saltando...)\n", current_addr, id);
+            current_addr++; 
+            count_corrupt++;
+        }
+
+        // Pequeña pausa para no saturar el buffer del Serial si hay miles de datos
+        if ((count_fast + count_slow) % 50 == 0) delay(5);
+    }
+
+    Serial.println("----------------------------------------");
+    Serial.println("RESUMEN DE VERIFICACIÓN:");
+    Serial.printf("  - Paquetes Fast: %lu\n", count_fast);
+    Serial.printf("  - Paquetes Slow: %lu\n", count_slow);
+    Serial.printf("  - Errores/Bytes corruptos: %lu\n", count_corrupt);
+    Serial.println("--- FIN DE VERIFICACIÓN ---\n");
+}
 
 void flight_computer_init() {
 
     if (!flash_init()) {
         CriticalErrorSensor("W25Q128 no detectada. Verificar HSPI y FLASH_CS.");
     }
+    else{
     Serial.println("[DAQ] Flash W25Q128 OK.");
-
+    }
     if (!SD.begin(PIN_CS_SD)) {
         Serial.println("[DAQ] ADVERTENCIA: SD no detectada.");
     } 
@@ -284,7 +356,7 @@ void flight_computer_update() {
                 }
                 else if (cmd == "DOWNLOAD") {
                     Serial.println("[COMANDO] Iniciando descarga por comando serial.");
-                    download_flash_to_sd();
+                    //// download_flash_to_sd();
                 }
                 else if (cmd == "ERASE") {
                     Serial.println("[COMANDO] Borrando flash por comando serial.");
@@ -485,7 +557,7 @@ void flight_computer_update() {
 
     case STATE_DOWNLOAD:
 
-        download_flash_to_sd();
+        // download_flash_to_sd();
         Serial.println("[DAQ] Descarga completa. Reiniciar para nuevo vuelo.");
         while (true) {
             digitalWrite(LED_GREEN_PIN, HIGH);

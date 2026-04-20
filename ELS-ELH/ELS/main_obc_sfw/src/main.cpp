@@ -7,6 +7,7 @@
 #include <Adafruit_PCF8574.h>
 #include <SoftwareSerial.h>
 #include "BluetoothSerial.h"
+#include "comm_manager.h"
 
 Adafruit_PCF8574 pcf;
 BluetoothSerial SerialBT;
@@ -24,15 +25,24 @@ void setup() {
     InitQMC5883L();
     InitBMP180();
     InitBNO055();
+    flash_init();
+    if (!flash_init()) {
+        Serial.print("FAAAAKKKKK")
+    }
+    else {
+        Serial.print("SE INICIO")
+    }
     InitBME280();
     InitUblox();
-    
+    flight_computer_init();
+    comms_init();
     Serial.println("CUBESAT-1 Flight Computer Starting...");
     InitPCB();
 }
 
 void loop() {
     currentMilis = millis();
+      comms_tick();
     if (currentMilis - previousTelemetry >= 1000) {
         previousTelemetry = currentMilis;
         Serial.println("Collecting telemetry data...");
@@ -59,7 +69,7 @@ void loop() {
             else if (command == "C2"){
                 CloseActuators2Voltage();
             }
+        }
     }
-    delay(2000);
-    }
+    // flight_computer_update();
 }

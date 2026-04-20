@@ -10,7 +10,7 @@
 #define CMD_READ_STATUS 0x05
 #define CMD_JEDEC_ID 0x9F
 
-#define PIN_CS_FLASH FLASH_CS
+#define PIN_CS_FLASH 15
 
 // extern SPIClass hspi;
 SPIClass hspi(HSPI);
@@ -58,7 +58,7 @@ bool flash_init() {
     uint8_t capacity     = hspi.transfer(0x00);
 
     digitalWrite(PIN_CS_FLASH, HIGH);
-    return (manufacturer == 0xEF && mem_type == 0x40 && capacity == 0x18);
+    return (manufacturer == 0xEF && mem_type == 0x40 && capacity == 0x16);
 }
 
 void flash_erase_chip() {

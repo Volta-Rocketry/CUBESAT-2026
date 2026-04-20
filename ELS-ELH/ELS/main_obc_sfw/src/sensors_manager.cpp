@@ -72,7 +72,6 @@ void InitExtencionBoard() {
 
         Serial.println("PCF8574 pins configured successfully.");
         SerialBT.println("PCF8574 pins configured successfully.");
-
     }
 }
 
@@ -504,46 +503,21 @@ void ReadUblox() {
 // Actuator control functions
 void OpenActuators1Voltage() {
     // Code to send voltage to actuators
-    int blinkCount = 0;
-    uint32_t previousMillis = millis();
-    bool ledState = LOW; 
     pcf.digitalWrite(ACTUATOR1_PIN, HIGH);
-    while (blinkCount < 6) {
-        uint32_t actuatorsMillis = millis();
-        if (actuatorsMillis - previousMillis >= 1.0) {
-            previousMillis = actuatorsMillis;
-            ledState = !ledState;
-            pcf.digitalWrite(LED_RED_PIN, ledState);
-            pcf.digitalWrite(LED_GREEN_PIN, ledState);
-
-            blinkCount++;
-        }
-    }
+    pcf.digitalWrite(LED_GREEN_PIN, HIGH);
 }
 void CloseActuators1Voltage() {
     // Code to stop voltage to actuators
     pcf.digitalWrite(ACTUATOR1_PIN, LOW);
+    pcf.digitalWrite(LED_GREEN_PIN, LOW);
 }
-
 void OpenActuators2Voltage() {
     // Code to send voltage to actuators
-    int blinkCount = 0;
-    uint32_t previousMillis = millis();
-    bool ledState = LOW; 
     pcf.digitalWrite(ACTUATOR2_PIN, HIGH);
-    while (blinkCount < 6) {
-        uint32_t actuatorsMillis = millis();
-        if (actuatorsMillis - previousMillis >= 1.0) {
-            previousMillis = actuatorsMillis;
-            ledState = !ledState;
-            pcf.digitalWrite(LED_RED_PIN, ledState);
-            pcf.digitalWrite(LED_GREEN_PIN, ledState);
-
-            blinkCount++;
-        }
-    }
+    pcf.digitalWrite(LED_GREEN_PIN, HIGH);
 }
 void CloseActuators2Voltage() {
     // Code to stop voltage to actuators
     pcf.digitalWrite(ACTUATOR2_PIN, LOW);
+    pcf.digitalWrite(LED_GREEN_PIN, LOW);
 }

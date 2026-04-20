@@ -198,3 +198,4 @@ extern StructBMP180 bmpData;
 extern StructBNO055 bnoData;
 extern StructBME280 bmeData;
 extern StructUblox ubloxData;
+

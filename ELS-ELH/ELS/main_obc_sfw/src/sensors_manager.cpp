@@ -16,8 +16,9 @@
 #include <TinyGPSplus.h> 
 #include <HardwareSerial.h>
 #include <Preferences.h>
+#include "BluetoothSerial.h"
 
-
+extern BluetoothSerial SerialBT;
 MPU6050 mpu(Wire);
 //DFRobot_QMC5883 compass;
 Adafruit_BMP085 bmp;
@@ -71,6 +72,7 @@ void InitExtencionBoard() {
         pcf.digitalWrite(LED_BLUE_PIN, LOW);
 
         Serial.println("PCF8574 pins configured successfully.");
+        SerialBT.println("PCF8574 pins configured successfully.");
 
     }
 }

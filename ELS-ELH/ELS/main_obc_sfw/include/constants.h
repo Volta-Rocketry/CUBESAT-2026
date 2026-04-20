@@ -65,7 +65,7 @@
 #define SLOW_SAMPLE_INTERVAL_MS 1000
 
 
-struct StructMPU9250{
+struct StructMPU6050{
     uint32_t timestamp;  // Timestamp
     // Acceleration
     float MPU_ax;     // MPU9250 acceleration on the X axis
@@ -75,12 +75,22 @@ struct StructMPU9250{
     float MPU_gx;     // MPU9250 angular velocity on the X axis
     float MPU_gy;     // MPU9250 angular velocity on the Y axis
     float MPU_gz;     // MPU9250 angular velocity on the Z axis
-    // Magnetic field
-    float MPU_mx;     // MPU9250 magnetic field on the X axis
-    float MPU_my;     // MPU9250 magnetic field on the Y axis
-    float MPU_mz;     // MPU9250 magnetic field on the Z axis
     // Chip temperature
     float MPU_temp;   // MPU9250 chip temperature
+};
+
+struct StructHMC5883L{
+    uint32_t timestamp; // Timestamp
+    float HMC_mx;       // HMC5883 magnetic field on the X axis
+    float HMC_my;       // HMC5883 magnetic field on the Y axis
+    float HMC_mz;       // HMC5883 magnetic field on the Z axis
+};
+
+struct StructBMP180{
+    uint32_t timestamp;  // Timestamp
+    float temp;          // Temperature
+    float pressure;      // Pressure
+    float altitude;      // Altitude
 };
 
 struct StructBNO055{
@@ -135,12 +145,6 @@ struct StructUblox {
     bool valid;        // Validity of the GPS data
 };
 
-struct StructTransducer {
-    float timestamp;  // Timestamp
-    float voltage;    // Transducer reading
-    float pressureTransducer;   // Transducer reading
-};
-
 
 // Calibration data structure
 struct CalibrationDataMPU {
@@ -156,16 +160,22 @@ struct CalibrationDataMPU {
     float tempRef;
     float gyroTCO;
     float accTCO;
+};
 
+struct CalibrationDataHMC{
     // Hard iron offsets
-    float mpuMagOffsetX;
-    float mpuMagOffsetY;
-    float mpuMagOffsetZ;
+    float hmcMagOffsetX;
+    float hmcMagOffsetY;
+    float hmcMagOffsetZ;
 
     // Soft iron
-    float mpuMagScaleX;
-    float mpuMagScaleY;
-    float mpuMagScaleZ;
+    float hmcMagScaleX;
+    float hmcMagScaleY;
+    float hmcMagScaleZ;
+};
+
+struct CalibrationDataBMP{
+    float bmpPresRef;
 };
 
 struct CalibrationDataBNO {
@@ -182,8 +192,9 @@ struct CalibrationDataBME {
 
 };
 
-extern StructMPU9250 mpuData;
+extern StructMPU6050 mpuData;
+extern StructHMC5883L hmcData;
+extern StructBMP180 bmpData;
 extern StructBNO055 bnoData;
 extern StructBME280 bmeData;
 extern StructUblox ubloxData;
-extern StructTransducer transducerData;

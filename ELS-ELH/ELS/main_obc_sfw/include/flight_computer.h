@@ -7,9 +7,8 @@
 typedef struct __attribute__((packed)) {
     uint8_t packet_id;   
     uint32_t timestamp_ms; 
-    StructMPU9250 mpu;         
-    StructBNO055 bno;        
-    StructTransducer transducer;
+    StructMPU6050 mpu;         
+    StructBNO055 bno;
     uint16_t checksum;      
 } FastFlightPacket;
 

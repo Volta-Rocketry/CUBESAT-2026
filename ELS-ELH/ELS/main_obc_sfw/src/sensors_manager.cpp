@@ -3,33 +3,41 @@
 #include "constants.h"
 #include "error_warning.h"
 #include <Arduino.h>
-#include "MPU9250.h"
+#include <Wire.h>
+#include <SPI.h>
 #include <Adafruit_BNO055.h>
 #include <Adafruit_BME280.h>
 #include <Adafruit_PCF8574.h>
-#include <Wire.h>
-#include <SPI.h>
+#include <MPU6050_light.h>
+#include <DFRobot_QMC5883.h>
+#include <Adafruit_BMP085.h>
 #include <Adafruit_Sensor.h> 
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
 #include <HardwareSerial.h>
 #include <Preferences.h>
 
-MPU9250 mpu(SPI,MPU_CS);
 
-
+MPU6050 mpu(Wire);
+DFRobot_QMC5883 compass;
+Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS);
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
+
 extern Adafruit_PCF8574 pcf;
 
-StructMPU9250 mpuData;
+StructMPU6050 mpuData;
+StructHMC5883L hmcData;
+StructBMP180 bmpData;
 StructBNO055 bnoData;
 StructBME280 bmeData;
 StructUblox ubloxData;
 
 CalibrationDataMPU mpuCalib;
+CalibrationDataHMC hmcCalib;
+CalibrationDataBMP bmpCalib;
 CalibrationDataBNO bnoCalib;
 CalibrationDataBME bmeCalib;
 
@@ -87,13 +95,22 @@ void InitExtencionBoard() {
     }
 }
 
-// Sensor initialization functions
-void InitMPU9250() {
-    // Code to initialize MPU9250 sensor
-    if (mpu.begin() < 0) {
-        CriticalErrorSensor("MPU9250 initialization failed");
+// Sensor initialization function
+void InitMPU6050(){
+    byte status = mpu.begin();
+    if (status != 0) {
+        CriticalErrorSensor("MPU6050 initialization failed");
     } else {
-        Serial.println("MPU9250 sensor initialized successfully.");
+        Serial.println("MPU6050 sensor initialized successfully.");
+    };
+}
+void InitHMC5883(){
+}
+void InitBMP180(){
+    if (!bmp.begin()) {
+	    CriticalErrorSensor("BMP180 initialization failed");
+    } else {
+        Serial.println("BMP180 sensor initialized successfully.");
     };
 }
 void InitBNO055() {
@@ -151,51 +168,55 @@ void CalibrateSensors() {
     // Variables temporales para el proceso de calibración
     float gSumX = 0, gSumY = 0, gSumZ = 0;
     float aSumX = 0, aSumY = 0, aSumZ = 0;
-    float tsum = 0;
-    float pSum = 0;
+    float tSum = 0;
+    float pSumBME = 0;
+    float pSumBMP = 0;
     bool GPSConected = false;
     int numReadings = 0;
     const int MAX_MU = 1000;
-    bool giroCalibrado = false;
-    uint32_t previousCalibMilis = 0;
+    uint32_t previousCalibMilis = millis();
     // Data collection loop for calibration
-/*
+
     while (numReadings < MAX_MU) {
         uint32_t calibMilis = millis();
         if (calibMilis - previousCalibMilis >= 150) {
             previousCalibMilis = calibMilis;
-            
-             if (mpu.readSensor() == 0) {
-                gSumX += mpu.getGyroX_rads();
-                gSumY += mpu.getGyroY_rads();
-                gSumZ += mpu.getGyroZ_rads();
-                aSumX += mpu.getAccelX_mss();
-                aSumY += mpu.getAccelY_mss();
-                aSumZ += mpu.getAccelZ_mss();
 
-                tsum += mpu.getTemperature_C();
-                }
+            byte status = mpu.begin();
+            if (status == 0) {
+                mpu.update();
                 
-            pSum += bme.readPressure();
+                gSumX += mpu.getGyroX();
+                gSumY += mpu.getGyroY();
+                gSumZ += mpu.getGyroZ();
+                aSumX += mpu.getAccX();
+                aSumY += mpu.getAccY();
+                aSumZ += mpu.getAccZ();
+                tSum  += mpu.getTemp();
+            }
+            pSumBME += bme.readPressure();
+            pSumBMP += bmp.readPressure();
 
             numReadings++;
         }
     }
-*/
-    // MPU9250 calibration
-    /*
+
+    // MPU6050 calibration
     mpuCalib.mpuGyroBiasX = gSumX / float(numReadings);
     mpuCalib.mpuGyroBiasY = gSumY / float(numReadings);
     mpuCalib.mpuGyroBiasZ = gSumZ / float(numReadings);
     mpuCalib.mpuAccBiasX = aSumX / float(numReadings);
     mpuCalib.mpuAccBiasY = aSumY / float(numReadings);
-    mpuCalib.mpuAccBiasZ = aSumZ / float(numReadings) - 9.80665;
+    mpuCalib.mpuAccBiasZ = aSumZ / float(numReadings) - 1;
 
-    // Calibración de temperatura
-    mpuCalib.tempRef = tsum / float(numReadings);
-    mpuCalib.gyroTCO = 0.000872; // 0.5 deg/s * (pi / 180)= 0.00872665 rad/s
-    mpuCalib.accTCO = 0.0147;  // 1.5 mg = 0.0015 G * 9.80665 = 0.0147 m/s^2
-*/
+    // Temperature calibration
+    mpuCalib.tempRef = tSum / float(numReadings);
+    mpuCalib.gyroTCO = 0.5; // 0.5 deg/s 
+    mpuCalib.accTCO = 0.0015;  // 1.5 mg = 0.0015 G
+
+    // BMP180 calibration
+    bmpCalib.bmpPresRef = pSumBMP / float(numReadings);
+    Serial.println("BME280 calibration completed successfully.");
 /*
     // Get calibration from BNO055
     bool calibrated = false;
@@ -226,6 +247,8 @@ void CalibrateSensors() {
         }
     }
 */
+
+/*
     while (!bno.isFullyCalibrated()) {
         bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
         Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
@@ -253,12 +276,14 @@ void CalibrateSensors() {
     if (bno.isFullyCalibrated()){
         Serial.println("BNO055 sensor fully calibrated.");
     }
-    /*
-    // BME280 calibration
-    bmeCalib.bmePresRef = pSum / float(numReadings);
-    Serial.println("BME280 calibration completed successfully.");
-    numCalib = 1;
+    */
 
+
+    // BME280 calibration
+    bmeCalib.bmePresRef = pSumBME / float(numReadings);
+    Serial.println("BME280 calibration completed successfully.");
+    // numCalib = 1;
+/*
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
     while (gpsSerial.available() > 0) {
@@ -284,10 +309,10 @@ void CalibratMagnetometer() {
         float calibMagSec = millis() / 1000.0;
         if (calibMagSec - previousCalibMagSec >= 0.1) {
             previousCalibMagSec = calibMagSec;
-            if (mpu.readSensor() == 0) {
-                float mx = mpu.getMagX_uT();
-                float my = mpu.getMagY_uT();
-                float mz = mpu.getMagZ_uT();
+            if (1) { // agregar la nueva mpu
+                float mx = 2;
+                float my = 2;
+                float mz = 2;
 
                 if (mx < magMin[0]) magMin[0] = mx;
                 if (my < magMin[1]) magMin[1] = my;
@@ -302,9 +327,9 @@ void CalibratMagnetometer() {
             }
         }
     }
-    mpuCalib.mpuMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
-    mpuCalib.mpuMagOffsetY = (magMax[1] + magMin[1]) / 2.0;
-    mpuCalib.mpuMagOffsetZ = (magMax[2] + magMin[2]) / 2.0;
+    hmcCalib.hmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
+    hmcCalib.hmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0;
+    hmcCalib.hmcMagOffsetZ = (magMax[2] + magMin[2]) / 2.0;
 
     float radioX = (magMax[0] - magMin[0]) / 2.0;
     float radioY = (magMax[1] - magMin[1]) / 2.0;
@@ -312,33 +337,53 @@ void CalibratMagnetometer() {
 
     float radioPromedio = (radioX + radioY + radioZ) / 3.0;
 
-    mpuCalib.mpuMagScaleX = radioPromedio / radioX;
-    mpuCalib.mpuMagScaleY = radioPromedio / radioY;
-    mpuCalib.mpuMagScaleZ = radioPromedio / radioZ;
+    hmcCalib.hmcMagScaleX = radioPromedio / radioX;
+    hmcCalib.hmcMagScaleY = radioPromedio / radioY;
+    hmcCalib.hmcMagScaleZ = radioPromedio / radioZ;
 }
 
 // Sensor reading functions
-void ReadMPU9250() {
-    // Code to read data from MPU9250 sensor
-    // temperatura correcion
-    // Correcion del error es:
-    // Dato corregido = Dato medido - (Bias + TCO * (Temperatura actual - Temperatura de referencia))
-    // TCO (Temperature Coefficient of Offset) sale del datasheet
-    float deltaT = (mpu.getTemperature_C() - mpuCalib.tempRef);
-
+void ReadMPU6050(){
+    mpu.update();
     mpuData.timestamp = millis();
 
-    mpuData.MPU_ax = mpu.getAccelX_mss(); // - (mpuCalib.mpuAccBiasX + (mpuCalib.accTCO * deltaT));
-    mpuData.MPU_ay = mpu.getAccelY_mss(); // - (mpuCalib.mpuAccBiasY + (mpuCalib.accTCO * deltaT));
-    mpuData.MPU_az = mpu.getAccelZ_mss(); // - (mpuCalib.mpuAccBiasZ + (mpuCalib.accTCO * deltaT));
+    mpuData.MPU_temp = mpu.getTemp();
+    float deltaTemp = mpuData.MPU_temp - mpuCalib.tempRef;
 
-    mpuData.MPU_gx = mpu.getGyroX_rads(); // - (mpuCalib.mpuGyroBiasX + (mpuCalib.gyroTCO * deltaT));
-    mpuData.MPU_gy = mpu.getGyroY_rads(); // - (mpuCalib.mpuGyroBiasY + (mpuCalib.gyroTCO * deltaT));
-    mpuData.MPU_gz = mpu.getGyroZ_rads(); // - (mpuCalib.mpuGyroBiasZ + (mpuCalib.gyroTCO * deltaT));
+    mpuData.MPU_ax = mpu.getAccX();
+    mpuData.MPU_ay = mpu.getAccY(); 
+    mpuData.MPU_az = mpu.getAccZ();
+    
+    mpuData.MPU_gx = mpu.getGyroX();
+    mpuData.MPU_gy = mpu.getGyroY();
+    mpuData.MPU_gz = mpu.getGyroZ();
 
-    mpuData.MPU_mx = mpu.getMagX_uT();
-    mpuData.MPU_my = mpu.getMagY_uT();
-    mpuData.MPU_mz = mpu.getMagZ_uT();
+    // Codigo calibrado y en m/s2 y rad/s
+    /*
+    float ax_g = mpu.getAccX() - mpuCalib.mpuAccBiasX - (mpuCalib.accTCO * deltaTemp);
+    float ay_g = mpu.getAccY() - mpuCalib.mpuAccBiasY - (mpuCalib.accTCO * deltaTemp);
+    float az_g = mpu.getAccZ() - mpuCalib.mpuAccBiasZ - (mpuCalib.accTCO * deltaTemp);
+
+    mpuData.MPU_ax = ax_g * 9.80665;
+    mpuData.MPU_ay = ay_g * 9.80665;
+    mpuData.MPU_az = az_g * 9.80665;
+
+    float gx_deg = mpu.getGyroX() - mpuCalib.mpuGyroBiasX - (mpuCalib.gyroTCO * deltaTemp);
+    float gy_deg = mpu.getGyroY() - mpuCalib.mpuGyroBiasY - (mpuCalib.gyroTCO * deltaTemp);
+    float gz_deg = mpu.getGyroZ() - mpuCalib.mpuGyroBiasZ - (mpuCalib.gyroTCO * deltaTemp);
+
+    mpuData.MPU_gx = gx_deg * 0.0174533;
+    mpuData.MPU_gy = gy_deg * 0.0174533;
+    mpuData.MPU_gz = gz_deg * 0.0174533;
+    */
+
+}
+void ReadBMP180(){
+    float pressurePad1 = bmpCalib.bmpPresRef / 100.0;
+    bmpData.timestamp = millis();
+    bmpData.temp = bmp.readTemperature();
+    bmpData.pressure = bmp.readPressure();
+    bmpData.altitude = bmp.readAltitude(pressurePad1);
 
 }
 void ReadBNO055() {
@@ -349,13 +394,13 @@ void ReadBNO055() {
     bnoData.BNO_ay = lin_accel.y();
     bnoData.BNO_az = lin_accel.z();
     imu::Vector<3> gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-    bnoData.BNO_gx = gyro.x();
-    bnoData.BNO_gy = gyro.y();
-    bnoData.BNO_gz = gyro.z();
+    bnoData.BNO_gx = gyro.x() * 0.0174533;
+    bnoData.BNO_gy = gyro.y() * 0.0174533;
+    bnoData.BNO_gz = gyro.z() * 0.0174533;
     imu::Vector<3> mag = bno.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
-    bnoData.BNO_mx = mag.x();
-    bnoData.BNO_my = mag.y();
-    bnoData.BNO_mz = mag.z();
+    bnoData.BNO_mx = mag.x() * 1e-6;
+    bnoData.BNO_my = mag.y() * 1e-6;
+    bnoData.BNO_mz = mag.z() * 1e-6;
      imu::Quaternion quat = bno.getQuat();
     bnoData.BNO_qw = quat.w();
     bnoData.BNO_qx = quat.x();
@@ -364,13 +409,12 @@ void ReadBNO055() {
 }
 void ReadBME280() {
     // Code to read data from BME sensor
-    float pressurePad = bmeCalib.bmePresRef / 100.0; 
+    float pressurePad2 = bmeCalib.bmePresRef / 100.0; 
     bmeData.timestamp = millis();
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();
     bmeData.pressure = bme.readPressure();
-    bmeData.altitude = bme.readAltitude(pressurePad); // Using standard sea level pressure as reference
-   //bmeData.altitude = bme.readAltitude(bmeCalib.bmePresRef / 100.0);
+    bmeData.altitude = bme.readAltitude(pressurePad2);
 }
 void ReadUblox() {
     // Code to read data from Ublox sensor

@@ -15,8 +15,9 @@ uint32_t currentMilis;
 void setup() {
     Serial.begin(BAUD_RATE);
     InitExtencionBoard();
+    InitMPU6050();
+    InitBMP180();
     InitBNO055();
-    InitMPU9250();
     InitBME280();
     InitUblox();
 

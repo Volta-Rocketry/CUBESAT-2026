@@ -61,9 +61,8 @@ static void record_fast_packet() {
     memset(&fast_pkt, 0, sizeof(FastFlightPacket));
     fast_pkt.packet_id = 0x01;
     fast_pkt.timestamp_ms = millis();
-    fast_pkt.mpu = mpuData; 
+    fast_pkt.mpu = mpuData;
     fast_pkt.bno = bnoData;
-    fast_pkt.transducer = transducerData;
 
     fast_pkt.checksum = crc16((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
 
@@ -143,12 +142,9 @@ static void download_flash_to_sd() {
                 (unsigned long)fast_pkt.timestamp_ms,
                 fast_pkt.mpu.MPU_ax, fast_pkt.mpu.MPU_ay, fast_pkt.mpu.MPU_az,
                 fast_pkt.mpu.MPU_gx, fast_pkt.mpu.MPU_gy, fast_pkt.mpu.MPU_gz,
-                fast_pkt.mpu.MPU_mx, fast_pkt.mpu.MPU_my, fast_pkt.mpu.MPU_mz,
                 fast_pkt.bno.BNO_ax, fast_pkt.bno.BNO_ay, fast_pkt.bno.BNO_az,
                 fast_pkt.bno.BNO_gx, fast_pkt.bno.BNO_gy, fast_pkt.bno.BNO_gz,
                 fast_pkt.bno.BNO_mx, fast_pkt.bno.BNO_my, fast_pkt.bno.BNO_mz,
-                fast_pkt.transducer.voltage,
-                fast_pkt.transducer.pressureTransducer,
                 crc_ok ? "OK" : "CORRUPT"
             );
             fast_file.println(csv_line);
@@ -260,7 +256,6 @@ void flight_computer_update() {
             last_slow_sample = now;
             ReadBME280();
             ReadUblox();
-            ReadMPU9250();
             ReadBNO055();
 /*
             Serial.printf("[IDLE] OK, Actuators inhibided, BME280 T: %.2fC P: %.2fPa A: %.2fm, Ublox Lat: %.6f Lon: %.6f Alt: %.2fm Spd: %.2fm/s, MPU9250 Accel: (%.2f, %.2f, %.2f) m/s², BNO055 Accel: (%.2f, %.2f, %.2f) m/s²\n",
@@ -337,8 +332,6 @@ void flight_computer_update() {
         }
         if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) { 
             last_fast_sample = now;
-
-            ReadMPU9250();
             ReadBME280(); 
 
             float total_accel = sqrtf(
@@ -366,9 +359,7 @@ void flight_computer_update() {
     case STATE_ASCENT:
         if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
             last_fast_sample = now;
-            ReadMPU9250();
             ReadBNO055();
-            ReadTransducers();
             record_fast_packet(); // 100 Hz
         }
         if (now - last_slow_sample >= SLOW_SAMPLE_INTERVAL_MS) {
@@ -398,9 +389,7 @@ void flight_computer_update() {
     case STATE_EYECTION:
         if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
             last_fast_sample = now;
-            ReadMPU9250();
             ReadBNO055();
-            ReadTransducers();
             record_fast_packet();
 
             float total_gyro = sqrtf(
@@ -435,9 +424,7 @@ void flight_computer_update() {
 
         if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
             last_fast_sample = now;
-            ReadMPU9250();
             ReadBNO055();
-            ReadTransducers();
             record_fast_packet();
         }
         if (now - last_slow_sample >= SLOW_SAMPLE_INTERVAL_MS) {
@@ -456,9 +443,7 @@ void flight_computer_update() {
     case STATE_DRAIN:
         if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
             last_fast_sample = now;
-            ReadMPU9250();
             ReadBNO055();
-            ReadTransducers();
             record_fast_packet();
         }
         if (now - last_slow_sample >= SLOW_SAMPLE_INTERVAL_MS) {

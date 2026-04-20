@@ -7,21 +7,23 @@ extern int numCalib;
 
 void InitExtencionBoard();
 
-void InitMPU9250();
+void InitMPU6050();
+void InitHMC5883();
+void InitBMP180();
 void InitBNO055();
 void InitBME280();
 void InitUblox();
-void InitTransducers();
 void InitActuators();
 
 void CalibrateSensors();
 void CalibratMagnetometer();
 
-void ReadMPU9250();
+void ReadMPU6050();
+void ReadHMC5883();
+void ReadBMP180();
 void ReadBNO055();
 void ReadBME280();
 void ReadUblox();
-void ReadTransducers();
 
 void OpenActuatorsVoltage();
 void CloseActuatorsVoltage();

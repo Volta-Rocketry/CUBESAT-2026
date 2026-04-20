@@ -79,11 +79,11 @@ struct StructMPU6050{
     float MPU_temp;   // MPU9250 chip temperature
 };
 
-struct StructHMC5883L{
+struct StructQMC5883L{
     uint32_t timestamp; // Timestamp
-    float HMC_mx;       // HMC5883 magnetic field on the X axis
-    float HMC_my;       // HMC5883 magnetic field on the Y axis
-    float HMC_mz;       // HMC5883 magnetic field on the Z axis
+    float QMC_mx;       // QMC5883L magnetic field on the X axis
+    float QMC_my;       // QMC5883L magnetic field on the Y axis
+    float QMC_mz;       // QMC5883L magnetic field on the Z axis
 };
 
 struct StructBMP180{
@@ -162,16 +162,16 @@ struct CalibrationDataMPU {
     float accTCO;
 };
 
-struct CalibrationDataHMC{
+struct CalibrationDataQMC{
     // Hard iron offsets
-    float hmcMagOffsetX;
-    float hmcMagOffsetY;
-    float hmcMagOffsetZ;
+    float qmcMagOffsetX;
+    float qmcMagOffsetY;
+    float qmcMagOffsetZ;
 
     // Soft iron
-    float hmcMagScaleX;
-    float hmcMagScaleY;
-    float hmcMagScaleZ;
+    float qmcMagScaleX;
+    float qmcMagScaleY;
+    float qmcMagScaleZ;
 };
 
 struct CalibrationDataBMP{
@@ -193,7 +193,7 @@ struct CalibrationDataBME {
 };
 
 extern StructMPU6050 mpuData;
-extern StructHMC5883L hmcData;
+extern StructQMC5883L qmcData;
 extern StructBMP180 bmpData;
 extern StructBNO055 bnoData;
 extern StructBME280 bmeData;

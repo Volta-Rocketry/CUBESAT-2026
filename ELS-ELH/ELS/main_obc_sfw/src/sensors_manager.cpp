@@ -19,7 +19,7 @@
 
 
 MPU6050 mpu(Wire);
-DFRobot_QMC5883 compass;
+//DFRobot_QMC5883 compass;
 Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS);
@@ -29,14 +29,14 @@ HardwareSerial gpsSerial(2);
 extern Adafruit_PCF8574 pcf;
 
 StructMPU6050 mpuData;
-StructHMC5883L hmcData;
+StructQMC5883L qmcData;
 StructBMP180 bmpData;
 StructBNO055 bnoData;
 StructBME280 bmeData;
 StructUblox ubloxData;
 
 CalibrationDataMPU mpuCalib;
-CalibrationDataHMC hmcCalib;
+CalibrationDataQMC qmcCalib;
 CalibrationDataBMP bmpCalib;
 CalibrationDataBNO bnoCalib;
 CalibrationDataBME bmeCalib;
@@ -104,7 +104,29 @@ void InitMPU6050(){
         Serial.println("MPU6050 sensor initialized successfully.");
     };
 }
-void InitHMC5883(){
+void InitQMC5883L(){
+    Wire.beginTransmission(0x68); 
+    Wire.write(0x37);
+    Wire.write(0x02); 
+    if (Wire.endTransmission() != 0) {
+        CriticalErrorSensor("Failed to open MPU6050 Bypass");
+        return;
+    }
+
+    Wire.beginTransmission(0x0D); 
+    Wire.write(0x09); 
+    Wire.write(0x1D); 
+    Wire.endTransmission();
+
+    Wire.beginTransmission(0x0D);
+    Wire.write(0x0B); // Registro FBR
+    Wire.write(0x01); 
+    
+    if (Wire.endTransmission() != 0) {
+        CriticalErrorSensor("QMC5883L not found on 0x0D");
+    } else {
+        Serial.println("QMC5883L initialized successfully.");
+    }
 }
 void InitBMP180(){
     if (!bmp.begin()) {
@@ -303,16 +325,23 @@ void CalibratMagnetometer() {
     float magMin[3] = {32767, 32767, 32767};
     float magMax[3] = {-32768, -32768, -32768};
 
-    float previousCalibMagSec = 0;
+    uint32_t previousCalibMagMillis = millis();
     bool calibrated = false;
     while (!calibrated) {
-        float calibMagSec = millis() / 1000.0;
-        if (calibMagSec - previousCalibMagSec >= 0.1) {
-            previousCalibMagSec = calibMagSec;
-            if (1) { // agregar la nueva mpu
-                float mx = 2;
-                float my = 2;
-                float mz = 2;
+        uint32_t calibMagSec = millis();
+        if (calibMagSec - previousCalibMagMillis >= 500) {
+            previousCalibMagMillis = calibMagSec;
+
+            Wire.beginTransmission(0x0D);
+            Wire.write(0x00);
+            Wire.endTransmission();
+            Wire.requestFrom(0x0D, 6);
+
+            if (Wire.available() == 6) {
+
+                float mx = (int16_t)(Wire.read() | (Wire.read() << 8));
+                float my = (int16_t)(Wire.read() | (Wire.read() << 8));
+                float mz = (int16_t)(Wire.read() | (Wire.read() << 8));
 
                 if (mx < magMin[0]) magMin[0] = mx;
                 if (my < magMin[1]) magMin[1] = my;
@@ -322,14 +351,14 @@ void CalibratMagnetometer() {
                 if (my > magMax[1]) magMax[1] = my;
                 if (mz > magMax[2]) magMax[2] = mz;
             }
-            if (previousCalibMagSec == 30){
+            if (previousCalibMagMillis == 30000){
                 calibrated = true;
             }
         }
     }
-    hmcCalib.hmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
-    hmcCalib.hmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0;
-    hmcCalib.hmcMagOffsetZ = (magMax[2] + magMin[2]) / 2.0;
+    qmcCalib.qmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
+    qmcCalib.qmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0;
+    qmcCalib.qmcMagOffsetZ = (magMax[2] + magMin[2]) / 2.0;
 
     float radioX = (magMax[0] - magMin[0]) / 2.0;
     float radioY = (magMax[1] - magMin[1]) / 2.0;
@@ -337,9 +366,9 @@ void CalibratMagnetometer() {
 
     float radioPromedio = (radioX + radioY + radioZ) / 3.0;
 
-    hmcCalib.hmcMagScaleX = radioPromedio / radioX;
-    hmcCalib.hmcMagScaleY = radioPromedio / radioY;
-    hmcCalib.hmcMagScaleZ = radioPromedio / radioZ;
+    qmcCalib.qmcMagScaleX = radioPromedio / radioX;
+    qmcCalib.qmcMagScaleY = radioPromedio / radioY;
+    qmcCalib.qmcMagScaleZ = radioPromedio / radioZ;
 }
 
 // Sensor reading functions
@@ -377,6 +406,35 @@ void ReadMPU6050(){
     mpuData.MPU_gz = gz_deg * 0.0174533;
     */
 
+}
+void ReadQMC5883L(){
+    Wire.beginTransmission(0x0D);
+    Wire.write(0x00);
+    Wire.endTransmission();
+    Wire.requestFrom(0x0D, 6);
+
+    if (Wire.available() == 6) {
+        int16_t rawX = (int16_t)(Wire.read() | (Wire.read() << 8));
+        int16_t rawY = (int16_t)(Wire.read() | (Wire.read() << 8));
+        int16_t rawZ = (int16_t)(Wire.read() | (Wire.read() << 8));
+
+        qmcData.timestamp = millis();
+        qmcData.QMC_mx = (rawX / 3000.0f) * 1e-4f;
+        qmcData.QMC_my = (rawY / 3000.0f) * 1e-4f;
+        qmcData.QMC_mz = (rawZ / 3000.0f) * 1e-4f;
+
+/*
+        float correctedX = (rawX - hmcCalib.qmcMagOffsetX) * hmcCalib.qmcMagScaleX;
+        float correctedY = (rawY - hmcCalib.qmcMagOffsetY) * hmcCalib.qmcMagScaleY;
+        float correctedZ = (rawZ - hmcCalib.qmcMagOffsetZ) * hmcCalib.qmcMagScaleZ;
+
+        qmcData.timestamp = millis();
+
+        qmcData.QMC_mx = (correctedX / 3000.0f) * 1e-4f;
+        qmcData.QMC_my = (correctedY / 3000.0f) * 1e-4f;
+        qmcData.QMC_mz = (correctedZ / 3000.0f) * 1e-4f;
+*/
+    }
 }
 void ReadBMP180(){
     float pressurePad1 = bmpCalib.bmpPresRef / 100.0;

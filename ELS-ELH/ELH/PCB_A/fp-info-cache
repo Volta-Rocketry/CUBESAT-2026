@@ -1,4 +1,4 @@
-27266967987283535
+27265201538123497
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62202,20 +62202,6 @@ One digit LED 7 segment SA39-11 SC39-11 SA39-12 SC39-12
 10
 10
 ELH_Library
-2Pin Header
-
-
-0
-2
-2
-ELH_Library
-3Pin Header
-
-
-0
-3
-3
-ELH_Library
 ADS1115
 
 
@@ -62243,6 +62229,13 @@ Bornera 2P
 0
 2
 2
+ELH_Library
+Bornera 3P
+
+
+0
+3
+3
 ELH_Library
 ESP32 DEVKIT V1
 

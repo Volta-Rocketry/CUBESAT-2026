@@ -101,7 +101,7 @@ void InitQMC5883L(){
     Wire.endTransmission();
 
     Wire.beginTransmission(0x0D);
-    Wire.write(0x0B); // Registro FBR
+    Wire.write(0x0B);
     Wire.write(0x01); 
     
     if (Wire.endTransmission() != 0) {

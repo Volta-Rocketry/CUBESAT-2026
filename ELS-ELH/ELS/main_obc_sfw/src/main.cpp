@@ -25,16 +25,9 @@ void setup() {
     InitQMC5883L();
     InitBMP180();
     InitBNO055();
-    flash_init();
-    if (!flash_init()) {
-        Serial.print("FAAAAKKKKK");
-    }
-    else {
-        Serial.print("SE INICIO");
-    }
+    flight_computer_init();
     InitBME280();
     InitUblox();
-    flight_computer_init();
     comms_init();
     Serial.println("CUBESAT-1 Flight Computer Starting...");
     InitPCB();

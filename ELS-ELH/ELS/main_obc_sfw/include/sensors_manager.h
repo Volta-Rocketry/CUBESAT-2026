@@ -3,16 +3,30 @@
 #include "constants.h"
 #include "error_warning.h"
 
-void InitMPU9250();
+extern int numCalib;
+
+void InitExtencionBoard();
+
+void InitMPU6050();
+void InitQMC5883L();
+void InitBMP180();
 void InitBNO055();
 void InitBME280();
 void InitUblox();
-void InitTransducers();
+void InitActuators1();
+void InitActuators2();
 
 void CalibrateSensors();
+void CalibratMagnetometer();
 
-void ReadMPU9250();
+void ReadMPU6050();
+void ReadQMC5883L();
+void ReadBMP180();
 void ReadBNO055();
 void ReadBME280();
 void ReadUblox();
-void ReadTransducers();
+
+void OpenActuators1Voltage();
+void CloseActuators1Voltage();
+void OpenActuators2Voltage();
+void CloseActuators2Voltage();

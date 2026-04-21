@@ -1,0 +1,176 @@
+(footprint "LM2596"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 21.36 4.3 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "1d46afb5-6aea-42ad-8024-f0a5a35e8820")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "LM2596"
+		(at 21.36 5.8 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "190e244b-4ba2-4244-8eb6-9ebcb47e6c6d")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "71c09692-2344-4197-88ab-2a63947a723a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "9b66ae61-af57-4763-b369-219517e6c322")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_rect
+		(start 0 0)
+		(end 43.6 21)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "b11f49f0-96d9-4073-8f92-cf1fc38cf208")
+	)
+	(fp_circle
+		(center 7.3 2.7)
+		(end 9.5 2.7)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "d5b6040a-5c79-4877-be0f-461469917419")
+	)
+	(fp_circle
+		(center 36.3 18.3)
+		(end 38.5 18.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "Edge.Cuts")
+		(uuid "6fadf659-e7d3-4b81-811a-91b23c05838c")
+	)
+	(fp_rect
+		(start -0.25 -0.25)
+		(end 43.85 21.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "15db5a02-e0da-4c82-a58e-9afc53e3b76e")
+	)
+	(fp_text user "LM2596"
+		(at 18.95 20.47 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "47daee6c-bb32-48ef-a920-82874012c92d")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.2)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "${REFERENCE}"
+		(at 21.36 7.3 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "20fb6db1-4ec4-4e89-8fae-4ea0c44e2835")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" thru_hole rect
+		(at 1.275 19.73)
+		(size 2 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "d6b5710b-ce0d-4a30-a005-b79aed5b8a23")
+	)
+	(pad "2" thru_hole rect
+		(at 1.275 1.27)
+		(size 2 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "f5259c1c-a62a-4e60-94ea-e5dfa6ff1aab")
+	)
+	(pad "3" thru_hole rect
+		(at 42.33 19.725)
+		(size 2 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "ec427001-a5c6-43ea-b45b-edeb477dad1b")
+	)
+	(pad "4" thru_hole rect
+		(at 42.33 1.27)
+		(size 2 2)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "f40046b6-6a18-4570-82ac-5fa4608458ba")
+	)
+	(embedded_fonts no)
+	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/LM2596.STEP"
+		(offset
+			(xyz 21.8 -10.5 1)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
+)

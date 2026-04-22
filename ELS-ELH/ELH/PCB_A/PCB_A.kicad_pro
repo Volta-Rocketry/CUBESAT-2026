@@ -662,7 +662,7 @@
         "uuid": "6aec2650-5a34-45ab-bea8-78bd6e422a1f"
       }
     ],
-    "used_designators": "",
+    "used_designators": "D2,D4,#PWR4,#PWR7,#PWR11-13,#PWR15,#PWR17-19,#PWR21,#PWR26,#PWR31,#PWR41,#PWR45,#PWR49-52,ESP1,C1-3,C5-7,C11-12,Q3,Q5,BOOST2,Bornera1,Bornera8-11,Regulator3,R12-13,R21-24",
     "variants": []
   },
   "sheets": [

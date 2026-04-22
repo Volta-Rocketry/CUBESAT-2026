@@ -2,6 +2,7 @@
 
 #include "constants.h"
 #include "error_warning.h"
+#include "signals.h"
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -216,11 +217,8 @@ void CalibrateSensors() {
     mpuCalib.gyroTCO = 0.5; // 0.5 deg/s 
     mpuCalib.accTCO = 0.0015;  // 1.5 mg = 0.0015 G
 
-    Serial.println("MPU6050 calibration completed successfully.");
-
     // BMP180 calibration
     bmpCalib.bmpPresRef = pSumBMP / float(numReadings);
-    Serial.println("BME280 calibration completed successfully.");
 /*
     // Get calibration from BNO055
     bool calibrated = false;
@@ -285,8 +283,6 @@ void CalibrateSensors() {
 
     // BME280 calibration
     bmeCalib.bmePresRef = pSumBME / float(numReadings);
-    Serial.println("BME280 calibration completed successfully.");
-    SerialBT.println("BME280 calibration completed successfully.");
     // numCalib = 1;
 
     // GPS connection check
@@ -297,11 +293,6 @@ void CalibrateSensors() {
     if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
         GPSConected = true;
         // numCalib = 2;
-        Serial.println("GPS connected successfully.");
-        SerialBT.println("GPS connected successfully.");
-    } else if (!GPSConected) {
-        Serial.println("GPS connection failed during calibration.");
-        SerialBT.println("GPS connection failed during calibration.");
     }
 }
 
@@ -353,9 +344,6 @@ void CalibratMagnetometer() {
     qmcCalib.qmcMagScaleX = radioPromedio / radioX;
     qmcCalib.qmcMagScaleY = radioPromedio / radioY;
     qmcCalib.qmcMagScaleZ = radioPromedio / radioZ;
-
-    Serial.println("Magnetometer connected successfully.");
-    SerialBT.println("Magnetometer connected successfully.");
 }
 
 

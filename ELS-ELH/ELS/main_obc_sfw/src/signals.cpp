@@ -1,4 +1,4 @@
-#include "LEDs_Buzzer_&_signals.h"
+#include "signals.h"
 
 #include <Arduino.h>
 #include "constants.h"
@@ -20,36 +20,7 @@ void InitPCB() {
             blinkCount++;
         }
     }
-    Serial.println("PCB initialized successfully.");
 }
-/*
-void PlayBuzzerTone(long frequence, long duration){
-    static unsigned long startMilis = 0, lastMicros = 0;
-    static long halfPeriod = 0;
-    static bool state = HIGH;
-
-    if (frequence > 0) {
-        halfPeriod = 1000000 / (frequence * 2);
-        startMilis = millis();
-        return; 
-    }
-    else if (duration == 0) {
-        return; 
-    }
-
-    if (millis() - startMilis >= duration) {
-        duration = 0;
-        pcf.digitalWrite(BUZZER_PIN, HIGH); 
-        return;
-    }
-
-    if (micros() - lastMicros >= halfPeriod) {
-        lastMicros = micros();
-        state = !state;
-        pcf.digitalWrite(BUZZER_PIN, state);
-    }
-}
-    */
 
     void PlayBuzzerTone(long frequency, long duration) {
     if (frequency == 0) return;

@@ -768,7 +768,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "ELH_Library:ESP32 DEVKIT V1"
 			(at 0 0 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -950,42 +950,6 @@
 					)
 				)
 				(number "D15"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin bidirectional line
-				(at 15.24 -25.4 180)
-				(length 2.54)
-				(name "D16"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "D16"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-			)
-			(pin bidirectional line
-				(at 15.24 -22.86 180)
-				(length 2.54)
-				(name "D17"
-					(effects
-						(font
-							(size 1.27 1.27)
-						)
-					)
-				)
-				(number "D17"
 					(effects
 						(font
 							(size 1.27 1.27)
@@ -1263,6 +1227,24 @@
 					)
 				)
 			)
+			(pin bidirectional line
+				(at 15.24 -25.4 180)
+				(length 2.54)
+				(name "D16/RX2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "RX2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
 			(pin output line
 				(at 15.24 -7.62 180)
 				(length 2.54)
@@ -1274,6 +1256,24 @@
 					)
 				)
 				(number "TX0"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(pin bidirectional line
+				(at 15.24 -22.86 180)
+				(length 2.54)
+				(name "D17/TX2"
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+				(number "TX2"
 					(effects
 						(font
 							(size 1.27 1.27)

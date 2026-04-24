@@ -3366,12 +3366,6 @@
 		(uuid "07e725b0-0f8d-4e12-a2c0-3083d0752dd0")
 	)
 	(junction
-		(at 59.69 148.59)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "0d687391-b753-4172-a791-be0eed6ec460")
-	)
-	(junction
 		(at 93.98 153.67)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3486,6 +3480,12 @@
 		(uuid "6c1fd3ef-3448-4418-b4dc-fae7f56679d1")
 	)
 	(junction
+		(at 59.69 160.02)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7bce1bf5-2cb1-43b4-bb5e-8856099433df")
+	)
+	(junction
 		(at 59.69 158.75)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3558,12 +3558,6 @@
 		(uuid "bc02550a-9593-4b48-9ce3-6dbde331a608")
 	)
 	(junction
-		(at 59.69 160.02)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c0998146-f47c-4fba-8ffe-1551663a7904")
-	)
-	(junction
 		(at 257.81 55.88)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3586,6 +3580,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "cd0b1edd-dba1-4852-9738-977654182b04")
+	)
+	(junction
+		(at 59.69 148.59)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "cd1d2f90-bff2-450d-ba5a-9567bedc2328")
 	)
 	(junction
 		(at 217.17 113.03)
@@ -3652,6 +3652,16 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "fe492e02-c2c5-47a0-9310-ece3edbde7b7")
+	)
+	(wire
+		(pts
+			(xy 59.69 158.75) (xy 59.69 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0616b27a-c254-4992-9d48-767daac7abe9")
 	)
 	(wire
 		(pts
@@ -4159,16 +4169,6 @@
 	)
 	(wire
 		(pts
-			(xy 59.69 158.75) (xy 59.69 160.02)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5308b0c0-f34c-48b5-ae66-d4e3e218bd93")
-	)
-	(wire
-		(pts
 			(xy 92.71 25.4) (xy 101.6 25.4)
 		)
 		(stroke
@@ -4186,16 +4186,6 @@
 			(type default)
 		)
 		(uuid "56ef91eb-3458-4e86-8513-b35ad9d54f94")
-	)
-	(wire
-		(pts
-			(xy 59.69 160.02) (xy 59.69 161.29)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "56f8dce7-a416-4e55-a8c3-c539370cc03a")
 	)
 	(wire
 		(pts
@@ -4400,6 +4390,16 @@
 			(type default)
 		)
 		(uuid "72c67f13-4b7c-438f-8655-c128ca1dbe18")
+	)
+	(wire
+		(pts
+			(xy 59.69 160.02) (xy 59.69 161.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "74f5b638-028c-4315-bc0c-2cc1c800cd64")
 	)
 	(wire
 		(pts
@@ -5412,7 +5412,7 @@
 		)
 		(uuid "186af1f1-fc16-4e8d-a72e-352283688f2d")
 	)
-	(label "CH_B_MOSFET_ESP2_3V3"
+	(label "CH_B_MOSFET_ESP_CTR_3V3"
 		(at 194.31 50.8 180)
 		(effects
 			(font

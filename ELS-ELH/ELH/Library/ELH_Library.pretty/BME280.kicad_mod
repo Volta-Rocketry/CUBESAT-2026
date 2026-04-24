@@ -8,7 +8,7 @@
 		(unlocked yes)
 		(layer "F.SilkS")
 		(hide yes)
-		(uuid "fda4ddd8-27fb-487c-b714-6939b11d4f76")
+		(uuid "d0f67ddc-eead-4640-986e-5197eeaea67b")
 		(effects
 			(font
 				(size 1 1)
@@ -20,7 +20,7 @@
 		(at 12.7 8.66 0)
 		(unlocked yes)
 		(layer "F.Fab")
-		(uuid "4199a11b-4d1e-4450-8dd9-9ae2ad88fda3")
+		(uuid "f07e0eb3-befa-4923-8178-5d3cc635c5be")
 		(effects
 			(font
 				(size 1 1)
@@ -33,7 +33,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "e01f7cb9-7093-44ba-b032-8710adccd692")
+		(uuid "ba63f24e-a32d-48d9-b6ff-f3fd11467b7e")
 		(effects
 			(font
 				(size 1 1)
@@ -46,7 +46,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "d14319a9-95a7-431d-95ce-167f18d33e7e")
+		(uuid "76655d67-762b-46c5-aeeb-3c16b63b8411")
 		(effects
 			(font
 				(size 1 1)
@@ -65,7 +65,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "7e09ed5f-225a-40a6-9017-6c8bf9f5cd9d")
+		(uuid "932860f7-d783-485e-8036-a111c9f9e073")
 	)
 	(fp_circle
 		(center 2.54 2.54)
@@ -76,7 +76,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "83d4e4d6-3c9b-4fea-adec-12e419cf9969")
+		(uuid "a0020961-1773-438d-9cee-5fca93d8f57b")
 	)
 	(fp_circle
 		(center 2.54 15.24)
@@ -87,7 +87,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "fcd470cc-f5de-4c38-9dae-6bbf86624d60")
+		(uuid "b63526e5-6c26-49ee-bf18-a063f1f080f1")
 	)
 	(fp_circle
 		(center 22.86 2.54)
@@ -98,7 +98,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "ae1c2567-a7cf-4951-9bc9-2c95a4345ace")
+		(uuid "992147c3-3e27-435e-b1a1-b3885e8847ec")
 	)
 	(fp_circle
 		(center 22.86 15.24)
@@ -109,7 +109,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "3fc6405b-05fb-46f6-a023-b760b37def1b")
+		(uuid "0a483a1a-0198-4f80-a69c-c687c031dbd5")
 	)
 	(fp_rect
 		(start -0.25 -0.25)
@@ -120,13 +120,13 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "78423f55-8284-4bd8-9a0a-ef4d9a9d0f27")
+		(uuid "ef50d56a-f04c-462f-8616-9d940adb9798")
 	)
 	(fp_text user "VIN"
 		(at 4 17.6 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "0e4021e3-5edd-45b0-b26b-d4822b7d1dce")
+		(uuid "045c4f88-4d52-44d3-9c9a-aba89aafff64")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -139,7 +139,7 @@
 		(at 6.5 13.8 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "bc08dc16-294e-4fbd-8c57-fe3f9718c763")
+		(uuid "56336090-5919-4b67-9aff-b41f5d773435")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -152,7 +152,7 @@
 		(at 7.2 4 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "4b920097-ae31-493b-80ba-ce363682725f")
+		(uuid "8e9b2b3f-1d9f-4d4f-8573-fe96d728b8e8")
 		(effects
 			(font
 				(size 0.6 0.6)
@@ -165,7 +165,7 @@
 		(at 8.8 17.6 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "82bd42e3-9a36-4ce0-9d25-81eaf57f85bd")
+		(uuid "81c939bb-4e2f-4298-b13a-6b2fcd22121d")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -178,7 +178,7 @@
 		(at 11.5 13.8 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "a530d96d-b86c-4cf3-8387-dc6e6f9c0c77")
+		(uuid "66c7cf91-bbf8-4b52-a3e4-23a5aaf11616")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -191,7 +191,7 @@
 		(at 12.7 2.54 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "b14d2334-265c-4f05-8e6a-7f525ddf553c")
+		(uuid "8be2f8a9-c890-4902-a94d-2febc75efd2b")
 		(effects
 			(font
 				(size 1 1)
@@ -205,7 +205,7 @@
 		(at 14 17.6 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "b790b139-c309-47bc-8485-db5afbdc49a2")
+		(uuid "c69a239e-7d14-4d7a-a51f-3b642cda6f12")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -218,7 +218,7 @@
 		(at 16.75 13.8 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "529d8615-a0ff-4f9e-a9b2-febfa7f4bc21")
+		(uuid "8c097f99-5154-4f70-bea3-56db78af1032")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -231,7 +231,7 @@
 		(at 19.5 17.6 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "c05fe90b-8999-477e-9da6-73dc3a0928ef")
+		(uuid "a4d13f7b-3bba-4455-b1d7-c656444980ea")
 		(effects
 			(font
 				(size 0.8 0.8)
@@ -244,7 +244,7 @@
 		(at 12.7 10.16 0)
 		(unlocked yes)
 		(layer "F.Fab")
-		(uuid "fbd08a1f-8791-4844-8217-4bc9a6954e10")
+		(uuid "e67158eb-aa32-4a5b-9fb3-fd30d61a49c0")
 		(effects
 			(font
 				(size 1 1)
@@ -260,7 +260,7 @@
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
 		(thermal_bridge_angle 45)
-		(uuid "72f936fc-ca72-45ff-93a7-2fef24e308a5")
+		(uuid "8ece513f-8886-4865-949d-28aafd27bc04")
 	)
 	(pad "CS" thru_hole oval
 		(at 20.32 15.24)
@@ -270,7 +270,7 @@
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
 		(thermal_bridge_angle 45)
-		(uuid "87223ee0-5b04-4004-a0ae-157eb1666e5a")
+		(uuid "5eca13b6-0806-4217-8fea-c75a19e336bb")
 	)
 	(pad "GND" thru_hole oval
 		(at 10.16 15.24)
@@ -280,7 +280,7 @@
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
 		(thermal_bridge_angle 45)
-		(uuid "f01a363c-24b8-4b0d-a474-6ae2d15e9c21")
+		(uuid "c62e22ba-c38f-4393-9587-c4c6fbc9af9a")
 	)
 	(pad "SCK" thru_hole oval
 		(at 12.7 15.24)
@@ -290,7 +290,7 @@
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
 		(thermal_bridge_angle 45)
-		(uuid "91460ca7-5b23-4592-997d-881399879226")
+		(uuid "2a584653-e254-4d2e-a312-e302fd647129")
 	)
 	(pad "SD0" thru_hole oval
 		(at 15.24 15.24)
@@ -300,7 +300,7 @@
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
 		(thermal_bridge_angle 45)
-		(uuid "01b2db91-59c5-4fd1-be08-045fa9262537")
+		(uuid "d21681d3-db76-4302-abbd-1edc5cab3288")
 	)
 	(pad "SDI" thru_hole oval
 		(at 17.78 15.24)
@@ -310,7 +310,7 @@
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
 		(thermal_bridge_angle 45)
-		(uuid "eae74f46-6d08-43a9-9ce5-01fe9fcb69de")
+		(uuid "bec88883-0e29-4cf6-8afa-a37c2041ad7e")
 	)
 	(pad "VIN" thru_hole oval
 		(at 5.08 15.24)
@@ -319,7 +319,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "eccc05b7-3cf7-4e56-82bf-66d450244748")
+		(uuid "e08d19cf-d4f7-4082-bf00-4b2417ab8621")
 	)
 	(embedded_fonts no)
 	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/BME_280_ADAFRUIT.STEP"
@@ -335,7 +335,7 @@
 	)
 	(model "D:/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/BME_280_ADAFRUIT.STEP"
 		(offset
-			(xyz 13 -8.5 0)
+			(xyz 12.7 -8.8 0)
 		)
 		(scale
 			(xyz 1 1 1)

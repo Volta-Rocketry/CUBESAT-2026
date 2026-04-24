@@ -6425,8 +6425,16 @@
 		(uuid "05329662-3ef2-4d62-9804-015e2df4f1b2")
 	)
 	(no_connect
+		(at 93.98 156.21)
+		(uuid "056d79a0-7e8e-4e41-95d1-664d4e4ff142")
+	)
+	(no_connect
 		(at 44.45 24.13)
 		(uuid "0f13057d-3c9d-4809-8a9b-228c94a1b874")
+	)
+	(no_connect
+		(at 71.12 153.67)
+		(uuid "11198b2f-487a-42fc-9c49-d8da0c021b7c")
 	)
 	(no_connect
 		(at 114.3 124.46)
@@ -6441,8 +6449,24 @@
 		(uuid "1f45caff-83a5-444a-a5c2-d936c0fe69b1")
 	)
 	(no_connect
+		(at 71.12 156.21)
+		(uuid "29fa8e32-780e-43ac-b816-848c7675f732")
+	)
+	(no_connect
+		(at 71.12 179.07)
+		(uuid "2f8632fc-39be-4e33-a8e5-1947681aa254")
+	)
+	(no_connect
+		(at 93.98 179.07)
+		(uuid "510b74dd-a6cf-4fcc-ad38-57ec5235156d")
+	)
+	(no_connect
 		(at 165.1 90.17)
 		(uuid "6269b006-231b-4ca9-a7e9-eb5df0d092b7")
+	)
+	(no_connect
+		(at 71.12 151.13)
+		(uuid "66ac0e2c-8e57-40c9-928e-1370eef0bd38")
 	)
 	(no_connect
 		(at 44.45 29.21)
@@ -6453,8 +6477,16 @@
 		(uuid "78c85d1c-c395-4c89-910a-639e99c1cb38")
 	)
 	(no_connect
+		(at 93.98 158.75)
+		(uuid "7910c889-2e96-4907-a028-0b7606174e74")
+	)
+	(no_connect
 		(at 69.85 59.69)
 		(uuid "7b27921a-c5c3-4770-8fef-dca9e94f5dbb")
+	)
+	(no_connect
+		(at 93.98 181.61)
+		(uuid "86df4523-917e-4280-b649-3b98eab01369")
 	)
 	(no_connect
 		(at 152.4 115.57)
@@ -9373,7 +9405,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "0091284e-7bfd-4d08-af8b-f60700e52a92")
-		(property "Reference" "#PWR042"
+		(property "Reference" "#PWR07"
 			(at 240.03 20.32 0)
 			(hide yes)
 			(show_name no)
@@ -9433,7 +9465,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR042")
+					(reference "#PWR07")
 					(unit 1)
 				)
 			)
@@ -9451,7 +9483,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "011af8ac-7f91-4564-952d-aec79e39fd3f")
-		(property "Reference" "#PWR056"
+		(property "Reference" "#PWR034"
 			(at 60.96 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -9512,7 +9544,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR056")
+					(reference "#PWR034")
 					(unit 1)
 				)
 			)
@@ -9530,7 +9562,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "01ea35ca-a0a2-437c-a9ab-b79ba54eae17")
-		(property "Reference" "D1"
+		(property "Reference" "D2"
 			(at 158.75 171.45 0)
 			(hide yes)
 			(show_name no)
@@ -9551,7 +9583,7 @@
 				)
 			)
 		)
-		(property "Footprint" "LED_THT:LED_D5.0mm-4_RGB_Staggered_Pins"
+		(property "Footprint" ""
 			(at 158.75 182.88 0)
 			(hide yes)
 			(show_name no)
@@ -9599,7 +9631,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "D1")
+					(reference "D2")
 					(unit 1)
 				)
 			)
@@ -9731,7 +9763,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ELH_Library:TXS0108E"
+		(property "Footprint" ""
 			(at 45.72 81.28 0)
 			(hide yes)
 			(show_name no)
@@ -9844,7 +9876,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "110690b3-1853-480d-a177-a92d0c4dfd06")
-		(property "Reference" "R12"
+		(property "Reference" "R2"
 			(at 215.9 81.28 90)
 			(hide yes)
 			(show_name no)
@@ -9865,7 +9897,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 221.234 81.026 90)
 			(hide yes)
 			(show_name no)
@@ -9907,7 +9939,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R12")
+					(reference "R2")
 					(unit 1)
 				)
 			)
@@ -9924,7 +9956,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "141818cd-9727-47ff-a323-27d8ca64acb5")
-		(property "Reference" "R9"
+		(property "Reference" "R12"
 			(at 149.86 186.69 90)
 			(hide yes)
 			(show_name no)
@@ -9935,7 +9967,7 @@
 				)
 			)
 		)
-		(property "Value" "R_US"
+		(property "Value" "330"
 			(at 150.114 186.944 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9945,7 +9977,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 149.606 190.246 90)
 			(hide yes)
 			(show_name no)
@@ -9987,7 +10019,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R9")
+					(reference "R12")
 					(unit 1)
 				)
 			)
@@ -10004,7 +10036,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "183dc0e4-9317-44a9-b62d-3e60e21ba427")
-		(property "Reference" "J19"
+		(property "Reference" "J8"
 			(at 234.696 58.42 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10024,7 +10056,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 234.95 63.5 0)
 			(hide yes)
 			(show_name no)
@@ -10063,7 +10095,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J19")
+					(reference "J8")
 					(unit 1)
 				)
 			)
@@ -10081,7 +10113,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "18937fe2-9c5b-461c-964d-415057820e79")
-		(property "Reference" "#PWR012"
+		(property "Reference" "#PWR030"
 			(at 191.77 90.17 0)
 			(hide yes)
 			(show_name no)
@@ -10142,7 +10174,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR012")
+					(reference "#PWR030")
 					(unit 1)
 				)
 			)
@@ -10159,9 +10191,8 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "1d15b0dd-d127-45b9-9ba8-8cd4ab354dc6")
-		(property "Reference" "ESP1"
-			(at 54.61 17.78 0)
-			(hide yes)
+		(property "Reference" "ESP_MAIN1"
+			(at 53.848 18.796 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -10176,7 +10207,7 @@
 			(do_not_autoplace no)
 			(effects
 				(font
-					(size 1.27 1.27)
+					(size 0.762 0.762)
 				)
 				(justify right)
 			)
@@ -10304,7 +10335,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "ESP1")
+					(reference "ESP_MAIN1")
 					(unit 1)
 				)
 			)
@@ -10400,7 +10431,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "2066bb12-df92-414b-949f-1ab16205082b")
-		(property "Reference" "J8"
+		(property "Reference" "J2"
 			(at 243.84 15.24 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10420,7 +10451,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 245.11 19.05 0)
 			(hide yes)
 			(show_name no)
@@ -10468,7 +10499,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J8")
+					(reference "J2")
 					(unit 1)
 				)
 			)
@@ -10485,7 +10516,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "24a2a78d-1565-44fc-a9fe-ccec65fbc288")
-		(property "Reference" "R3"
+		(property "Reference" "R7"
 			(at 199.39 139.7 90)
 			(hide yes)
 			(show_name no)
@@ -10506,7 +10537,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 199.644 145.034 90)
 			(hide yes)
 			(show_name no)
@@ -10548,7 +10579,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R3")
+					(reference "R7")
 					(unit 1)
 				)
 			)
@@ -10565,7 +10596,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "26f72a8e-bed7-477e-8a19-e8761375b6a6")
-		(property "Reference" "J14"
+		(property "Reference" "J6"
 			(at 244.094 56.134 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10585,7 +10616,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 252.73 58.42 0)
 			(hide yes)
 			(show_name no)
@@ -10624,7 +10655,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J14")
+					(reference "J6")
 					(unit 1)
 				)
 			)
@@ -10642,7 +10673,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "27a36d20-beb9-474e-8217-75a0ce1f92ba")
-		(property "Reference" "#PWR014"
+		(property "Reference" "#PWR035"
 			(at 48.26 114.3 0)
 			(hide yes)
 			(show_name no)
@@ -10703,7 +10734,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR014")
+					(reference "#PWR035")
 					(unit 1)
 				)
 			)
@@ -10720,7 +10751,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "2d27c43e-1c35-437d-9f99-20944664e1f4")
-		(property "Reference" "#PWR059"
+		(property "Reference" "#PWR019"
 			(at 157.48 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -10780,7 +10811,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR059")
+					(reference "#PWR019")
 					(unit 1)
 				)
 			)
@@ -10797,7 +10828,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "2eb839ba-1221-4ef0-8dac-d233f94cee25")
-		(property "Reference" "R8"
+		(property "Reference" "R11"
 			(at 149.86 181.61 90)
 			(hide yes)
 			(show_name no)
@@ -10808,7 +10839,7 @@
 				)
 			)
 		)
-		(property "Value" "R_US"
+		(property "Value" "330"
 			(at 150.114 181.864 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10818,7 +10849,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 149.606 185.166 90)
 			(hide yes)
 			(show_name no)
@@ -10860,7 +10891,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R8")
+					(reference "R11")
 					(unit 1)
 				)
 			)
@@ -10878,7 +10909,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "305d74f1-b7c2-44f4-b2cf-d3d2f4577769")
-		(property "Reference" "#PWR018"
+		(property "Reference" "#PWR040"
 			(at 146.05 120.65 0)
 			(hide yes)
 			(show_name no)
@@ -10939,7 +10970,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR018")
+					(reference "#PWR040")
 					(unit 1)
 				)
 			)
@@ -10956,7 +10987,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "4064d07f-90a1-402a-99ac-1bf4cbfc9bcf")
-		(property "Reference" "#PWR057"
+		(property "Reference" "#PWR013"
 			(at 157.48 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -11016,7 +11047,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR057")
+					(reference "#PWR013")
 					(unit 1)
 				)
 			)
@@ -11033,7 +11064,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "40f8382f-91ff-4008-ba1c-41ed53d4de90")
-		(property "Reference" "#PWR062"
+		(property "Reference" "#PWR018"
 			(at 119.38 59.69 0)
 			(hide yes)
 			(show_name no)
@@ -11093,7 +11124,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR062")
+					(reference "#PWR018")
 					(unit 1)
 				)
 			)
@@ -11110,7 +11141,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "432d2129-39b6-42d0-b066-6c244da285ab")
-		(property "Reference" "#PWR040"
+		(property "Reference" "#PWR06"
 			(at 220.98 30.48 0)
 			(hide yes)
 			(show_name no)
@@ -11170,7 +11201,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR040")
+					(reference "#PWR06")
 					(unit 1)
 				)
 			)
@@ -11188,7 +11219,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4b2a7779-b585-42cd-8b9d-b6893e6114d5")
-		(property "Reference" "#PWR08"
+		(property "Reference" "#PWR044"
 			(at 196.85 151.13 0)
 			(hide yes)
 			(show_name no)
@@ -11249,7 +11280,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR08")
+					(reference "#PWR044")
 					(unit 1)
 				)
 			)
@@ -11266,7 +11297,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "4dd9345e-66a0-4f43-98fb-0b453952895f")
-		(property "Reference" "#PWR04"
+		(property "Reference" "#PWR028"
 			(at 281.94 90.17 0)
 			(hide yes)
 			(show_name no)
@@ -11327,7 +11358,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR04")
+					(reference "#PWR028")
 					(unit 1)
 				)
 			)
@@ -11364,7 +11395,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 16.51 96.52 0)
 			(hide yes)
 			(show_name no)
@@ -11436,7 +11467,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4e758116-116c-49b1-8dcd-de4a16a66b75")
-		(property "Reference" "#PWR053"
+		(property "Reference" "#PWR033"
 			(at 31.75 106.68 0)
 			(hide yes)
 			(show_name no)
@@ -11497,7 +11528,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR053")
+					(reference "#PWR033")
 					(unit 1)
 				)
 			)
@@ -11515,7 +11546,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4ec9f114-b441-4ed4-b584-83e39fb92cd6")
-		(property "Reference" "J7"
+		(property "Reference" "J3"
 			(at 267.97 15.24 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11535,7 +11566,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 269.24 19.05 0)
 			(hide yes)
 			(show_name no)
@@ -11583,7 +11614,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J7")
+					(reference "J3")
 					(unit 1)
 				)
 			)
@@ -11699,7 +11730,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "5706f05f-f57e-45df-a999-022cc4c38662")
-		(property "Reference" "#PWR015"
+		(property "Reference" "#PWR029"
 			(at 118.11 88.9 0)
 			(hide yes)
 			(show_name no)
@@ -11759,7 +11790,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR015")
+					(reference "#PWR029")
 					(unit 1)
 				)
 			)
@@ -11776,7 +11807,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "579f6e03-1803-4f8b-9ff4-8b78332c62c3")
-		(property "Reference" "J18"
+		(property "Reference" "J14"
 			(at 65.532 96.52 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11796,7 +11827,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 62.23 99.06 0)
 			(hide yes)
 			(show_name no)
@@ -11850,7 +11881,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J18")
+					(reference "J14")
 					(unit 1)
 				)
 			)
@@ -11868,7 +11899,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5bbe5600-c637-4e91-888b-e96037cde200")
-		(property "Reference" "D10"
+		(property "Reference" "D1"
 			(at 275.59 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -11889,7 +11920,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ELH_Library:LED RGB"
+		(property "Footprint" ""
 			(at 275.59 82.55 0)
 			(hide yes)
 			(show_name no)
@@ -11937,7 +11968,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "D10")
+					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -11954,7 +11985,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "612a8dff-a0f5-4726-9520-9ccba9fd530b")
-		(property "Reference" "#PWR060"
+		(property "Reference" "#PWR014"
 			(at 119.38 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -12014,7 +12045,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR060")
+					(reference "#PWR014")
 					(unit 1)
 				)
 			)
@@ -12031,7 +12062,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "65e094d4-0104-4a28-99e5-150cee7ed2a4")
-		(property "Reference" "C3"
+		(property "Reference" "C4"
 			(at 44.4563 147.32 90)
 			(hide yes)
 			(show_name no)
@@ -12052,7 +12083,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
+		(property "Footprint" ""
 			(at 44.45 153.67 0)
 			(hide yes)
 			(show_name no)
@@ -12094,7 +12125,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "C3")
+					(reference "C4")
 					(unit 1)
 				)
 			)
@@ -12111,7 +12142,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "683b1753-e513-4475-b3f5-a67d9d326b3c")
-		(property "Reference" "#PWR051"
+		(property "Reference" "#PWR04"
 			(at 157.48 24.13 0)
 			(hide yes)
 			(show_name no)
@@ -12171,7 +12202,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR051")
+					(reference "#PWR04")
 					(unit 1)
 				)
 			)
@@ -12188,7 +12219,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "6a7d74b3-027c-4b05-9213-c3e0b6c42c1c")
-		(property "Reference" "#PWR022"
+		(property "Reference" "#PWR024"
 			(at 227.33 83.82 0)
 			(hide yes)
 			(show_name no)
@@ -12248,7 +12279,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR022")
+					(reference "#PWR024")
 					(unit 1)
 				)
 			)
@@ -12266,7 +12297,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "6d976963-23d9-454d-b939-1225dd88a82d")
-		(property "Reference" "J4"
+		(property "Reference" "J5"
 			(at 146.685 16.51 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12286,7 +12317,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x20_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 146.05 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -12382,7 +12413,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J4")
+					(reference "J5")
 					(unit 1)
 				)
 			)
@@ -12399,7 +12430,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "6e7a93c1-0f5c-44d9-905c-ddee09e7e2ad")
-		(property "Reference" "#PWR050"
+		(property "Reference" "#PWR021"
 			(at 147.32 67.31 0)
 			(hide yes)
 			(show_name no)
@@ -12459,7 +12490,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR050")
+					(reference "#PWR021")
 					(unit 1)
 				)
 			)
@@ -12476,7 +12507,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "73702715-45dc-486f-aff0-024da66024c5")
-		(property "Reference" "#PWR044"
+		(property "Reference" "#PWR09"
 			(at 264.16 20.32 0)
 			(hide yes)
 			(show_name no)
@@ -12536,7 +12567,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR044")
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
@@ -12554,7 +12585,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "75a82b75-61fe-4347-b935-933a753ec6f0")
-		(property "Reference" "#PWR023"
+		(property "Reference" "#PWR017"
 			(at 35.56 59.69 0)
 			(hide yes)
 			(show_name no)
@@ -12615,7 +12646,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR023")
+					(reference "#PWR017")
 					(unit 1)
 				)
 			)
@@ -12632,7 +12663,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "7602586f-e4b1-4037-9108-c783e7f11753")
-		(property "Reference" "R1"
+		(property "Reference" "R8"
 			(at 44.45 140.97 90)
 			(hide yes)
 			(show_name no)
@@ -12653,7 +12684,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 44.704 146.304 90)
 			(hide yes)
 			(show_name no)
@@ -12695,7 +12726,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R1")
+					(reference "R8")
 					(unit 1)
 				)
 			)
@@ -12713,7 +12744,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "76b47651-1c2f-4e8f-9261-9b0d647b2fa3")
-		(property "Reference" "J2"
+		(property "Reference" "J12"
 			(at 182.245 67.31 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12733,7 +12764,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 181.61 74.93 0)
 			(hide yes)
 			(show_name no)
@@ -12781,7 +12812,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J2")
+					(reference "J12")
 					(unit 1)
 				)
 			)
@@ -12798,7 +12829,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "7c47eec1-7cef-49f1-9a45-4d5f76bb8c9c")
-		(property "Reference" "#PWR043"
+		(property "Reference" "#PWR08"
 			(at 242.57 30.48 0)
 			(hide yes)
 			(show_name no)
@@ -12858,7 +12889,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR043")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -12875,7 +12906,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "7c6edd7b-9f4f-41d8-9945-9faaf8708de0")
-		(property "Reference" "R5"
+		(property "Reference" "R3"
 			(at 266.7 81.28 90)
 			(hide yes)
 			(show_name no)
@@ -12896,7 +12927,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 266.446 84.836 90)
 			(hide yes)
 			(show_name no)
@@ -12938,7 +12969,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R5")
+					(reference "R3")
 					(unit 1)
 				)
 			)
@@ -12955,7 +12986,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "7f9ea0ba-01ac-4afe-9b2f-3efa9f275db3")
-		(property "Reference" "#PWR045"
+		(property "Reference" "#PWR010"
 			(at 266.7 30.48 0)
 			(hide yes)
 			(show_name no)
@@ -13015,7 +13046,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR045")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -13032,7 +13063,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "806da399-39b5-4bc4-89bd-37a25a2a4ea5")
-		(property "Reference" "#PWR038"
+		(property "Reference" "#PWR05"
 			(at 218.44 20.32 0)
 			(hide yes)
 			(show_name no)
@@ -13092,7 +13123,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR038")
+					(reference "#PWR05")
 					(unit 1)
 				)
 			)
@@ -13130,7 +13161,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
+		(property "Footprint" ""
 			(at 43.18 58.42 0)
 			(hide yes)
 			(show_name no)
@@ -13212,7 +13243,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Buzzer_Beeper:Buzzer_12x9.5RM7.6"
+		(property "Footprint" ""
 			(at 205.105 146.05 90)
 			(hide yes)
 			(show_name no)
@@ -13271,7 +13302,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "87d41179-9ead-455a-a51b-1e7a8d558a80")
-		(property "Reference" "#PWR021"
+		(property "Reference" "#PWR039"
 			(at 85.09 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -13331,7 +13362,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR021")
+					(reference "#PWR039")
 					(unit 1)
 				)
 			)
@@ -13348,7 +13379,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "8c88a34b-36aa-4a6b-af5b-2913c02a9c4f")
-		(property "Reference" "#PWR026"
+		(property "Reference" "#PWR023"
 			(at 193.04 72.39 0)
 			(hide yes)
 			(show_name no)
@@ -13408,7 +13439,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR026")
+					(reference "#PWR023")
 					(unit 1)
 				)
 			)
@@ -13425,7 +13456,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "94a78a75-2b47-4831-8df0-d615d7a6adc4")
-		(property "Reference" "#PWR039"
+		(property "Reference" "#PWR02"
 			(at 147.32 21.59 0)
 			(hide yes)
 			(show_name no)
@@ -13485,7 +13516,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR039")
+					(reference "#PWR02")
 					(unit 1)
 				)
 			)
@@ -13502,7 +13533,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "9e7d64af-5848-401a-bf6b-e465cc3cd698")
-		(property "Reference" "J15"
+		(property "Reference" "J7"
 			(at 243.84 59.944 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -13522,7 +13553,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 252.73 62.23 0)
 			(hide yes)
 			(show_name no)
@@ -13561,7 +13592,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J15")
+					(reference "J7")
 					(unit 1)
 				)
 			)
@@ -13579,7 +13610,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "9fa36ab0-4be4-4516-adb5-c285d85f5f32")
-		(property "Reference" "#PWR048"
+		(property "Reference" "#PWR046"
 			(at 165.1 190.5 0)
 			(hide yes)
 			(show_name no)
@@ -13639,7 +13670,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR048")
+					(reference "#PWR046")
 					(unit 1)
 				)
 			)
@@ -13656,7 +13687,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "a7e136db-239f-4de7-a183-fcfa9b64d300")
-		(property "Reference" "#PWR013"
+		(property "Reference" "#PWR037"
 			(at 95.25 116.84 0)
 			(hide yes)
 			(show_name no)
@@ -13716,7 +13747,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR013")
+					(reference "#PWR037")
 					(unit 1)
 				)
 			)
@@ -13733,7 +13764,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "a8d29dbf-1b98-4abf-8933-4ee238754fbc")
-		(property "Reference" "#PWR064"
+		(property "Reference" "#PWR01"
 			(at 119.38 21.59 0)
 			(hide yes)
 			(show_name no)
@@ -13793,7 +13824,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR064")
+					(reference "#PWR01")
 					(unit 1)
 				)
 			)
@@ -13810,7 +13841,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "a97a9bb3-b8e2-4b1d-ade3-da4ac78e52fa")
-		(property "Reference" "#PWR016"
+		(property "Reference" "#PWR036"
 			(at 38.1 116.84 0)
 			(hide yes)
 			(show_name no)
@@ -13870,7 +13901,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR016")
+					(reference "#PWR036")
 					(unit 1)
 				)
 			)
@@ -13887,7 +13918,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "acdbfb76-4dc1-496e-9af0-7102dfba1e67")
-		(property "Reference" "C1"
+		(property "Reference" "C3"
 			(at 44.4437 149.86 90)
 			(hide yes)
 			(show_name no)
@@ -13908,7 +13939,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
+		(property "Footprint" ""
 			(at 44.45 143.51 0)
 			(hide yes)
 			(show_name no)
@@ -13950,7 +13981,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "C1")
+					(reference "C3")
 					(unit 1)
 				)
 			)
@@ -13968,7 +13999,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "aeee7108-1b5d-4932-a219-c2d0e760908b")
-		(property "Reference" "#PWR030"
+		(property "Reference" "#PWR016"
 			(at 25.4 57.15 0)
 			(hide yes)
 			(show_name no)
@@ -14029,7 +14060,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR030")
+					(reference "#PWR016")
 					(unit 1)
 				)
 			)
@@ -14047,7 +14078,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b3382d64-b7bb-4b9e-b385-294e76027990")
-		(property "Reference" "#PWR055"
+		(property "Reference" "#PWR027"
 			(at 52.07 82.55 0)
 			(hide yes)
 			(show_name no)
@@ -14108,7 +14139,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR055")
+					(reference "#PWR027")
 					(unit 1)
 				)
 			)
@@ -14146,7 +14177,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 266.446 89.916 90)
 			(hide yes)
 			(show_name no)
@@ -14206,7 +14237,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b834a234-6632-49c8-a0ec-3a292424760a")
-		(property "Reference" "J9"
+		(property "Reference" "J1"
 			(at 222.25 15.24 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -14226,7 +14257,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 223.52 19.05 0)
 			(hide yes)
 			(show_name no)
@@ -14274,7 +14305,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J9")
+					(reference "J1")
 					(unit 1)
 				)
 			)
@@ -14291,7 +14322,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "b8611067-a47a-42af-9bec-ea9c68efbecc")
-		(property "Reference" "J16"
+		(property "Reference" "J10"
 			(at 250.444 67.056 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -14311,7 +14342,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 252.73 67.31 0)
 			(hide yes)
 			(show_name no)
@@ -14350,7 +14381,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J16")
+					(reference "J10")
 					(unit 1)
 				)
 			)
@@ -14367,7 +14398,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "b9052982-e5e2-4bcd-b208-dc82463531d4")
-		(property "Reference" "R2"
+		(property "Reference" "R9"
 			(at 44.45 152.4 90)
 			(hide yes)
 			(show_name no)
@@ -14389,7 +14420,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 44.704 157.734 90)
 			(hide yes)
 			(show_name no)
@@ -14431,7 +14462,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R2")
+					(reference "R9")
 					(unit 1)
 				)
 			)
@@ -14552,7 +14583,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "bb53271e-d0ed-4b28-bfbf-918d26caa3f2")
-		(property "Reference" "#PWR05"
+		(property "Reference" "#PWR045"
 			(at 38.1 184.15 0)
 			(hide yes)
 			(show_name no)
@@ -14613,7 +14644,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR05")
+					(reference "#PWR045")
 					(unit 1)
 				)
 			)
@@ -14631,7 +14662,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bc418059-7359-490f-98dd-034880a382cb")
-		(property "Reference" "#PWR024"
+		(property "Reference" "#PWR03"
 			(at 113.03 24.13 0)
 			(hide yes)
 			(show_name no)
@@ -14692,7 +14723,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR024")
+					(reference "#PWR03")
 					(unit 1)
 				)
 			)
@@ -14709,7 +14740,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "c1a6d7be-23a5-49f0-8653-e21f22d257f9")
-		(property "Reference" "C13"
+		(property "Reference" "C1"
 			(at 34.29 60.2362 0)
 			(hide yes)
 			(show_name no)
@@ -14732,7 +14763,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
+		(property "Footprint" ""
 			(at 36.83 58.42 0)
 			(hide yes)
 			(show_name no)
@@ -14774,7 +14805,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "C13")
+					(reference "C1")
 					(unit 1)
 				)
 			)
@@ -14791,7 +14822,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "c59813e5-f68f-44de-98c2-865ce15e8e1a")
-		(property "Reference" "#PWR052"
+		(property "Reference" "#PWR011"
 			(at 157.48 34.29 0)
 			(hide yes)
 			(show_name no)
@@ -14851,7 +14882,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR052")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -14868,7 +14899,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "c6cda0c8-b763-4cb8-ae53-37298d5ac2cc")
-		(property "Reference" "#PWR07"
+		(property "Reference" "#PWR043"
 			(at 60.96 148.59 0)
 			(hide yes)
 			(show_name no)
@@ -14929,7 +14960,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR07")
+					(reference "#PWR043")
 					(unit 1)
 				)
 			)
@@ -14947,7 +14978,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "c9682a1d-4765-4a53-9ec6-6fb5af80e016")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR038"
 			(at 156.21 118.11 0)
 			(hide yes)
 			(show_name no)
@@ -15008,7 +15039,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR010")
+					(reference "#PWR038")
 					(unit 1)
 				)
 			)
@@ -15048,7 +15079,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Buzzer_Beeper:Buzzer_12x9.5RM7.6"
+		(property "Footprint" ""
 			(at 222.25 75.565 90)
 			(hide yes)
 			(show_name no)
@@ -15108,7 +15139,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d25abb9c-9b3a-408b-85dd-af0378c15b48")
-		(property "Reference" "#PWR047"
+		(property "Reference" "#PWR042"
 			(at 152.4 146.05 0)
 			(hide yes)
 			(show_name no)
@@ -15169,7 +15200,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR047")
+					(reference "#PWR042")
 					(unit 1)
 				)
 			)
@@ -15186,7 +15217,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "d58c050e-6686-4e96-9df5-e738fb957903")
-		(property "Reference" "#PWR046"
+		(property "Reference" "#PWR041"
 			(at 140.97 142.24 0)
 			(hide yes)
 			(show_name no)
@@ -15247,7 +15278,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR046")
+					(reference "#PWR041")
 					(unit 1)
 				)
 			)
@@ -15265,7 +15296,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d988f1e7-73f7-4981-9f9a-901b0710e4bd")
-		(property "Reference" "J3"
+		(property "Reference" "J4"
 			(at 108.585 16.51 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15285,7 +15316,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x20_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 107.95 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -15381,7 +15412,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J3")
+					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -15398,7 +15429,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "dd166fe6-3e12-4cd9-bb3c-e183d44158ab")
-		(property "Reference" "C5"
+		(property "Reference" "C6"
 			(at 55.88 188.5062 0)
 			(hide yes)
 			(show_name no)
@@ -15421,7 +15452,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
+		(property "Footprint" ""
 			(at 58.42 186.69 0)
 			(hide yes)
 			(show_name no)
@@ -15463,7 +15494,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "C5")
+					(reference "C6")
 					(unit 1)
 				)
 			)
@@ -15480,7 +15511,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "dd908600-dd78-4149-b5e1-c18af4b72748")
-		(property "Reference" "#PWR063"
+		(property "Reference" "#PWR012"
 			(at 124.46 35.56 0)
 			(hide yes)
 			(show_name no)
@@ -15540,7 +15571,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR063")
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -15557,7 +15588,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "df620525-6b1a-4275-99c9-646097f6849c")
-		(property "Reference" "IMU3"
+		(property "Reference" "IMU1"
 			(at 101.346 112.014 0)
 			(hide yes)
 			(show_name no)
@@ -15645,7 +15676,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "IMU3")
+					(reference "IMU1")
 					(unit 1)
 				)
 			)
@@ -15662,7 +15693,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "e7a5f6ef-c3e9-485d-a2d0-4856161b6f70")
-		(property "Reference" "#PWR054"
+		(property "Reference" "#PWR026"
 			(at 41.91 82.55 0)
 			(hide yes)
 			(show_name no)
@@ -15722,7 +15753,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR054")
+					(reference "#PWR026")
 					(unit 1)
 				)
 			)
@@ -15739,7 +15770,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "e88b7ea8-dd1e-40e9-9f68-c01aa5eb2954")
-		(property "Reference" "R13"
+		(property "Reference" "R5"
 			(at 161.29 91.44 90)
 			(hide yes)
 			(show_name no)
@@ -15760,7 +15791,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 161.544 96.774 90)
 			(hide yes)
 			(show_name no)
@@ -15802,7 +15833,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R13")
+					(reference "R5")
 					(unit 1)
 				)
 			)
@@ -15819,7 +15850,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "e9cd1c75-3729-4167-8b9a-792a7aca1a52")
-		(property "Reference" "#PWR058"
+		(property "Reference" "#PWR015"
 			(at 157.48 54.61 0)
 			(hide yes)
 			(show_name no)
@@ -15879,7 +15910,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR058")
+					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -15896,7 +15927,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "e9eae5d6-67b0-492b-ad60-eac0256bae10")
-		(property "Reference" "#PWR061"
+		(property "Reference" "#PWR020"
 			(at 114.3 67.31 0)
 			(hide yes)
 			(show_name no)
@@ -15956,7 +15987,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR061")
+					(reference "#PWR020")
 					(unit 1)
 				)
 			)
@@ -15973,7 +16004,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "ea5dd39e-e991-41d2-a124-59e2218b6024")
-		(property "Reference" "R7"
+		(property "Reference" "R1"
 			(at 266.7 76.2 90)
 			(hide yes)
 			(show_name no)
@@ -15994,7 +16025,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 266.446 79.756 90)
 			(hide yes)
 			(show_name no)
@@ -16036,7 +16067,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R7")
+					(reference "R1")
 					(unit 1)
 				)
 			)
@@ -16053,7 +16084,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "eaa27972-5112-42f9-a89f-e83d17b29efd")
-		(property "Reference" "R6"
+		(property "Reference" "R10"
 			(at 149.86 176.53 90)
 			(hide yes)
 			(show_name no)
@@ -16064,7 +16095,7 @@
 				)
 			)
 		)
-		(property "Value" "R_US"
+		(property "Value" "330"
 			(at 150.114 176.784 90)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16074,7 +16105,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 149.606 180.086 90)
 			(hide yes)
 			(show_name no)
@@ -16116,7 +16147,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R6")
+					(reference "R10")
 					(unit 1)
 				)
 			)
@@ -16133,7 +16164,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "ebafefa8-12ff-4e52-817a-dfb3fa1dc8b3")
-		(property "Reference" "#PWR06"
+		(property "Reference" "#PWR047"
 			(at 45.72 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -16194,7 +16225,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR06")
+					(reference "#PWR047")
 					(unit 1)
 				)
 			)
@@ -16211,7 +16242,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "ebc39136-6b7c-4dba-a358-df409343dbdc")
-		(property "Reference" "Bornera7"
+		(property "Reference" "Bornera1"
 			(at 217.17 66.0401 0)
 			(hide yes)
 			(show_name no)
@@ -16223,7 +16254,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "UART BUS 2 5V"
+		(property "Value" "UART BUS 2"
 			(at 217.17 64.7701 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16234,7 +16265,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "ELH_Library:Bornera 2P"
+		(property "Footprint" ""
 			(at 219.71 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -16276,7 +16307,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "Bornera7")
+					(reference "Bornera1")
 					(unit 1)
 				)
 			)
@@ -16293,7 +16324,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "ebcf0b9c-8a2c-471e-9367-f73a91451878")
-		(property "Reference" "R14"
+		(property "Reference" "R6"
 			(at 60.96 113.03 90)
 			(hide yes)
 			(show_name no)
@@ -16314,7 +16345,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
+		(property "Footprint" ""
 			(at 60.706 107.696 90)
 			(hide yes)
 			(show_name no)
@@ -16356,7 +16387,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "R14")
+					(reference "R6")
 					(unit 1)
 				)
 			)
@@ -16374,9 +16405,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ed0cea96-9762-4f2e-85fc-b91390fe1b31")
-		(property "Reference" "ESP2"
-			(at 78.74 144.78 0)
-			(hide yes)
+		(property "Reference" "ESP_CTR1"
+			(at 82.55 144.78 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -16391,7 +16421,7 @@
 			(do_not_autoplace no)
 			(effects
 				(font
-					(size 1.27 1.27)
+					(size 0.762 0.762)
 				)
 			)
 		)
@@ -16518,7 +16548,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "ESP2")
+					(reference "ESP_CTR1")
 					(unit 1)
 				)
 			)
@@ -16536,7 +16566,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "edec9326-bf28-400a-9025-705ddced38f7")
-		(property "Reference" "J11"
+		(property "Reference" "J15"
 			(at 135.255 140.97 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16556,7 +16586,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 134.62 153.67 0)
 			(hide yes)
 			(show_name no)
@@ -16616,7 +16646,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J11")
+					(reference "J15")
 					(unit 1)
 				)
 			)
@@ -16633,7 +16663,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "eec503c7-7b62-4bcf-9583-e24fbdd69723")
-		(property "Reference" "#PWR049"
+		(property "Reference" "#PWR022"
 			(at 147.32 69.85 0)
 			(hide yes)
 			(show_name no)
@@ -16693,7 +16723,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR049")
+					(reference "#PWR022")
 					(unit 1)
 				)
 			)
@@ -16710,7 +16740,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "f102bc8e-2826-422c-90e8-1e30a6682996")
-		(property "Reference" "C4"
+		(property "Reference" "C5"
 			(at 57.15 186.6963 90)
 			(hide yes)
 			(show_name no)
@@ -16731,7 +16761,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
+		(property "Footprint" ""
 			(at 50.8 186.69 0)
 			(hide yes)
 			(show_name no)
@@ -16773,7 +16803,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "C4")
+					(reference "C5")
 					(unit 1)
 				)
 			)
@@ -16790,7 +16820,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "f44d0bcb-46ec-4a24-b990-2054b4316785")
-		(property "Reference" "#PWR017"
+		(property "Reference" "#PWR031"
 			(at 107.95 91.44 0)
 			(hide yes)
 			(show_name no)
@@ -16850,7 +16880,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR017")
+					(reference "#PWR031")
 					(unit 1)
 				)
 			)
@@ -16867,7 +16897,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "f6fa7972-16a0-4692-960d-aa481652339f")
-		(property "Reference" "J17"
+		(property "Reference" "J11"
 			(at 243.84 68.834 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -16887,7 +16917,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 252.73 71.12 0)
 			(hide yes)
 			(show_name no)
@@ -16926,7 +16956,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J17")
+					(reference "J11")
 					(unit 1)
 				)
 			)
@@ -16944,7 +16974,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f8784739-e1bd-47d2-93d8-0af51d878766")
-		(property "Reference" "BME2"
+		(property "Reference" "BME1"
 			(at 180.34 82.55 0)
 			(hide yes)
 			(show_name no)
@@ -16999,18 +17029,6 @@
 				)
 			)
 		)
-		(property "Price" ""
-			(at 180.34 97.79 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify bottom)
-			)
-		)
 		(pin "VIN"
 			(uuid "619b7c05-bfbd-4242-b1bc-90e95226607c")
 		)
@@ -17035,7 +17053,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "BME2")
+					(reference "BME1")
 					(unit 1)
 				)
 			)
@@ -17053,7 +17071,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "f92985de-0413-4f4a-8cc1-42d0c3c550e9")
-		(property "Reference" "#PWR041"
+		(property "Reference" "#PWR032"
 			(at 201.93 105.41 0)
 			(hide yes)
 			(show_name no)
@@ -17114,7 +17132,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "#PWR041")
+					(reference "#PWR032")
 					(unit 1)
 				)
 			)
@@ -17131,7 +17149,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "fa73959f-7ad7-4c5d-91ef-1339c517def5")
-		(property "Reference" "J20"
+		(property "Reference" "J9"
 			(at 234.188 70.612 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -17151,7 +17169,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Vertical"
+		(property "Footprint" ""
 			(at 234.95 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -17190,7 +17208,7 @@
 		(instances
 			(project "PCB_B"
 				(path "/8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
-					(reference "J20")
+					(reference "J9")
 					(unit 1)
 				)
 			)

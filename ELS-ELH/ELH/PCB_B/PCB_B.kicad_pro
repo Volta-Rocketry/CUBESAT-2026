@@ -525,7 +525,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "C:/Users/andre/Downloads/PCBs docs/gerber b/",
+      "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
@@ -538,7 +538,7 @@
     "annotate_start_num": 0,
     "annotation": {
       "method": 0,
-      "sort_order": 1
+      "sort_order": 0
     },
     "bom_export_filename": "${PROJECTNAME}.csv",
     "bom_fmt_presets": [],
@@ -678,7 +678,7 @@
         "uuid": "8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
       }
     ],
-    "used_designators": "ESP_CTR1,D1-2,#PWR1-47,Converter1,BME1,Bornera1,BZ1-2,C1-6,ESP_MAIN1,IMU1,J1-15,R1-12,SD_Adapter1,U1,W25QXX1",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [

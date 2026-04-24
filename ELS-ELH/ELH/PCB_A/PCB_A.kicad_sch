@@ -6409,7 +6409,7 @@
 				)
 			)
 		)
-		(property "Value" "MP1584"
+		(property "Value" "LM2596"
 			(at 49.276 70.104 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8006,7 +8006,7 @@
 				)
 			)
 		)
-		(property "Value" "MP1584"
+		(property "Value" "LM2596"
 			(at 49.276 87.884 0)
 			(show_name no)
 			(do_not_autoplace no)

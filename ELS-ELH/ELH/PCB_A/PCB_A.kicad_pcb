@@ -5560,7 +5560,7 @@
 				)
 			)
 		)
-		(property "Value" "MP1584"
+		(property "Value" "LM2596"
 			(at 21.36 5.8 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12830,7 +12830,7 @@
 				)
 			)
 		)
-		(property "Value" "MP1584"
+		(property "Value" "LM2596"
 			(at 21.36 5.8 0)
 			(unlocked yes)
 			(layer "F.Fab")

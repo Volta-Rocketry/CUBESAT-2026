@@ -137,16 +137,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "11290cc9-d5e3-45c7-a7c8-017f6d55c037")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/4ec9f114-b441-4ed4-b584-83e39fb92cd6")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -388,16 +394,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 270)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "f13931ee-a748-4435-8d30-f4c4b10e430f")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/ebcf0b9c-8a2c-471e-9367-f73a91451878")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -596,16 +608,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "capacitor/THT/other"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "96a01148-47a2-43e9-95f3-c7cc735cd918")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/85ab03b6-4e90-4f30-aeff-1dff4ec264e8")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -784,21 +802,27 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 295)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "0aafca15-4406-4a0c-b28d-ce034ac31c1f")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/b9052982-e5e2-4bcd-b208-dc82463531d4")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start 0.54 1.37)
-			(end 7.080001 1.370001)
+			(end 7.08 1.37)
 			(stroke
 				(width 0.12)
 				(type solid)
@@ -837,7 +861,7 @@
 			(uuid "fb62e6b2-9878-4dd6-93e4-f0882b510166")
 		)
 		(fp_line
-			(start 7.080001 1.370001)
+			(start 7.08 1.37)
 			(end 7.08 1.04)
 			(stroke
 				(width 0.12)
@@ -858,7 +882,7 @@
 		)
 		(fp_poly
 			(pts
-				(xy -1.05 1.5) (xy -1.049999 -1.5) (xy 8.67 -1.5) (xy 8.669999 1.5)
+				(xy -1.05 -1.500001) (xy 8.67 -1.5) (xy 8.67 1.5) (xy -1.05 1.5)
 			)
 			(stroke
 				(width 0.05)
@@ -890,7 +914,7 @@
 		)
 		(fp_poly
 			(pts
-				(xy 0.66 1.25) (xy 0.66 -1.249999) (xy 6.960001 -1.25) (xy 6.96 1.249999)
+				(xy 0.66 -1.25) (xy 6.96 -1.25) (xy 6.96 1.25) (xy 0.66 1.25)
 			)
 			(stroke
 				(width 0.1)
@@ -994,16 +1018,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "98dc26f0-c8e8-4593-b1a6-fc603fddf736")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/26f72a8e-bed7-477e-8a19-e8761375b6a6")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1231,16 +1261,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "fe4fd0e4-6850-4aee-a085-38c0463ba749")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/b8611067-a47a-42af-9bec-ea9c68efbecc")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1476,12 +1512,6 @@
 		(path "/df620525-6b1a-4275-99c9-646097f6849c")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "3V" "GND" "SCL" "SDA" "6" "7" "ADR" "PS0" "PS1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -1924,298 +1954,14 @@
 			)
 		)
 	)
-	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x07_P2.54mm_Vertical"
-		(layer "F.Cu")
-		(uuid "460cdecc-e6d4-4ba1-8a83-f380fcdb4f68")
-		(at 68.09 -8.71 180)
-		(descr "Through hole straight pin header, 1x07, 2.54mm pitch, single row")
-		(tags "Through hole pin header THT 1x07 2.54mm single row")
-		(property "Reference" "J10"
-			(at 0 -2.38 0)
-			(layer "F.SilkS")
-			(uuid "861000e5-3e34-4b56-b687-5947acf2dde0")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Value" "Conn_01x07_Pin"
-			(at 0 17.62 0)
-			(layer "F.Fab")
-			(uuid "c8581be1-ab58-4c3b-92cc-705c89c372b4")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "0e4b9024-3807-4a4b-9a60-e5d606a2f40f")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x07, script generated"
-			(at 0 0 0)
-			(layer "F.Fab")
-			(hide yes)
-			(uuid "06c5f34a-08f3-478f-a471-667658de1b34")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property ki_fp_filters "Connector*:*_1x??_*")
-		(path "/65a5b868-4c2a-428c-afcf-1424dc5553f7")
-		(sheetname "/")
-		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6" "7")
-			)
-		)
-		(attr through_hole)
-		(duplicate_pad_numbers_are_jumpers no)
-		(fp_line
-			(start 1.38 1.27)
-			(end 1.38 16.62)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "daf118a5-2eea-462b-89fd-940a49b39686")
-		)
-		(fp_line
-			(start -1.38 16.62)
-			(end 1.38 16.62)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "25192323-b2be-44ce-9820-dbcd7f7bd273")
-		)
-		(fp_line
-			(start -1.38 1.27)
-			(end 1.38 1.27)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "35b9f87b-4f85-44ad-a66e-d075932d4ac7")
-		)
-		(fp_line
-			(start -1.38 1.27)
-			(end -1.38 16.62)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "38ee48c8-0ccf-47fe-9538-cb6b712c7bef")
-		)
-		(fp_line
-			(start -1.38 0)
-			(end -1.38 -1.38)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "12a85bbf-a41b-4f2f-93b2-80277602f1a3")
-		)
-		(fp_line
-			(start -1.38 -1.38)
-			(end 0 -1.38)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "0a6fba90-d3bc-46a4-9749-0a63b389c310")
-		)
-		(fp_rect
-			(start -1.77 -1.78)
-			(end 1.77 17.02)
-			(stroke
-				(width 0.05)
-				(type solid)
-			)
-			(fill no)
-			(layer "F.CrtYd")
-			(uuid "8380f1c8-4472-4809-9bae-11c019f14fa0")
-		)
-		(fp_line
-			(start 1.27 16.51)
-			(end -1.27 16.51)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "49f671f3-117c-40d9-9d30-e532cbe76cfd")
-		)
-		(fp_line
-			(start 1.27 -1.27)
-			(end 1.27 16.51)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "60d8c0c9-5baa-44cf-9f5e-edd69c22dfa7")
-		)
-		(fp_line
-			(start -0.635 -1.27)
-			(end 1.27 -1.27)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "1f935af8-3335-466f-ac95-aded771c6d80")
-		)
-		(fp_line
-			(start -1.27 16.51)
-			(end -1.27 -0.635)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "09da6c92-b7a8-4f7c-9f62-efb0fad00f37")
-		)
-		(fp_line
-			(start -1.27 -0.635)
-			(end -0.635 -1.27)
-			(stroke
-				(width 0.1)
-				(type solid)
-			)
-			(layer "F.Fab")
-			(uuid "6a44053d-b20d-4802-b96e-d6485693e43e")
-		)
-		(fp_text user "${REFERENCE}"
-			(at 0 7.62 90)
-			(layer "F.Fab")
-			(uuid "c5bfbf38-293a-478c-9e03-dfbcf81717a6")
-			(effects
-				(font
-					(size 1 1)
-					(thickness 0.15)
-				)
-			)
-		)
-		(pad "1" thru_hole rect
-			(at 0 0 180)
-			(size 1.7 1.7)
-			(drill 1)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net "/D15_ESP_3V3")
-			(pinfunction "Pin_1_1")
-			(pintype "passive")
-			(uuid "cb5014d2-aee4-4e59-bc1e-57866618f941")
-		)
-		(pad "2" thru_hole circle
-			(at 0 2.54 180)
-			(size 1.7 1.7)
-			(drill 1)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net "/D2_ESP_3V3")
-			(pinfunction "Pin_2_2")
-			(pintype "passive")
-			(uuid "f3a01d1c-3a2b-4b52-aeef-1735832b0f27")
-		)
-		(pad "3" thru_hole circle
-			(at 0 5.08 180)
-			(size 1.7 1.7)
-			(drill 1)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net "/RX0_ESP_3V3")
-			(pinfunction "Pin_3_3")
-			(pintype "passive")
-			(uuid "839eae91-dc74-4669-8c49-a2ab305c1616")
-		)
-		(pad "4" thru_hole circle
-			(at 0 7.62 180)
-			(size 1.7 1.7)
-			(drill 1)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net "/TX0_ESP_3V3")
-			(pinfunction "Pin_4_4")
-			(pintype "passive")
-			(uuid "9fa7f0f9-3531-4136-8355-23176a27ada3")
-		)
-		(pad "5" thru_hole circle
-			(at 0 10.16 180)
-			(size 1.7 1.7)
-			(drill 1)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net "/D12_ESP_3V3")
-			(pinfunction "Pin_5_5")
-			(pintype "passive")
-			(uuid "9b2e30e1-79d2-45fe-aa44-61cda9293151")
-		)
-		(pad "6" thru_hole circle
-			(at 0 12.7 180)
-			(size 1.7 1.7)
-			(drill 1)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net "/D39_ESP_3V3")
-			(pinfunction "Pin_6_6")
-			(pintype "passive")
-			(uuid "a4491da9-3007-42d0-89dd-3874cb78d0f1")
-		)
-		(pad "7" thru_hole circle
-			(at 0 15.24 180)
-			(size 1.7 1.7)
-			(drill 1)
-			(layers "*.Cu" "*.Mask")
-			(remove_unused_layers no)
-			(net "/EN_ESP_3V3")
-			(pinfunction "Pin_7_7")
-			(pintype "passive")
-			(uuid "981155d1-78fd-4d41-bc45-c4faf6952f58")
-		)
-		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x07_P2.54mm_Vertical.step"
-			(offset
-				(xyz 0 0 0)
-			)
-			(scale
-				(xyz 1 1 1)
-			)
-			(rotate
-				(xyz 0 0 0)
-			)
-		)
-	)
-	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x20_P2.54mm_Vertical"
+	(footprint "Connector_PinSocket_2.54mm:PinSocket_1x20_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "4659702d-8745-4edf-8318-dc1220fadef8")
 		(at -24.1 -44 90)
-		(descr "Through hole straight pin header, 1x20, 2.54mm pitch, single row")
-		(tags "Through hole pin header THT 1x20 2.54mm single row")
+		(descr "Through hole straight socket strip, 1x20, 2.54mm pitch, single row (from Kicad 4.0.7), script generated")
+		(tags "Through hole socket strip THT 1x20 2.54mm single row")
 		(property "Reference" "J4"
-			(at 0 -2.38 90)
+			(at 0 -2.77 90)
 			(layer "F.SilkS")
 			(uuid "25446cdb-38b4-4e4d-98d7-397abc1ebb80")
 			(effects
@@ -2226,7 +1972,7 @@
 			)
 		)
 		(property "Value" "Conn_01x20_Pin"
-			(at 0 50.64 90)
+			(at 0 51.03 90)
 			(layer "F.Fab")
 			(uuid "2957cf2d-8ebf-4a0d-bdce-b7104b8cb5d6")
 			(effects
@@ -2258,23 +2004,37 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 90)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "f8d5394a-b349-46f5-94f2-65f8d09ccee6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/6d976963-23d9-454d-b939-1225dd88a82d")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15"
-					"16" "17" "18" "19" "20"
-				)
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start -1.38 -1.38)
-			(end 0 -1.38)
+			(start 1.33 -1.33)
+			(end 1.33 0)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "3693ab97-79e4-4de5-a12b-f1ad3a9fd970")
+		)
+		(fp_line
+			(start 0 -1.33)
+			(end 1.33 -1.33)
 			(stroke
 				(width 0.12)
 				(type solid)
@@ -2283,18 +2043,8 @@
 			(uuid "3283a857-7f85-433d-8faf-2dfc06dc6f1e")
 		)
 		(fp_line
-			(start -1.38 0)
-			(end -1.38 -1.38)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "4f57f441-144a-4bc1-ad67-6684fd4fc76c")
-		)
-		(fp_line
-			(start 1.38 1.27)
-			(end 1.38 49.64)
+			(start 1.33 1.27)
+			(end 1.33 49.59)
 			(stroke
 				(width 0.12)
 				(type solid)
@@ -2303,18 +2053,8 @@
 			(uuid "313961d6-0a97-4055-b814-beb293b3a391")
 		)
 		(fp_line
-			(start -1.38 1.27)
-			(end 1.38 1.27)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "1b4f3ab3-a52e-44f9-8686-e3b6f65fca77")
-		)
-		(fp_line
-			(start -1.38 1.27)
-			(end -1.38 49.64)
+			(start -1.33 1.27)
+			(end 1.33 1.27)
 			(stroke
 				(width 0.12)
 				(type solid)
@@ -2323,39 +2063,68 @@
 			(uuid "426d076e-4d1e-4d21-85c5-6732107bb344")
 		)
 		(fp_line
-			(start -1.38 49.64)
-			(end 1.38 49.64)
+			(start -1.33 1.27)
+			(end -1.33 49.59)
 			(stroke
 				(width 0.12)
 				(type solid)
 			)
 			(layer "F.SilkS")
-			(uuid "3693ab97-79e4-4de5-a12b-f1ad3a9fd970")
+			(uuid "4f57f441-144a-4bc1-ad67-6684fd4fc76c")
 		)
-		(fp_rect
-			(start -1.77 -1.78)
+		(fp_line
+			(start -1.33 49.59)
+			(end 1.33 49.59)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "1b4f3ab3-a52e-44f9-8686-e3b6f65fca77")
+		)
+		(fp_line
+			(start 1.77 -1.77)
 			(end 1.77 50.03)
 			(stroke
 				(width 0.05)
 				(type solid)
 			)
-			(fill no)
 			(layer "F.CrtYd")
-			(uuid "2f0bfde3-53f5-46a1-882b-fe4345947674")
+			(uuid "410d7227-56b3-434f-a982-28ed0a41934c")
 		)
 		(fp_line
-			(start 1.27 -1.27)
-			(end 1.27 49.53)
+			(start -1.77 -1.77)
+			(end 1.77 -1.77)
 			(stroke
-				(width 0.1)
+				(width 0.05)
 				(type solid)
 			)
-			(layer "F.Fab")
-			(uuid "cc6cb8d3-c54b-45c1-a7f0-693891dc3d52")
+			(layer "F.CrtYd")
+			(uuid "2fe050a7-1932-4bfd-b640-c07107df5a01")
 		)
 		(fp_line
-			(start -0.635 -1.27)
-			(end 1.27 -1.27)
+			(start 1.77 50.03)
+			(end -1.77 50.03)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "50d2450a-9c80-43f4-9380-25e8a24483c6")
+		)
+		(fp_line
+			(start -1.77 50.03)
+			(end -1.77 -1.77)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "a41053cc-c0e2-479e-9d61-b38e4094ba07")
+		)
+		(fp_line
+			(start 0.635 -1.27)
+			(end 1.27 -0.635)
 			(stroke
 				(width 0.1)
 				(type solid)
@@ -2364,14 +2133,24 @@
 			(uuid "bed7eea8-f9cc-4f26-8ae9-4a5a0436eeee")
 		)
 		(fp_line
-			(start -1.27 -0.635)
-			(end -0.635 -1.27)
+			(start -1.27 -1.27)
+			(end 0.635 -1.27)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
 			(uuid "4047a00c-3417-4d55-8f73-9cbdd96a763f")
+		)
+		(fp_line
+			(start 1.27 -0.635)
+			(end 1.27 49.53)
+			(stroke
+				(width 0.1)
+				(type solid)
+			)
+			(layer "F.Fab")
+			(uuid "cc6cb8d3-c54b-45c1-a7f0-693891dc3d52")
 		)
 		(fp_line
 			(start 1.27 49.53)
@@ -2385,7 +2164,7 @@
 		)
 		(fp_line
 			(start -1.27 49.53)
-			(end -1.27 -0.635)
+			(end -1.27 -1.27)
 			(stroke
 				(width 0.1)
 				(type solid)
@@ -2394,7 +2173,7 @@
 			(uuid "bdcb3541-7b58-4f7a-af11-73f4cae58955")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 24.13 0)
+			(at 0 24.13 180)
 			(layer "F.Fab")
 			(uuid "82a31c9a-36f4-4c2e-b7ce-47656e0ec111")
 			(effects
@@ -2625,7 +2404,7 @@
 			(uuid "a0874855-5980-4100-b4c9-337360697d34")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x20_P2.54mm_Vertical.step"
+		(model "${KICAD10_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x20_P2.54mm_Vertical.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -2694,14 +2473,6 @@
 		(path "/0be3156e-6074-45b8-932e-82b764de0397")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15"
-					"16" "17" "18" "19" "20"
-				)
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -3343,16 +3114,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "capacitor/THT/other"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "76cb0b8c-2212-4682-9567-cabfc5ca75bf")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "CP_*")
 		(path "/c1a6d7be-23a5-49f0-8653-e21f22d257f9")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -4711,12 +4488,6 @@
 		(path "/ebc39136-6b7c-4dba-a358-df409343dbdc")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -4846,12 +4617,6 @@
 		(path "/5489ff1a-8a95-4307-bf9a-967ff493128a")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6" "7" "8")
-			)
-		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -5081,6 +4846,17 @@
 				(xyz -0 -0 -0)
 			)
 		)
+		(model "D:/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/GY87_10DOF_IMU.step"
+			(offset
+				(xyz -140.5 94 2.5)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Buzzer_Beeper:Buzzer_12x9.5RM7.6"
 		(layer "F.Cu")
@@ -5140,12 +4916,6 @@
 		(path "/d021023d-7ca8-4d4a-8363-b53471001f60")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
@@ -5320,12 +5090,6 @@
 		(path "/5bbe5600-c637-4e91-888b-e96037cde200")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "2" "1" "3" "4")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -5561,12 +5325,6 @@
 		(path "/01ea35ca-a0a2-437c-a9ab-b79ba54eae17")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "2" "1" "3" "4")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -5835,12 +5593,6 @@
 		(path "/f8784739-e1bd-47d2-93d8-0af51d878766")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "VIN" "CS" "SCK" "SDI" "SD0" "3Vo" "GND")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -6203,16 +5955,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "92588467-3f96-419b-b439-ca2f87cb2ab1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/fa73959f-7ad7-4c5d-91ef-1339c517def5")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6440,16 +6198,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "capacitor/THT/other"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "41b193bb-4fab-4312-a1d0-b71b9fc21e9c")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/f102bc8e-2826-422c-90e8-1e30a6682996")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6628,16 +6392,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "df89d773-981d-4606-a9e8-a60fef4b8bb5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/110690b3-1853-480d-a177-a92d0c4dfd06")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6844,12 +6614,6 @@
 		(path "/0a0d9cb9-d37a-4cff-bb05-472cfc4087b1")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "4" "2" "3" "5" "6")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -7052,14 +6816,14 @@
 		)
 		(embedded_fonts no)
 	)
-	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x20_P2.54mm_Vertical"
+	(footprint "Connector_PinSocket_2.54mm:PinSocket_1x20_P2.54mm_Vertical"
 		(layer "F.Cu")
 		(uuid "8d11622c-f254-49f9-8394-81fe3c8a17ec")
 		(at -24.1 44 90)
-		(descr "Through hole straight pin header, 1x20, 2.54mm pitch, single row")
-		(tags "Through hole pin header THT 1x20 2.54mm single row")
+		(descr "Through hole straight socket strip, 1x20, 2.54mm pitch, single row (from Kicad 4.0.7), script generated")
+		(tags "Through hole socket strip THT 1x20 2.54mm single row")
 		(property "Reference" "J3"
-			(at 0 -2.38 90)
+			(at 0 -2.77 90)
 			(layer "F.SilkS")
 			(uuid "77a9b3e9-450d-44fa-b736-5623f4f9108a")
 			(effects
@@ -7070,7 +6834,7 @@
 			)
 		)
 		(property "Value" "Conn_01x20_Pin"
-			(at 0 50.64 90)
+			(at 0 51.03 90)
 			(layer "F.Fab")
 			(uuid "9cf536ac-e54e-41bf-b3b2-ca527599c34c")
 			(effects
@@ -7102,63 +6866,27 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 90)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "781e5f47-c762-4f77-91cf-5aabda063474")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/d988f1e7-73f7-4981-9f9a-901b0710e4bd")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12" "13" "14" "15"
-					"16" "17" "18" "19" "20"
-				)
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
-			(start -1.38 -1.38)
-			(end 0 -1.38)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "742920ce-ae50-4433-a198-842c3421fcd7")
-		)
-		(fp_line
-			(start -1.38 0)
-			(end -1.38 -1.38)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "51302f0b-90b5-4e98-ac8b-3940cc073654")
-		)
-		(fp_line
-			(start 1.38 1.27)
-			(end 1.38 49.64)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "61dc236f-d058-4933-8314-2fde6ec8abdc")
-		)
-		(fp_line
-			(start -1.38 1.27)
-			(end 1.38 1.27)
-			(stroke
-				(width 0.12)
-				(type solid)
-			)
-			(layer "F.SilkS")
-			(uuid "29023112-1247-473c-8dfe-bdb229246b30")
-		)
-		(fp_line
-			(start -1.38 1.27)
-			(end -1.38 49.64)
+			(start 1.33 -1.33)
+			(end 1.33 0)
 			(stroke
 				(width 0.12)
 				(type solid)
@@ -7167,8 +6895,8 @@
 			(uuid "6010c287-4092-4154-b496-f38effe7730a")
 		)
 		(fp_line
-			(start -1.38 49.64)
-			(end 1.38 49.64)
+			(start 0 -1.33)
+			(end 1.33 -1.33)
 			(stroke
 				(width 0.12)
 				(type solid)
@@ -7176,30 +6904,99 @@
 			(layer "F.SilkS")
 			(uuid "028aeb13-81e5-44a9-b113-8143ed309b7b")
 		)
-		(fp_rect
-			(start -1.77 -1.78)
+		(fp_line
+			(start 1.33 1.27)
+			(end 1.33 49.59)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "51302f0b-90b5-4e98-ac8b-3940cc073654")
+		)
+		(fp_line
+			(start -1.33 1.27)
+			(end 1.33 1.27)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "29023112-1247-473c-8dfe-bdb229246b30")
+		)
+		(fp_line
+			(start -1.33 1.27)
+			(end -1.33 49.59)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "742920ce-ae50-4433-a198-842c3421fcd7")
+		)
+		(fp_line
+			(start -1.33 49.59)
+			(end 1.33 49.59)
+			(stroke
+				(width 0.12)
+				(type solid)
+			)
+			(layer "F.SilkS")
+			(uuid "61dc236f-d058-4933-8314-2fde6ec8abdc")
+		)
+		(fp_line
+			(start 1.77 -1.77)
 			(end 1.77 50.03)
 			(stroke
 				(width 0.05)
 				(type solid)
 			)
-			(fill no)
 			(layer "F.CrtYd")
-			(uuid "043fc025-3b85-46cd-af07-08ae7c9c7e1e")
+			(uuid "a9fab32a-9565-4148-88b3-54e531af38ce")
 		)
 		(fp_line
-			(start 1.27 -1.27)
-			(end 1.27 49.53)
+			(start -1.77 -1.77)
+			(end 1.77 -1.77)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "37d4952b-c29b-476c-8b7a-fb1ab8cd3561")
+		)
+		(fp_line
+			(start 1.77 50.03)
+			(end -1.77 50.03)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "170373c8-0744-4306-80cf-b40759386aca")
+		)
+		(fp_line
+			(start -1.77 50.03)
+			(end -1.77 -1.77)
+			(stroke
+				(width 0.05)
+				(type solid)
+			)
+			(layer "F.CrtYd")
+			(uuid "0a8a1a83-18f1-457e-8b93-f9173a36fe9b")
+		)
+		(fp_line
+			(start 0.635 -1.27)
+			(end 1.27 -0.635)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "cb88f48d-f8c4-4919-8004-fe4373349b0e")
+			(uuid "2b18c5ea-665a-45e1-be43-c3c212ae5f85")
 		)
 		(fp_line
-			(start -0.635 -1.27)
-			(end 1.27 -1.27)
+			(start -1.27 -1.27)
+			(end 0.635 -1.27)
 			(stroke
 				(width 0.1)
 				(type solid)
@@ -7208,14 +7005,14 @@
 			(uuid "496e43db-65db-45db-8317-162c42a433b6")
 		)
 		(fp_line
-			(start -1.27 -0.635)
-			(end -0.635 -1.27)
+			(start 1.27 -0.635)
+			(end 1.27 49.53)
 			(stroke
 				(width 0.1)
 				(type solid)
 			)
 			(layer "F.Fab")
-			(uuid "2b18c5ea-665a-45e1-be43-c3c212ae5f85")
+			(uuid "cb88f48d-f8c4-4919-8004-fe4373349b0e")
 		)
 		(fp_line
 			(start 1.27 49.53)
@@ -7229,7 +7026,7 @@
 		)
 		(fp_line
 			(start -1.27 49.53)
-			(end -1.27 -0.635)
+			(end -1.27 -1.27)
 			(stroke
 				(width 0.1)
 				(type solid)
@@ -7238,7 +7035,7 @@
 			(uuid "3895e2c8-165c-42dd-89b9-5b139b3e989d")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 24.13 0)
+			(at 0 24.13 180)
 			(layer "F.Fab")
 			(uuid "61402fd1-23c6-48d3-a7e7-4f75c24ba5bf")
 			(effects
@@ -7469,7 +7266,7 @@
 			(uuid "f4294f9a-ba8d-47a8-aac9-c588e6f696a6")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x20_P2.54mm_Vertical.step"
+		(model "${KICAD10_3DMODEL_DIR}/Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x20_P2.54mm_Vertical.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -7531,16 +7328,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "capacitor/THT/other"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "39e89c98-312e-4ca6-ae43-47429d8a3697")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/65e094d4-0104-4a28-99e5-150cee7ed2a4")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7719,16 +7522,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "capacitor/THT/other"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "f9d32f46-2a50-414f-a71e-f2265e522dcf")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "C_*")
 		(path "/acdbfb76-4dc1-496e-9af0-7102dfba1e67")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7907,16 +7716,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "c9fe6b78-9f67-45ee-a680-0a988697721b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/9e7d64af-5848-401a-bf6b-e465cc3cd698")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8144,16 +7959,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "21de0fc4-e0b5-44c3-ae5a-8d3891ab0a18")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/183dc0e4-9317-44a9-b62d-3e60e21ba427")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8381,16 +8202,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "capacitor/THT/other"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "897e9bca-b72c-4261-840b-39950e9839ba")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "CP_*")
 		(path "/dd166fe6-3e12-4cd9-bb3c-e183d44158ab")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9741,16 +9568,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "9540aa87-3f50-418a-8cc0-b06033721d09")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/b834a234-6632-49c8-a0ec-3a292424760a")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9992,16 +9825,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "fb67689c-445d-4106-90c8-beaae456662a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/579f6e03-1803-4f8b-9ff4-8b78332c62c3")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -10265,16 +10104,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "fabc4a48-d1bf-4f70-ac5b-fca747a03f53")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/4e475139-f90d-4b3b-a38c-703e2b367c8d")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -10546,12 +10391,6 @@
 		(path "/86cddfd2-8c0d-4c31-b223-1c782a059ae5")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
@@ -10717,16 +10556,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "b90d4233-a2e0-42a3-8836-cddcef6d2a52")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/edec9326-bf28-400a-9025-705ddced38f7")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4" "5" "6" "7" "8")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11041,16 +10886,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "cd354e3c-66e8-42fc-8704-d82addfaebc2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/e88b7ea8-dd1e-40e9-9f68-c01aa5eb2954")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11249,16 +11100,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 90)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "e6e2501a-4960-4e1a-b245-13f28141aaa4")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/7602586f-e4b1-4037-9108-c783e7f11753")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11457,16 +11314,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "3e52b9c1-d0f5-4553-8cf6-15932d94bbe5")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/f6fa7972-16a0-4692-960d-aa481652339f")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11694,16 +11557,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 180)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "2ab1c937-fa7c-4ccf-bd62-e25248fb81de")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/2066bb12-df92-414b-949f-1ab16205082b")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11945,16 +11814,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "connector/pin_header_socket"
+			(at 0 0 90)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "5bbb1134-d92e-4993-bda9-5b7d09440669")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "Connector*:*_1x??_*")
 		(path "/76b47651-1c2f-4e8f-9261-9b0d647b2fa3")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2" "3" "4")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -12225,16 +12100,22 @@
 				)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 0)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "f691bac7-3117-4dd7-8985-88f52c980c2a")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/24a2a78d-1565-44fc-a9fe-ccec65fbc288")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -12440,15 +12321,6 @@
 		(path "/1d15b0dd-d127-45b9-9ba8-8cd4ab354dc6")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "EN" "VP" "VN" "D34" "D35" "D32" "D33" "D25" "D26" "D27" "D14"
-					"D12" "D13" "GND" "VIN" "D23" "D22" "TX0" "RX0" "D21" "D19" "D18" "D5"
-					"TX2" "RX2" "D4" "D2" "D15" "3V3"
-				)
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -13317,15 +13189,6 @@
 		(path "/ed0cea96-9762-4f2e-85fc-b91390fe1b31")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "EN" "VP" "VN" "D34" "D35" "D32" "D33" "D25" "D26" "D27" "D14"
-					"D12" "D13" "GND" "VIN" "D23" "D22" "TX0" "RX0" "D21" "D19" "D18" "D5"
-					"TX2" "RX2" "D4" "D2" "D15" "3V3"
-				)
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -14191,16 +14054,23 @@
 				(justify mirror)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 90)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "5290ea53-a64a-4447-9845-2bcdc21264d6")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/ea5dd39e-e991-41d2-a124-59e2218b6024")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -14404,16 +14274,23 @@
 				(justify mirror)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 270)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "96b597c8-2ebd-4bc1-9f46-53670c7e145e")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/eaa27972-5112-42f9-a89f-e83d17b29efd")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -14639,12 +14516,6 @@
 		(path "/b94fce83-b533-4993-8102-c0d66d1a8bc6")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "6" "2" "3" "4" "5")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_rect
@@ -14916,16 +14787,23 @@
 				(justify mirror)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 270)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "af59452f-ce06-4e75-8e7f-f98272124764")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/141818cd-9727-47ff-a323-27d8ca64acb5")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -15129,16 +15007,23 @@
 				(justify mirror)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 270)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "ac582eae-330f-4fdd-9de1-3a303d5b8baf")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/2eb839ba-1221-4ef0-8dac-d233f94cee25")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -15342,16 +15227,23 @@
 				(justify mirror)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 90)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "f9c27d06-34b3-43e0-bee4-27ec36276ea1")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/b4e34caf-033e-4c2c-9f2b-6a553abf4c13")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -15555,16 +15447,23 @@
 				(justify mirror)
 			)
 		)
+		(property "KiLib_Generator" "resistor/THT"
+			(at 0 0 90)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "34c4aa4c-8944-49db-a8d6-c272f0a67672")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+				(justify mirror)
+			)
+		)
 		(property ki_fp_filters "R_*")
 		(path "/7c6edd7b-9f4f-41d8-9945-9faaf8708de0")
 		(sheetname "/")
 		(sheetfile "PCB_B.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "1" "2")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line

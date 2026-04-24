@@ -8,7 +8,7 @@
 		(unlocked yes)
 		(layer "F.SilkS")
 		(hide yes)
-		(uuid "226bac1f-3d4f-4b3a-9f3b-8e25116de49b")
+		(uuid "a92f37b3-8b5b-45d8-8f10-c7595dcbd4c5")
 		(effects
 			(font
 				(size 1 1)
@@ -20,7 +20,7 @@
 		(at 21.36 5.8 0)
 		(unlocked yes)
 		(layer "F.Fab")
-		(uuid "d471634b-ab8b-4d72-97fd-f01d316242fb")
+		(uuid "b7133718-df87-4dc3-b8d4-096d6f2e570c")
 		(effects
 			(font
 				(size 1 1)
@@ -33,7 +33,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "91ff18d2-600c-4f5a-9bb5-ed0e461548df")
+		(uuid "b314a8c5-3cf9-4ab9-8e65-664df0ee78d1")
 		(effects
 			(font
 				(size 1 1)
@@ -46,7 +46,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "a452e9a0-89b3-4dce-b3ca-3a1cc02a8164")
+		(uuid "1534a355-8f42-461e-8ceb-72382e9f326b")
 		(effects
 			(font
 				(size 1 1)
@@ -65,7 +65,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "b3919a16-76a0-465a-bbef-0245c926ebd8")
+		(uuid "a7933db8-1fd3-4b99-960a-193e8adb2931")
 	)
 	(fp_circle
 		(center 7.3 2.7)
@@ -76,7 +76,7 @@
 		)
 		(fill no)
 		(layer "Edge.Cuts")
-		(uuid "27189daa-4d29-4049-9591-800b029d47c7")
+		(uuid "54aad495-1cf6-46e5-9a46-78d8d2a9eef8")
 	)
 	(fp_circle
 		(center 36.3 18.3)
@@ -87,7 +87,7 @@
 		)
 		(fill no)
 		(layer "Edge.Cuts")
-		(uuid "09c7195b-bfcb-4c32-9704-500f3c97f721")
+		(uuid "a2c1a2c8-1b74-4f7d-96fe-d328c2981847")
 	)
 	(fp_rect
 		(start -0.25 -0.25)
@@ -98,13 +98,13 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "5166eb54-2030-4569-bd05-cd98f366fa29")
+		(uuid "98db5ec0-76fa-4653-bc98-d846e14c99b8")
 	)
 	(fp_text user "LM2596"
 		(at 18.95 20.47 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "a4df4d33-7cc4-4772-ab05-1a323dd1b231")
+		(uuid "829026a9-1273-42f4-8edc-7bc6fd02dce6")
 		(effects
 			(font
 				(size 1 1)
@@ -118,7 +118,7 @@
 		(at 21.36 7.3 0)
 		(unlocked yes)
 		(layer "F.Fab")
-		(uuid "0d215957-218a-4704-8678-83522831c91c")
+		(uuid "949b548f-7a57-424d-8312-06fe961ae8fd")
 		(effects
 			(font
 				(size 1 1)
@@ -133,7 +133,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "086e2080-df67-4aae-9a3a-17895065a827")
+		(uuid "3bea77ad-e63f-4679-9914-925f5b360599")
 	)
 	(pad "IN-" thru_hole rect
 		(at 1.275 19.73)
@@ -142,7 +142,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "b5f08359-5fa4-4eb2-855f-9baa9c7847bb")
+		(uuid "b84c43e5-cc65-4e1c-bb28-8f9cd2a860de")
 	)
 	(pad "OUT+" thru_hole rect
 		(at 42.33 1.27)
@@ -151,7 +151,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "c861e643-56d8-4047-8aea-8d43003496f3")
+		(uuid "bc19707b-acbd-4324-a30f-1464e520400f")
 	)
 	(pad "OUT-" thru_hole rect
 		(at 42.33 19.725)
@@ -160,12 +160,23 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "842096d1-0b63-4e4a-a386-84857f0500ca")
+		(uuid "60a682aa-debf-4591-8c15-155744b69291")
 	)
 	(embedded_fonts no)
 	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/LM2596.STEP"
 		(offset
 			(xyz 21.8 -10.5 1)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
+	(model "D:/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/LM2596.STEP"
+		(offset
+			(xyz 22 -10.85 0)
 		)
 		(scale
 			(xyz 1 1 1)

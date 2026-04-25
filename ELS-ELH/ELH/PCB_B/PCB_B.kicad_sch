@@ -8604,6 +8604,16 @@
 		)
 		(uuid "12dc7cd5-87d8-48df-9626-1056f44359a9")
 	)
+	(label "CH_C_MOSFET_ESP_CTR_3V3"
+		(at 96.52 171.45 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "1665ee6e-4db9-40c3-8684-6fbb78c1f147")
+	)
 	(label "RX_UART_BUS2_5V"
 		(at 257.81 71.12 0)
 		(effects
@@ -8693,16 +8703,6 @@
 			(justify left bottom)
 		)
 		(uuid "2e8b8d0f-77b5-4ddd-bb87-85539e7f4635")
-	)
-	(label "CH_A_MOSFET_ESP_CTR_3V3"
-		(at 96.52 171.45 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "319bd4c5-eb04-4d14-a7e1-26a4d767e739")
 	)
 	(label "CH_D_MOSFET_ESP_CTR_3V3"
 		(at 96.52 166.37 0)
@@ -9035,24 +9035,14 @@
 		(uuid "8afea61e-b49a-4a3f-9674-128d2a3f518d")
 	)
 	(label "CH_C_MOSFET_ESP_CTR_3V3"
-		(at 96.52 163.83 0)
+		(at 157.48 39.37 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "8d445403-ee7b-48eb-a4c2-50db5d90564b")
-	)
-	(label "CH_C_MOSFET_ESP_CTR_3V3"
-		(at 156.21 58.42 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "8e193a57-39b2-4c8e-b61f-4aec778bf064")
+		(uuid "8ba86845-93bf-4cae-8af7-e5ecf816e0ea")
 	)
 	(label "TX_UART_BUS2_ESP_MAIN_3V3"
 		(at 44.45 36.83 180)
@@ -9133,16 +9123,6 @@
 			(justify right bottom)
 		)
 		(uuid "a323dcaf-b003-4e04-9752-e7a3f692b357")
-	)
-	(label "CH_A_MOSFET_ESP_CTR_3V3"
-		(at 157.48 39.37 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a64ca532-2904-46b0-9eb4-6b920b7a97b6")
 	)
 	(label "CS_SD_ESP_MAIN_3V3"
 		(at 72.39 52.07 0)
@@ -9374,6 +9354,16 @@
 		)
 		(uuid "f3e4f534-0a54-474e-8e57-e4fa9b0f0f05")
 	)
+	(label "CH_A_MOSFET_ESP_CTR_3V3"
+		(at 96.52 163.83 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f6927c0d-5eb1-4b06-a422-88229711089c")
+	)
 	(label "SCK_SPI_BUS1_ESP_MAIN_3V3"
 		(at 44.45 125.73 180)
 		(effects
@@ -9383,6 +9373,16 @@
 			(justify right bottom)
 		)
 		(uuid "f87094a6-cb2e-4beb-bf78-c0fd5630c6ff")
+	)
+	(label "CH_A_MOSFET_ESP_CTR_3V3"
+		(at 156.21 59.69 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "fcec613c-c362-44a2-a99a-b9d432f3a59d")
 	)
 	(label "SCL_I2C_BUS1_ESP_MAIN_3V3"
 		(at 152.4 124.46 180)

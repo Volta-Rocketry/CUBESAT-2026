@@ -529,7 +529,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "../Fab_outputs/PCB_A/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "C:/Users/andre/Downloads/PCB_A.step",

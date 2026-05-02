@@ -10,10 +10,10 @@
 #include <string.h>
 #include <stdio.h>
 
-static FlightState g_state = STATE_INIT;
-static uint32_t g_flash_write_addr = 0;
-static uint8_t g_page_buf[FLASH_PAGE_SIZE];
-static uint16_t g_page_buf_idx = 0;
+static FlightState gState = STATE_INIT;
+static uint32_t gFlashWriteAddr = 0;
+static uint8_t gPageBuf[FLASH_PAGE_SIZE];
+static uint16_t gPageBufIdx = 0;
 
 
 static uint16_t crc16(const uint8_t* data, size_t len) {
@@ -27,31 +27,31 @@ static uint16_t crc16(const uint8_t* data, size_t len) {
     return crc;
 }
 
-static void page_buf_flush() {
-    if (g_page_buf_idx == 0) return;
+static void PageBufFlush() {
+    if (gPageBufIdx == 0) return;
 
-    if (g_flash_write_addr + g_page_buf_idx > FLASH_TOTAL_BYTES) {
+    if (gFlashWriteAddr + gPageBufIdx > FLASH_TOTAL_BYTES) {
         Serial.println("[DAQ] Flash llena. Deteniendo grabacion.");
         return;
     }
 
-    flash_write(g_flash_write_addr, g_page_buf, g_page_buf_idx);
-    g_flash_write_addr += g_page_buf_idx;
-    g_page_buf_idx      = 0;
+    FlashWrite(gFlashWriteAddr, gPageBuf, gPageBufIdx);
+    gFlashWriteAddr += gPageBufIdx;
+    gPageBufIdx = 0;
 }
 
-static void page_buf_write(const uint8_t* data, uint16_t len) {
+static void PageBufWrite(const uint8_t* data, uint16_t len) {
     uint16_t written = 0;
     while (written < len) {
-        uint16_t space = FLASH_PAGE_SIZE - g_page_buf_idx;
-        uint16_t to_copy = (len - written) < space ? (len - written) : space;
+        uint16_t space = FLASH_PAGE_SIZE - gPageBufIdx;
+        uint16_t toCopy = (len - written) < space ? (len - written) : space;
 
-        memcpy(g_page_buf + g_page_buf_idx, data + written, to_copy);
-        g_page_buf_idx += to_copy;
-        written += to_copy;
+        memcpy(gPageBuf + gPageBufIdx, data + written, toCopy);
+        gPageBufIdx += toCopy;
+        written += toCopy;
 
-        if (g_page_buf_idx == FLASH_PAGE_SIZE) {
-            page_buf_flush();
+        if (gPageBufIdx == FLASH_PAGE_SIZE) {
+            PageBufFlush();
         }
     }
 }
@@ -66,7 +66,7 @@ static void record_fast_packet() {
 
     fast_pkt.checksum = crc16((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
 
-    page_buf_write((uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
+    PageBufWrite((uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
 }
 
 static void record_slow_packet() {
@@ -79,13 +79,13 @@ static void record_slow_packet() {
 
     slow_pkt.checksum = crc16((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
 
-    page_buf_write((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
+    PageBufWrite((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
 }
 
 /*
 static void download_flash_to_sd() {
 
-    if (g_flash_write_addr == 0) {
+    if (gFlashWriteAddr == 0) {
         Serial.println("[DOWNLOAD] Flash vacia.");
         return;
     }
@@ -116,18 +116,18 @@ static void download_flash_to_sd() {
         "crc_ok"
     );
 
-    uint32_t     current_addr  = 0;
+    uint32_t     currentAddr  = 0;
     uint32_t     corrupt_count = 0;
 
-    while (current_addr < g_flash_write_addr) {
+    while (currentAddr < gFlashWriteAddr) {
 
         uint8_t id;
-        flash_read(current_addr, &id, 1);
+        FlashRead(currentAddr, &id, 1);
 
         if (id == 0x01) {
             FastFlightPacket fast_pkt;
 
-            flash_read(current_addr, (uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
+            FlashRead(currentAddr, (uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
 
             uint16_t expected_crc = crc16((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
             bool crc_ok = (fast_pkt.checksum == expected_crc);
@@ -150,12 +150,12 @@ static void download_flash_to_sd() {
             );
             fast_file.println(csv_line);
 
-            current_addr += sizeof(FastFlightPacket);
+            currentAddr += sizeof(FastFlightPacket);
         }
 
         else if (id == 0x02) {
             SlowFlightPacket slow_pkt;
-            flash_read(current_addr, (uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
+            FlashRead(currentAddr, (uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
 
             uint16_t expected_crc = crc16((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
             bool crc_ok = (slow_pkt.checksum == expected_crc);
@@ -177,11 +177,11 @@ static void download_flash_to_sd() {
             );    
             slow_file.println(csv_line);
 
-            current_addr += sizeof(SlowFlightPacket);
+            currentAddr += sizeof(SlowFlightPacket);
         }
 
         else {
-            current_addr++;
+            currentAddr++;
             corrupt_count++;
         }
 
@@ -191,7 +191,7 @@ static void download_flash_to_sd() {
     slow_file.close();
 
     Serial.printf("[DOWNLOAD] Listo. Bytes leidos: %lu. Errores: %lu\n",
-        (unsigned long)g_flash_write_addr,
+        (unsigned long)gFlashWriteAddr,
         (unsigned long)corrupt_count
     );
 
@@ -201,84 +201,84 @@ static void download_flash_to_sd() {
 }
 */
 
-void verify_flash_content() {
+void VerifyFlashContent() {
     Serial.println("\n--- INICIANDO VERIFICACIÓN DE FLASH ---");
     
-    if (g_flash_write_addr == 0) {
+    if (gFlashWriteAddr == 0) {
         Serial.println("[!] La Flash está vacía (puntero en 0).");
         return;
     }
 
-    Serial.printf("[INFO] Datos totales escritos: %lu bytes\n", g_flash_write_addr);
+    Serial.printf("[INFO] Datos totales escritos: %lu bytes\n", gFlashWriteAddr);
     Serial.println("----------------------------------------");
 
-    uint32_t current_addr = 0;
-    uint32_t count_fast = 0;
-    uint32_t count_slow = 0;
-    uint32_t count_corrupt = 0;
+    uint32_t currentAddr = 0;
+    uint32_t countFast = 0;
+    uint32_t countSlow = 0;
+    uint32_t countCorrupt = 0;
 
-    while (current_addr < g_flash_write_addr) {
+    while (currentAddr < gFlashWriteAddr) {
         uint8_t id = 0;
         // Leemos solo el primer byte para identificar el tipo de paquete
-        flash_read(current_addr, &id, 1);
+        FlashRead(currentAddr, &id, 1);
 
         if (id == 0x01) { // Paquete Rápido (MPU + BNO)
             FastFlightPacket p;
-            flash_read(current_addr, (uint8_t*)&p, sizeof(FastFlightPacket));
+            FlashRead(currentAddr, (uint8_t*)&p, sizeof(FastFlightPacket));
             
             // Verificación de CRC
             uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
 
             Serial.printf("[FAST] Addr: 0x%06lX | TS: %lu | AccelX: %.2f | CRC: %s\n", 
-                          current_addr, p.timestamp_ms, p.mpu.MPU_ax, ok ? "OK" : "ERROR");
+                          currentAddr, p.timestamp_ms, p.mpu.MPU_ax, ok ? "OK" : "ERROR");
             
-            if (!ok) count_corrupt++;
-            count_fast++;
-            current_addr += sizeof(FastFlightPacket);
+            if (!ok) countCorrupt++;
+            countFast++;
+            currentAddr += sizeof(FastFlightPacket);
         } 
         else if (id == 0x02) { // Paquete Lento (BME + GPS)
             SlowFlightPacket p;
-            flash_read(current_addr, (uint8_t*)&p, sizeof(SlowFlightPacket));
+            FlashRead(currentAddr, (uint8_t*)&p, sizeof(SlowFlightPacket));
             
             uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
 
             Serial.printf("[SLOW] Addr: 0x%06lX | TS: %lu | Pres: %.2f | GPS_Lat: %.6f | CRC: %s\n", 
-                          current_addr, p.timestamp_ms, p.bme.pressure, p.gps.latitude, ok ? "OK" : "ERROR");
+                          currentAddr, p.timestamp_ms, p.bme.pressure, p.gps.latitude, ok ? "OK" : "ERROR");
 
-            if (!ok) count_corrupt++;
-            count_slow++;
-            current_addr += sizeof(SlowFlightPacket);
+            if (!ok) countCorrupt++;
+            countSlow++;
+            currentAddr += sizeof(SlowFlightPacket);
         } 
         else {
             // Si encontramos algo que no es 0x01 ni 0x02, es ruido o error de alineación
-            Serial.printf("[?] Byte desconocido en 0x%06lX: 0x%02X (Saltando...)\n", current_addr, id);
-            current_addr++; 
-            count_corrupt++;
+            Serial.printf("[?] Byte desconocido en 0x%06lX: 0x%02X (Saltando...)\n", currentAddr, id);
+            currentAddr++; 
+            countCorrupt++;
         }
 
         // Pequeña pausa para no saturar el buffer del Serial si hay miles de datos
-        if ((count_fast + count_slow) % 50 == 0) delay(5);
+        if ((countFast + countSlow) % 50 == 0) delay(5);
     }
 
     Serial.println("----------------------------------------");
     Serial.println("RESUMEN DE VERIFICACIÓN:");
-    Serial.printf("  - Paquetes Fast: %lu\n", count_fast);
-    Serial.printf("  - Paquetes Slow: %lu\n", count_slow);
-    Serial.printf("  - Errores/Bytes corruptos: %lu\n", count_corrupt);
+    Serial.printf("  - Paquetes Fast: %lu\n", countFast);
+    Serial.printf("  - Paquetes Slow: %lu\n", countSlow);
+    Serial.printf("  - Errores/Bytes corruptos: %lu\n", countCorrupt);
     Serial.println("--- FIN DE VERIFICACIÓN ---\n");
 }
 
 void flight_computer_init() {
 
-    if (!flash_init()) {
+    if (!FlashInit()) {
         CriticalErrorSensor("W25Q128 no detectada. Verificar HSPI y FLASH_CS.");
     }
     else{
     Serial.println("[DAQ] Flash W25Q128 OK.");
     }
-    if (!SD.begin(PIN_CS_SD)) {
+    if (!SD.begin(SD_CS)) {
         Serial.println("[DAQ] ADVERTENCIA: SD no detectada.");
     } 
     else {
@@ -286,11 +286,11 @@ void flight_computer_init() {
     }
 
     Serial.println("[DAQ] Borrando flash (esperar)...");
-    flash_erase_chip();
+    FlashEraseChip();
     Serial.println("[DAQ] Flash borrada OK.");
 
-    g_flash_write_addr = 0;
-    g_page_buf_idx = 0;
+    gFlashWriteAddr = 0;
+    gPageBufIdx = 0;
 
     Serial.printf("[DAQ] Flash: %lu MB disponibles.\n", 
         FLASH_TOTAL_BYTES / (1024UL * 1024UL));
@@ -298,32 +298,32 @@ void flight_computer_init() {
         (float)(FLASH_TOTAL_BYTES / sizeof(FastFlightPacket)) / 6000.0f);
 
     digitalWrite(LED_BLUE_PIN, HIGH);
-    g_state = STATE_IDLE; //Para prueba (cambiar a STATE_PAD para vuelo)
+    gState = STATE_IDLE; //Para prueba (cambiar a STATE_PAD para vuelo)
     Serial.println("[DAQ] MODO PRUEBA: grabando en STATE_ASCENT. Presionar boton para descargar.");
 }
 
 void flight_computer_update() {
 
     // camelCase
-    static uint32_t last_fast_sample = 0;
-    static uint32_t last_slow_sample = 0;
-    static uint32_t accel_start_ms   = 0; 
-    static float    max_altitude     = -999.0f;
-    static uint8_t  apogee_count     = 0;
-    static uint32_t stable_start_ms  = 0;
-    static uint32_t landed_start_ms  = 0;
-    static float    last_landed_alt  = 0.0f;
+    static uint32_t lastFastSample = 0;
+    static uint32_t lastSlowSample = 0;
+    static uint32_t accelStartMs   = 0; 
+    static float    maxAltitude     = -999.0f;
+    static uint8_t  apogeeCount     = 0;
+    static uint32_t stableStartMs  = 0;
+    static uint32_t landedStartMs  = 0;
+    static float    lastLandedAlt  = 0.0f;
 
     uint32_t now = millis();
 
-    switch (g_state) {
+    switch (gState) {
 
     case STATE_IDLE: 
 
         digitalWrite(LED_BLUE_PIN, HIGH);
 
-        if (now - last_slow_sample >= 1000) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= 1000) {
+            lastSlowSample = now;
             ReadBME280();
             ReadUblox();
             ReadBNO055();
@@ -342,7 +342,7 @@ void flight_computer_update() {
                 cmd.trim();
                 if (cmd == "INTEGRATION") {
                     Serial.println("[COMANDO] Pasando a INTEGRATION.");
-                    g_state = STATE_INTEGRATION;
+                    gState = STATE_INTEGRATION;
                     digitalWrite(LED_BLUE_PIN, LOW);
                     digitalWrite(LED_GREEN_PIN, HIGH);
                 }
@@ -360,13 +360,13 @@ void flight_computer_update() {
                 }
                 else if (cmd == "ERASE") {
                     Serial.println("[COMANDO] Borrando flash por comando serial.");
-                    flash_erase_chip();
-                    g_flash_write_addr = 0;
-                    g_page_buf_idx = 0;
+                    FlashEraseChip();
+                    gFlashWriteAddr = 0;
+                    gPageBufIdx = 0;
                 }
                 if (cmd == "PAD") {
                     Serial.println("[COMANDO] Pasando a PAD.");
-                    g_state = STATE_PAD;
+                    gState = STATE_PAD;
                     digitalWrite(LED_BLUE_PIN, LOW);
                     digitalWrite(LED_RED_PIN, HIGH);
                 }
@@ -382,8 +382,8 @@ void flight_computer_update() {
         break;
 
     case STATE_INTEGRATION:
-        if (now - last_slow_sample >= 5000) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= 5000) {
+            lastSlowSample = now;
             ReadBME280();
             record_slow_packet();
         }
@@ -391,15 +391,15 @@ void flight_computer_update() {
 
     case STATE_PAD:
 
-        if (now - last_slow_sample >= 10000) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= 10000) {
+            lastSlowSample = now;
 
             ReadBME280();
             ReadUblox();
             record_slow_packet();
         }
-        if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) { 
-            last_fast_sample = now;
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
+            lastFastSample = now;
             ReadBME280(); 
 
             float total_accel = sqrtf(
@@ -409,54 +409,54 @@ void flight_computer_update() {
             );
 
             if (total_accel > LAUNCH_ACCEL_THRESHOLD_MS2) {
-                if (accel_start_ms == 0) accel_start_ms = now;
+                if (accelStartMs == 0) accelStartMs = now;
                 
-                if ((now - accel_start_ms >= 500) && (bmeData.altitude > 30.0f)) {
+                if ((now - accelStartMs >= 500) && (bmeData.altitude > 30.0f)) {
                     Serial.println("[EVENTO] DESPEGUE DETECTADO. Pasando a ASCENT.");
-                    g_state = STATE_ASCENT;
+                    gState = STATE_ASCENT;
                     digitalWrite(LED_RED_PIN, LOW);
                     digitalWrite(LED_GREEN_PIN, HIGH);
                 }
             } 
             else {
-                accel_start_ms = 0;
+                accelStartMs = 0;
             }
         }
         break;
 
     case STATE_ASCENT:
-        if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
-            last_fast_sample = now;
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
             ReadBNO055();
             record_fast_packet(); // 100 Hz
         }
-        if (now - last_slow_sample >= SLOW_SAMPLE_INTERVAL_MS) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
             ReadBME280();
             ReadUblox();
             record_slow_packet(); // 1 Hz
 
-            if (bmeData.altitude > max_altitude) {
-                max_altitude = bmeData.altitude;
-                apogee_count = 0;
+            if (bmeData.altitude > maxAltitude) {
+                maxAltitude = bmeData.altitude;
+                apogeeCount = 0;
             } 
-            else if (bmeData.altitude < (max_altitude - 5.0f)) {
-                apogee_count++;
-                if (apogee_count >= 10) {
+            else if (bmeData.altitude < (maxAltitude - 5.0f)) {
+                apogeeCount++;
+                if (apogeeCount >= 10) {
                     Serial.println("[EVENTO] APOGEO DETECTADO. Pasando a EJECTION.");
-                    g_state = STATE_EYECTION;
+                    gState = STATE_EYECTION;
                     digitalWrite(LED_GREEN_PIN, LOW);
                 }
             } 
             else {
-                apogee_count = 0;
+                apogeeCount = 0;
             }
         }
         break;
 
     case STATE_EYECTION:
-        if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
-            last_fast_sample = now;
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
             ReadBNO055();
             record_fast_packet();
 
@@ -468,18 +468,18 @@ void flight_computer_update() {
             
             // Falta ademas comprobar que los kill switches dejaron de estar presionados
             if (total_gyro < 20.0f) {  // por que 20, cuando se estabilize no podria ser mayor?
-                if (stable_start_ms == 0) stable_start_ms = now;
-                if (now - stable_start_ms > 2000) {
+                if (stableStartMs == 0) stableStartMs = now;
+                if (now - stableStartMs > 2000) {
                     Serial.println("[EVENTO] Cubesat estabilizado. Pasando a CONTROL.");
-                    g_state = STATE_CONTROL;
+                    gState = STATE_CONTROL;
                 }
             } 
             else {
-                stable_start_ms = 0;
+                stableStartMs = 0;
             }
         }
-        if (now - last_slow_sample >= SLOW_SAMPLE_INTERVAL_MS) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
             ReadBME280();
             ReadUblox();
             record_slow_packet();
@@ -488,49 +488,49 @@ void flight_computer_update() {
 
     case STATE_CONTROL:
 
-        if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
-            last_fast_sample = now;
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
             ReadBNO055();
             record_fast_packet();
         }
-        if (now - last_slow_sample >= SLOW_SAMPLE_INTERVAL_MS) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
             ReadBME280();
             ReadUblox();
             record_slow_packet();
 
             if (bmeData.altitude < 500.0f) {
                 Serial.println("[EVENTO] Umbral de drenaje cruzado. Pasando a DRAIN.");
-                g_state = STATE_DRAIN;
+                gState = STATE_DRAIN;
             }
         }
         break;
 
     case STATE_DRAIN:
-        if (now - last_fast_sample >= FAST_SAMPLE_INTERVAL_MS) {
-            last_fast_sample = now;
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
             ReadBNO055();
             record_fast_packet();
         }
-        if (now - last_slow_sample >= SLOW_SAMPLE_INTERVAL_MS) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
             ReadBME280();
             ReadUblox();
             record_slow_packet();
 
-            if (fabsf(bmeData.altitude - last_landed_alt) < 2.0f) {
-                if (landed_start_ms == 0) landed_start_ms = now;
-                if (now - landed_start_ms > 5000) { 
+            if (fabsf(bmeData.altitude - lastLandedAlt) < 2.0f) {
+                if (landedStartMs == 0) landedStartMs = now;
+                if (now - landedStartMs > 5000) { 
 
-                    page_buf_flush(); 
+                    PageBufFlush(); 
                     Serial.println("[EVENTO] ATERRIZAJE CONFIRMADO. Pasando a RECOVERY.");
-                    g_state = STATE_RECOVERY;
+                    gState = STATE_RECOVERY;
                     digitalWrite(LED_RED_PIN, LOW);
                 }
             }
             else {
-                last_landed_alt = bmeData.altitude;
-                landed_start_ms = 0;
+                lastLandedAlt = bmeData.altitude;
+                landedStartMs = 0;
             }
         }
         break;
@@ -539,19 +539,9 @@ void flight_computer_update() {
 
         digitalWrite(LED_GREEN_PIN, (now % 1000) < 500 ? HIGH : LOW);
 
-        if (now - last_slow_sample >= 10000) {
-            last_slow_sample = now;
+        if (now - lastSlowSample >= 10000) {
+            lastSlowSample = now;
             ReadBME280(); 
-        }
-
-        if (digitalRead(PIN_BUTTON) == LOW) {
-            delay(50); // No es muy poco tiempo?
-            if (digitalRead(PIN_BUTTON) == LOW) {
-                g_state = STATE_DOWNLOAD; 
-                digitalWrite(LED_GREEN_PIN, LOW);
-                digitalWrite(LED_BLUE_PIN, HIGH);
-                Serial.println("[DAQ] Iniciando descarga a SD...");
-            }
         }
         break;
 
@@ -570,6 +560,6 @@ void flight_computer_update() {
     }
 }
 
-FlightState flight_computer_get_state() {
-    return g_state;
+FlightState FlightComputerGetState() {
+    return gState;
 }

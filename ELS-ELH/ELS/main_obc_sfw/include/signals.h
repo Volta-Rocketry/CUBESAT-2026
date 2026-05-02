@@ -3,4 +3,6 @@
 #include "constants.h"
 
 void InitPCB();
-void PlayBuzzerTone(long frequency, long duration);
+void println(const char* message);
+void ColorRGB(int r, int g, int b);
+void PWMBuzzer(unsigned int f, unsigned long d);

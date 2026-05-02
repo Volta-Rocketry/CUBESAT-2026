@@ -5,8 +5,7 @@
 
 extern int numCalib;
 
-void InitExtencionBoard();
-
+void InitLedBuzzerActuators();
 void InitMPU6050();
 void InitQMC5883L();
 void InitBMP180();

@@ -21,45 +21,61 @@
 #define BME_SCK 18
 #define BME_MOSI 23
 #define BME_MISO 19
-#define BME_CS 33
+#define BME_CS 26
 
 // UBLOX PIN DEFINITIONS
-#define UBLOX_TX 32
+#define UBLOX_TX 25
 #define UBLOX_RX 36
 
 // FLASH PIN DEFINITIONS
 #define FLASH_SCK 18
 #define FLASH_MOSI 23
 #define FLASH_MISO 19 
-#define FLASH_CS 15
+#define FLASH_CS 5
 
 // SD PIN DEFINITIONS
-#define SD_SCK 16
-#define SD_MOSI 17
-#define SD_MISO 27
-#define SD_CS  3
-
-// TRANSDUCER PIN DEFINITION
-#define TRANSDUCER_PIN 16
+#define SD_SCK 18
+#define SD_MOSI 22
+#define SD_MISO 19
+#define SD_CS  2
 
 // ACTUATOR PIN DEFINITION
-#define ACTUATOR1_PIN 1
-#define ACTUATOR2_PIN 2
+#define ACTUATOR1_PIN 16
+#define ACTUATOR2_PIN 4
 
 // LED PIN DEFINITIONS
-// Estan en el expansor
-#define LED_RED_PIN 5
-#define LED_GREEN_PIN 6
-#define LED_BLUE_PIN 7
+#define LED_RED_PIN 13
+#define LED_GREEN_PIN 14
+#define LED_BLUE_PIN 27
 
 // BUZZER PIN DEFINITIONS
-#define BUZZER_PIN 4
+#define BUZZER_PIN 17
+
+// PWM DEFINITIONS
+#define RED_CHANNEL 0
+#define GREEN_CHANNEL 1
+#define BLUE_CHANNEL 2
+#define BUZZER_CHANNEL 3
+
+#define PWM_FREQ 5000
+#define PWM_RESOLUTION 8
 
 // flight computer definitions
-#define PIN_CS_SD SD_CS
 #define LAUNCH_ACCEL_THRESHOLD_MS2 29.43f  // cambiar de 3g a una menor que pueda acelear el dron de prueba
 #define FAST_SAMPLE_INTERVAL_MS 10
 #define SLOW_SAMPLE_INTERVAL_MS 1000
+
+// FLASH
+#define FLASH_PAGE_SIZE 256UL
+#define FLASH_TOTAL_BYTES 16777216UL
+
+#define CMD_WRITE_ENABLE 0x06
+#define CMD_CHIP_ERASE 0xC7
+#define CMD_PAGE_PROGRAM 0x02
+#define CMD_READ_DATA 0x03
+#define CMD_READ_STATUS 0x05
+#define CMD_JEDEC_ID 0x9F
+
 
 
 struct StructMPU6050{
@@ -145,7 +161,7 @@ struct StructUblox {
 
 // Calibration data structure
 struct CalibrationDataMPU {
-    // MPU9250 calibration data
+    // MPU6050 calibration data
     float mpuGyroBiasX;
     float mpuGyroBiasY;
     float mpuGyroBiasZ;

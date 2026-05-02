@@ -36,6 +36,6 @@ typedef enum {
     STATE_DOWNLOAD
 } FlightState;
 
-void flight_computer_init();
-void flight_computer_update();
-FlightState flight_computer_get_state();
+void FlightComputerInit();
+void FlightComputerUpdate();
+FlightState FlightComputerGetState();

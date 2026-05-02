@@ -4,12 +4,10 @@
 #include "error_warning.h"
 #include "signals.h"
 #include "flight_computer.h"
-#include <Adafruit_PCF8574.h>
 #include <SoftwareSerial.h>
 #include "BluetoothSerial.h"
 #include "comm_manager.h"
 
-Adafruit_PCF8574 pcf;
 BluetoothSerial SerialBT;
 
 uint32_t previousTelemetry = 0;
@@ -19,13 +17,12 @@ void setup() {
     Serial.begin(BAUD_RATE);
     SerialBT.begin("ESP32_Robot"); 
     Serial.println("El dispositivo ya se puede emparejar vía Bluetooth.");
-
-    InitExtencionBoard();
+    InitLedBuzzerActuators();
+    InitPCB();
     InitMPU6050();
     InitQMC5883L();
     InitBMP180();
     InitBNO055();
-    flight_computer_init();
     InitBME280();
     InitUblox();
     comms_init();
@@ -46,7 +43,7 @@ void loop() {
             command.trim();
             Serial.println(command);
             if (command == "LED") {
-                pcf.digitalWrite(LED_BLUE_PIN, HIGH);
+                digitalWrite(LED_BLUE_PIN, HIGH);
                 SerialBT.println("LED blue");
                 Serial.println("LED BLUE");
             }

@@ -1,14 +1,13 @@
 #include "sensors_manager.h"
 
-#include "constants.h"
-#include "error_warning.h"
-#include "signals.h"
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
+#include "constants.h"
+#include "error_warning.h"
+#include "signals.h"
 #include <Adafruit_BNO055.h>
 #include <Adafruit_BME280.h>
-#include <Adafruit_PCF8574.h>
 #include <MPU6050_light.h>
 #include <DFRobot_QMC5883.h>
 #include <Adafruit_BMP085.h>
@@ -27,8 +26,6 @@ Adafruit_BME280 bme(BME_CS);
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
 
-extern Adafruit_PCF8574 pcf;
-
 StructMPU6050 mpuData;
 StructQMC5883L qmcData;
 StructBMP180 bmpData;
@@ -46,44 +43,27 @@ Preferences preferences;
 
 int numCalib = 0;
 
-void InitExtencionBoard() {
-    Wire.begin(21, 22);
-    Wire.setTimeOut(100);
-    delay(100); 
+void InitLedBuzzerActuators(){
+ledcSetup(RED_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+    ledcSetup(GREEN_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+    ledcSetup(BLUE_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+    ledcSetup(BUZZER_CHANNEL, 2000, 8); 
 
-    if (!pcf.begin(0x20, &Wire)) {
-        CriticalErrorSensor("PCF8574 initialization failed");
-    } else {
-        Serial.println("PCF8574 I/O expander initialized successfully.");
-        pcf.pinMode(ACTUATOR1_PIN, OUTPUT);
-        pcf.pinMode(ACTUATOR2_PIN, OUTPUT);
-        pcf.pinMode(SD_CS, OUTPUT);
-        pcf.pinMode(BUZZER_PIN, OUTPUT);
-        pcf.pinMode(LED_RED_PIN, OUTPUT);
-        pcf.pinMode(LED_GREEN_PIN, OUTPUT);
-        pcf.pinMode(LED_BLUE_PIN, OUTPUT);
-
-        // Aseguramos que los PINES inicien apagados por seguridad
-        pcf.digitalWrite(ACTUATOR1_PIN, LOW);
-        pcf.digitalWrite(ACTUATOR2_PIN, LOW);
-        pcf.digitalWrite(BUZZER_PIN, HIGH);
-        pcf.digitalWrite(LED_RED_PIN, LOW);
-        pcf.digitalWrite(LED_GREEN_PIN, LOW);
-        pcf.digitalWrite(LED_BLUE_PIN, LOW);
-
-        Serial.println("PCF8574 pins configured successfully.");
-        SerialBT.println("PCF8574 pins configured successfully.");
-    }
+    ledcAttachPin(LED_RED_PIN, RED_CHANNEL);
+    ledcAttachPin(LED_GREEN_PIN, GREEN_CHANNEL);
+    ledcAttachPin(LED_BLUE_PIN, BLUE_CHANNEL);
+    ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+    
+    pinMode(ACTUATOR1_PIN, OUTPUT);
+    pinMode(ACTUATOR2_PIN, OUTPUT);
 }
 
-// Sensor initialization function
 void InitMPU6050(){
     byte status = mpu.begin();
     if (status != 0) {
         CriticalErrorSensor("MPU6050 initialization failed");
     } else {
-        Serial.println("MPU6050 sensor initialized successfully.");
-        SerialBT.println("MPU6050 sensor initialized successfully.");
+        println("MPU6050 sensor initialized successfully");
     };
 }
 void InitQMC5883L(){
@@ -92,7 +72,6 @@ void InitQMC5883L(){
     Wire.write(0x02); 
     if (Wire.endTransmission() != 0) {
         CriticalErrorSensor("Failed to open MPU6050 Bypass");
-        SerialBT.println("Failed to open MPU6050 Bypass");
         return;
     }
 
@@ -108,16 +87,14 @@ void InitQMC5883L(){
     if (Wire.endTransmission() != 0) {
         CriticalErrorSensor("QMC5883L not found on 0x0D");
     } else {
-        Serial.println("QMC5883L initialized successfully.");
-        SerialBT.println("QMC5883L initialized successfully.");
+        println("QMC5883L initialized successfully");
     }
 }
 void InitBMP180(){
     if (!bmp.begin()) {
 	    CriticalErrorSensor("BMP180 initialization failed");
     } else {
-        Serial.println("BMP180 sensor initialized successfully.");
-        SerialBT.println("BMP180 sensor initialized successfully.");
+        println("BMP180 sensor initialized successfully");
     };
 }
 void InitBNO055() {
@@ -125,8 +102,7 @@ void InitBNO055() {
     if (!bno.begin()) {
         CriticalErrorSensor("BNO055 initialization failed");
     } else {
-        Serial.println("BNO055 sensor initialized successfully.");
-        SerialBT.println("BNO055 sensor initialized successfully.");
+        println("BNO055 sensor initialized successfully");
     };
 }
 void InitBME280() {
@@ -134,8 +110,7 @@ void InitBME280() {
     if (!bme.begin()) {
         CriticalErrorSensor("BME280 initialization failed");
     } else {
-        Serial.println("BME280 sensor initialized successfully.");
-        SerialBT.println("BME280 sensor initialized successfully.");
+        println("BME280 sensor initialized successfully");
     }
 }
 void InitUblox() {
@@ -158,8 +133,7 @@ void InitUblox() {
     if (!GPSInitialized) {
         CriticalErrorSensor("Ublox initialization failed");
     } else {
-        Serial.println("Ublox sensor initialized successfully.");
-        SerialBT.println("Ublox sensor initialized successfully.");
+        println("Ublox sensor initialized successfully");
     }
 }
 // Sensor calibration functions
@@ -491,21 +465,21 @@ void ReadUblox() {
 // Actuator control functions
 void OpenActuators1Voltage() {
     // Code to send voltage to actuators
-    pcf.digitalWrite(ACTUATOR1_PIN, HIGH);
-    pcf.digitalWrite(LED_GREEN_PIN, HIGH);
+    digitalWrite(ACTUATOR1_PIN, HIGH);
+    digitalWrite(LED_GREEN_PIN, HIGH);
 }
 void CloseActuators1Voltage() {
     // Code to stop voltage to actuators
-    pcf.digitalWrite(ACTUATOR1_PIN, LOW);
-    pcf.digitalWrite(LED_GREEN_PIN, LOW);
+    digitalWrite(ACTUATOR1_PIN, LOW);
+    digitalWrite(LED_GREEN_PIN, LOW);
 }
 void OpenActuators2Voltage() {
     // Code to send voltage to actuators
-    pcf.digitalWrite(ACTUATOR2_PIN, HIGH);
-    pcf.digitalWrite(LED_GREEN_PIN, HIGH);
+    digitalWrite(ACTUATOR2_PIN, HIGH);
+    digitalWrite(LED_GREEN_PIN, HIGH);
 }
 void CloseActuators2Voltage() {
     // Code to stop voltage to actuators
-    pcf.digitalWrite(ACTUATOR2_PIN, LOW);
-    pcf.digitalWrite(LED_GREEN_PIN, LOW);
+    digitalWrite(ACTUATOR2_PIN, LOW);
+    digitalWrite(LED_GREEN_PIN, LOW);
 }

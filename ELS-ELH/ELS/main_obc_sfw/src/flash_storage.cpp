@@ -3,36 +3,26 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#define CMD_WRITE_ENABLE 0x06
-#define CMD_CHIP_ERASE 0xC7
-#define CMD_PAGE_PROGRAM 0x02
-#define CMD_READ_DATA 0x03
-#define CMD_READ_STATUS 0x05
-#define CMD_JEDEC_ID 0x9F
-
-#define PIN_CS_FLASH 15
-
-// extern SPIClass hspi;
 SPIClass hspi(HSPI);
 
-static void flash_wait_busy() {
-    digitalWrite(PIN_CS_FLASH, LOW);
+static void FlashWaitBusy() {
+    digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_READ_STATUS);
     while (hspi.transfer(0x00) & 0x01);
-    digitalWrite(PIN_CS_FLASH, HIGH);
+    digitalWrite(FLASH_CS, HIGH);
 }
 
-static void flash_write_enable() {
-    digitalWrite(PIN_CS_FLASH, LOW);
+static void FlashWriteEnable() {
+    digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_WRITE_ENABLE);
-    digitalWrite(PIN_CS_FLASH, HIGH);
+    digitalWrite(FLASH_CS, HIGH);
     delayMicroseconds(5);
 }
 
-static void flash_write_page(uint32_t addr, const uint8_t* data, uint16_t len) {
-    flash_write_enable();
+static void FlashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
+    FlashWriteEnable();
 
-    digitalWrite(PIN_CS_FLASH, LOW);
+    digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_PAGE_PROGRAM); 
 
     hspi.transfer((addr >> 16) & 0xFF); 
@@ -43,52 +33,52 @@ static void flash_write_page(uint32_t addr, const uint8_t* data, uint16_t len) {
         hspi.transfer(data[i]);
     }
 
-    digitalWrite(PIN_CS_FLASH, HIGH);
-    flash_wait_busy();
+    digitalWrite(FLASH_CS, HIGH);
+    FlashWaitBusy();
 }
 
-bool flash_init() {
-    pinMode(PIN_CS_FLASH, OUTPUT);
-    digitalWrite(PIN_CS_FLASH, HIGH);
+bool FlashInit() {
+    pinMode(FLASH_CS, OUTPUT);
+    digitalWrite(FLASH_CS, HIGH);
 
-    digitalWrite(PIN_CS_FLASH, LOW);
+    digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_JEDEC_ID);
     uint8_t manufacturer = hspi.transfer(0x00);
-    uint8_t mem_type     = hspi.transfer(0x00);
+    uint8_t memType     = hspi.transfer(0x00);
     uint8_t capacity     = hspi.transfer(0x00);
 
-    digitalWrite(PIN_CS_FLASH, HIGH);
-    return (manufacturer == 0xEF && mem_type == 0x40 && capacity == 0x16);
+    digitalWrite(FLASH_CS, HIGH);
+    return (manufacturer == 0xEF && memType == 0x40 && capacity == 0x16);
 }
 
-void flash_erase_chip() {
-    flash_write_enable();
-    digitalWrite(PIN_CS_FLASH, LOW);
+void FlashEraseChip() {
+    FlashWriteEnable();
+    digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_CHIP_ERASE);
-    digitalWrite(PIN_CS_FLASH, HIGH);
-    flash_wait_busy();
+    digitalWrite(FLASH_CS, HIGH);
+    FlashWaitBusy();
 }
 
-void flash_write(uint32_t addr, const uint8_t* data, uint16_t len) {
+void FlashWrite(uint32_t addr, const uint8_t* data, uint16_t len) {
     uint16_t written = 0;
-    uint32_t current_addr = addr;
-    const uint8_t* current_data = data;
+    uint32_t currentAddr = addr;
+    const uint8_t* currentData = data;
 
     while (written < len) {
-        uint16_t page_offset   = current_addr % FLASH_PAGE_SIZE;
-        uint16_t space_in_page = FLASH_PAGE_SIZE - page_offset;
+        uint16_t pageOffset   = currentAddr % FLASH_PAGE_SIZE;
+        uint16_t spaceInPage = FLASH_PAGE_SIZE - pageOffset;
 
-        uint16_t to_write = (len - written) < space_in_page ? (len - written) : space_in_page;
-        flash_write_page(current_addr, current_data, to_write);
+        uint16_t toWrite = (len - written) < spaceInPage ? (len - written) : spaceInPage;
+        FlashWritePage(currentAddr, currentData, toWrite);
 
-        written += to_write;
-        current_addr += to_write;
-        current_data += to_write;
+        written += toWrite;
+        currentAddr += toWrite;
+        currentData += toWrite;
     }
 }
 
-void flash_read(uint32_t addr, uint8_t* buf, uint32_t len) {
-    digitalWrite(PIN_CS_FLASH, LOW);
+void FlashRead(uint32_t addr, uint8_t* buf, uint32_t len) {
+    digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_READ_DATA);
 
     hspi.transfer((addr >> 16) & 0xFF);
@@ -99,5 +89,5 @@ void flash_read(uint32_t addr, uint8_t* buf, uint32_t len) {
         buf[i] = hspi.transfer(0x00);
     }
 
-    digitalWrite(PIN_CS_FLASH, HIGH);
+    digitalWrite(FLASH_CS, HIGH);
 }

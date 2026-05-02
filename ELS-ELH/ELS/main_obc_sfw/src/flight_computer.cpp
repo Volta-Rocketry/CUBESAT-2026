@@ -3,6 +3,8 @@
 #include "constants.h"
 #include "sensors_manager.h"    
 #include "error_warning.h"      
+#include "signals.h"
+#include "linear_kalman_nav.h"
 #include "flash_storage.h"    
 #include <Arduino.h>
 #include <SD.h>
@@ -93,7 +95,7 @@ void VerifyFlashContent() {
         return;
     }
 
-    println("Total written data: %lu bytes\n", gFlashWriteAddr);
+    // println("Total written data: %lu bytes\n", gFlashWriteAddr);
 
     uint32_t currentAddr = 0;
     uint32_t countFast = 0;
@@ -189,11 +191,11 @@ void flight_computer_update() {
     ReadBME280();
 
     float accelZ = mpuData.MPU_az - 9.81f; 
-    filtroNav.predict(accelZ, dt);
+    NavFilter.predict(accelZ, dt);
 
     //implement an if function for new baro data
     float altitud_baro = bmeData.altitude;
-    filtroNav.update(altitud_baro);
+    NavFilter.update(altitud_baro);
     
     float filtered_altitude = filtroNav.getAltitude();
     float filtered_velocity = filtroNav.getVelocity();

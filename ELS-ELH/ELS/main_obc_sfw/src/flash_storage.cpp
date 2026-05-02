@@ -1,5 +1,8 @@
 #include "flash_storage.h"
+
 #include "constants.h"
+#include "error_warning.h"
+#include "signals.h"
 #include <Arduino.h>
 #include <SPI.h>
 

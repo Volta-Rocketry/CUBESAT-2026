@@ -9,6 +9,9 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include "linear_kalman_nav.h"
+
+KalmanFilterNav NavFilter;
 
 static FlightState gState = STATE_INIT;
 static uint32_t gFlashWriteAddr = 0;
@@ -180,6 +183,28 @@ void flight_computer_update() {
     static float    lastLandedAlt  = 0.0f;
 
     uint32_t now = millis();
+
+//---------- Verify implementation - Where to implement the dt time
+    ReadMPU6050();
+    ReadBME280();
+
+    float accelZ = mpuData.MPU_az - 9.81f; 
+    filtroNav.predict(accelZ, dt);
+
+    //implement an if function for new baro data
+    float altitud_baro = bmeData.altitude;
+    filtroNav.update(altitud_baro);
+    
+    float filtered_altitude = filtroNav.getAltitude();
+    float filtered_velocity = filtroNav.getVelocity();
+
+    if (vel_actual > 280.0f) {
+        kfNav.setRBaro(1000.0f); 
+    } 
+    else {
+        kfNav.setRBaro(2.0f); 
+    }
+//-----------
 
     switch (gState) {
 

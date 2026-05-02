@@ -28,6 +28,7 @@ void setup() {
     comms_init();
     Serial.println("CUBESAT-1 Flight Computer Starting...");
     InitPCB();
+    filtroNav.setInitialAltitude(0.0f); 
 }
 
 void loop() {
@@ -35,8 +36,7 @@ void loop() {
       comms_tick();
     if (currentMilis - previousTelemetry >= 1000) {
         previousTelemetry = currentMilis;
-        Serial.println("Collecting telemetry data...");
-        SerialBT.println("HOLA");
+        println("Collecting telemetry data...");
         delay(2000);
         if (SerialBT.available() >0 ){
             String command = SerialBT.readStringUntil('\n');
@@ -61,5 +61,7 @@ void loop() {
             }
         }
     }
-    // flight_computer_update();
+    
+    flight_computer_update();
+
 }

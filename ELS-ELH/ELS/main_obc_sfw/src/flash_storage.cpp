@@ -37,7 +37,7 @@ static void FlashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
     FlashWaitBusy();
 }
 
-bool FlashInit() {
+void FlashInit() {
     pinMode(FLASH_CS, OUTPUT);
     digitalWrite(FLASH_CS, HIGH);
 
@@ -48,7 +48,12 @@ bool FlashInit() {
     uint8_t capacity     = hspi.transfer(0x00);
 
     digitalWrite(FLASH_CS, HIGH);
-    return (manufacturer == 0xEF && memType == 0x40 && capacity == 0x16);
+    if (manufacturer == 0xEF && memType == 0x40 && capacity == 0x16) {
+        println("Initialized FLASH");
+    }
+    else {
+        CriticalErrorSensor("FLASH not found");
+    }
 }
 
 void FlashEraseChip() {

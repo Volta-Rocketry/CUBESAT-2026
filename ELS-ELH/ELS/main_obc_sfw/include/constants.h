@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include "flight_computer.h"
+
 /**
  * @brief Pins definitions and data structure definitions.
  *
@@ -85,36 +87,41 @@
 // ======================
 
 /** @name FLASH COMMANDS AND DEFINITIONS */
-#define FLASH_PAGE_SIZE 256UL          ///< Flash memory page size in bytes
-#define FLASH_TOTAL_BYTES 16777216UL   ///< Total Flash memory capacity
+#define FLASH_PAGE_SIZE 256UL        ///< Flash memory page size in bytes
+#define FLASH_TOTAL_BYTES 16777216UL ///< Total Flash memory capacity
 
-#define CMD_WRITE_ENABLE 0x06          ///< SPI Command: Write enable
-#define CMD_CHIP_ERASE 0xC7            ///< SPI Command: Chip erase
-#define CMD_PAGE_PROGRAM 0x02          ///< SPI Command: Page program
-#define CMD_READ_DATA 0x03             ///< SPI Command: Read data
-#define CMD_READ_STATUS 0x05           ///< SPI Command: Read status register
-#define CMD_JEDEC_ID 0x9F              ///< SPI Command: Read manufacturer identification
+#define CMD_WRITE_ENABLE 0x06        ///< SPI Command: Write enable
+#define CMD_CHIP_ERASE 0xC7          ///< SPI Command: Chip erase
+#define CMD_PAGE_PROGRAM 0x02        ///< SPI Command: Page program
+#define CMD_READ_DATA 0x03           ///< SPI Command: Read data
+#define CMD_READ_STATUS 0x05         ///< SPI Command: Read status register
+#define CMD_JEDEC_ID 0x9F            ///< SPI Command: Read manufacturer identification
 
-// COMMUNICATION
-#define COMM_SYNC_1 0xAA
-#define COMM_SYNC_2 0x55
-#define ID_CTR_TP 0x10
-#define ID_CAM_TP 0x11
-#define ID_FLIGHT_SP 0X20
-#define CTR_TP_PAYLOAD_LEN 53
-#define CAM_TP_PAYLOAD_LEN 28
-#define FLIGHT_SP_PAYLOAD_LEN 9
-#define CTR_TP_FRAME_SIZE (2 + 1 + 1 + CTR_TP_PAYLOAD_LEN + 2)
-#define CAM_TP_FRAME_SIZE (2 + 1 + 1 + CAM_TP_PAYLOAD_LEN + 2)
-#define FLIGHT_SP_FRAME_SIZE (2 + 1 + 1 + FLIGHT_SP_PAYLOAD_LEN + 2)
-#define CTR_TP_INTERVAL_MS 10
-#define CAM_TP_INTERVAL_MS 10
-#define FLIGHT_SP_INTERVAL_MS 1000
-#define TEST_SP_INTERVAL_MS 1000
-#define CTR_TX 43
-#define CTR_RX 44
-#define CAM_TX 15
-#define CAM_RX 16
+// ============================================
+// COMMUNICATION CONSTANTS, PINS AND FRECUENCY
+// ============================================
+
+#define COMM_SYNC_1 0xAA             ///< Communication synchronization Signal
+#define COMM_SYNC_2 0x55             ///< Communication synchronization Signal
+#define ID_CTR_TP 0x10               ///< ID of the control package
+#define ID_CAM_TP 0x11               ///< ID of the camera package
+#define ID_FLIGHT_SP 0X20            ///< ID of the flight package
+#define CTR_TP_PAYLOAD_LEN 53        ///< Length of the control package payload data
+#define CAM_TP_PAYLOAD_LEN 28        ///< Length of the camera package payload data
+#define FLIGHT_SP_PAYLOAD_LEN 9      ///< Length of the flight package payload data
+#define CTR_TP_FRAME_SIZE (2 + 1 + 1 + CTR_TP_PAYLOAD_LEN + 2)       ///< Length of the control package frame
+#define CAM_TP_FRAME_SIZE (2 + 1 + 1 + CAM_TP_PAYLOAD_LEN + 2)       ///< Length of the camera package frame
+#define FLIGHT_SP_FRAME_SIZE (2 + 1 + 1 + FLIGHT_SP_PAYLOAD_LEN + 2) ///< Length of the flight package frame
+#define CTR_TP_INTERVAL_MS 10        ///< Time interval to send the control obc package
+#define CAM_TP_INTERVAL_MS 10        ///< Time interval for camera package sending
+#define FLIGHT_SP_INTERVAL_MS 1000   ///< Time interval for flight package sending
+#define TEST_SP_INTERVAL_MS 1000     ///< Time interval for test package sending
+#define CTR_TX 43                    ///< Reception pin (TX) to the Control OBC
+#define CTR_RX 44                    ///< Reception pin (RX) to the Control OBC
+#define CAM_TX 15                    ///< Reception pin (TX) to the Camera
+#define CAM_RX 16                    ///< Reception pin (RX) to the Camera
+
+#define BLINK 500
 
 // =======================
 // SENSOR DATA STRUCTURES
@@ -277,6 +284,67 @@ struct CalibrationDataBME {
     float bmePresRef;        ///< Reference pressure for altitude calculation
 };
 
+// Valid
+struct StructInitSensor {
+    bool initBNO;
+    bool initMPU;
+    bool initQMC;
+    bool initBMP;
+    bool initBME;
+    bool initGPS;
+    bool initFlash;
+};
+struct StructCalibSensor {
+    bool calibBNO;
+    bool calibMPU;
+    bool calibQMC;
+    bool calibBMP;
+    bool calibBME;
+    bool calibGPS;
+};
+struct StructInitCom{
+    bool comControl;
+    bool comCamera;
+};
+
+// ==========================
+// COMMUNICATION DATA STRUCTURES
+// ==========================
+
+/**
+ * @struct CommsCtrData
+ * @brief Data package for sending to Control OBC.
+ */
+struct CommsCtrData{
+    uint32_t timestamp; // Timestamp
+    float altitude; // BME280 altitude
+    float vertical_velocity; // Vertical velocity
+    float ax, ay, az; // BNO055 acceleration on the X, Y and Z axis
+    float gx, gy, gz; // BNO055 angular velocity on the X, Y and Z axis
+    float qw, qx, qy, qz; // BNO055 quaternion W, X, Y and Z components
+    FlightState flight_state; // Flight State
+};
+
+/**
+ * @struct CommsCamData
+ * @brief Data package for sending to Camera.
+ */
+struct CommsCamData{
+    uint32_t timestamp; // Timestamp
+    float ax, ay, az; // BNO055 acceleration on the X, Y and Z axis
+    float gx, gy, gz; // BNO055 angular velocity on the X, Y and Z axis
+};
+
+/**
+ * @struct CommsFlightmData
+ * @brief Data package of flight state for sending.
+ */
+struct CommsFlightData{
+    uint32_t timestamp; // Timestamp
+    float altitude; // BME280 altitude
+    FlightState flight_state; // Flight State
+};
+
 // ==========================
 // EXTERNAL GLOBAL VARIABLES
 // ==========================
@@ -284,10 +352,15 @@ struct CalibrationDataBME {
 /** @name Sensor Data Instances
  * Global variables defined in the main source file for access throughout the program.
  */
-extern StructMPU6050 mpuData;    ///< Global instance for MPU6050 data
-extern StructQMC5883L qmcData;   ///< Global instance for QMC5883L data
-extern StructBMP180 bmpData;     ///< Global instance for BMP180 data
-extern StructBNO055 bnoData;     ///< Global instance for BNO055 data
-extern StructBME280 bmeData;     ///< Global instance for BME280 data
-extern StructUblox ubloxData;    ///< Global instance for Ublox GPS data
-
+extern StructMPU6050 mpuData;           ///< Global instance for MPU6050 data
+extern StructQMC5883L qmcData;          ///< Global instance for QMC5883L data
+extern StructBMP180 bmpData;            ///< Global instance for BMP180 data
+extern StructBNO055 bnoData;            ///< Global instance for BNO055 data
+extern StructBME280 bmeData;            ///< Global instance for BME280 data
+extern StructUblox ubloxData;           ///< Global instance for Ublox GPS data
+extern CommsCtrData ctrData;            ///< Global instance for data to be sent to Control
+extern CommsCamData camData;            ///< Global instance for data to be sent to Camera
+extern CommsFlightData flightData;      ///< Global instance for flight data to be sent 
+extern StructInitSensor initSensor;
+extern StructCalibSensor calibSensor;
+extern StructInitCom initCom;

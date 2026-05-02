@@ -2,10 +2,11 @@
 #include <string.h>
 #include "constants.h"
 #include "comm_manager.h"
+#include "signals.h"
 
-static CommsCTRData ctrData;
-static CommsCAMData camData;
-static CommsFlightData flightData;
+CommsCtrData ctrData;
+CommsCamData camData;
+CommsFlightData flightData;
 
 static uint32_t LAST_CTR_SEND_MS = 0;
 static uint32_t LAST_CAM_SEND_MS = 0;
@@ -121,19 +122,19 @@ static void build_flight_frame(uint8_t* frame, const CommsFlightData* d) {
 
 static void send_ctr_frame() {
     uint8_t frame[CTR_TP_FRAME_SIZE];    
-    build_ctr_frame(frame, &s_ctr_data);
+    build_ctr_frame(frame, &ctrData);
     Serial1.write(frame, CTR_TP_FRAME_SIZE);   
 }
 
 static void send_cam_frame() {
     uint8_t frame[CAM_TP_FRAME_SIZE];         
-    build_cam_frame(frame, &s_cam_data);
+    build_cam_frame(frame, &camData);
     Serial2.write(frame, CAM_TP_FRAME_SIZE);   
 }
 
 static void send_flight_frame() {
     uint8_t frame[FLIGHT_SP_FRAME_SIZE];         
-    build_flight_frame(frame, &s_flight_data);
+    build_flight_frame(frame, &flightData);
     Serial2.write(frame, FLIGHT_SP_FRAME_SIZE);   
 }
 
@@ -147,38 +148,38 @@ void comms_update_ctr(uint32_t timestamp, float altitude, float vertical_velocit
                       float qw, float qx, float qy, float qz,
                       FlightState state) {
 
-    s_ctr_data.timestamp = timestamp;
-    s_ctr_data.altitude = altitude;
-    s_ctr_data.vertical_velocity = vertical_velocity;
-    s_ctr_data.ax = ax; s_ctr_data.ay = ay; s_ctr_data.az = az;
-    s_ctr_data.gx = gx; s_ctr_data.gy = gy; s_ctr_data.gz = gz;
-    s_ctr_data.qw = qw; s_ctr_data.qx = qx; s_ctr_data.qy = qy;  s_ctr_data.qz = qz;
-    s_ctr_data.flight_state = state;
+    ctrData.timestamp = timestamp;
+    ctrData.altitude = altitude;
+    ctrData.vertical_velocity = vertical_velocity;
+    ctrData.ax = ax; ctrData.ay = ay; ctrData.az = az;
+    ctrData.gx = gx; ctrData.gy = gy; ctrData.gz = gz;
+    ctrData.qw = qw; ctrData.qx = qx; ctrData.qy = qy;  ctrData.qz = qz;
+    ctrData.flight_state = state;
 }
 
 void comms_update_cam(uint32_t timestamp,
                       float ax, float ay, float az,
                       float gx, float gy, float gz) {
 
-    s_cam_data.timestamp = timestamp;
-    s_cam_data.ax = ax; s_cam_data.ay = ay; s_cam_data.az = az;
-    s_cam_data.gx = gx; s_cam_data.gy = gy; s_cam_data.gz = gz;
+    camData.timestamp = timestamp;
+    camData.ax = ax; camData.ay = ay; camData.az = az;
+    camData.gx = gx; camData.gy = gy; camData.gz = gz;
 }
 
 void comms_update_flight(uint32_t timestamp, float altitude,
                       FlightState state) {
 
-    s_flight_data.timestamp = timestamp;
-    s_flight_data.altitude = altitude;
-    s_flight_data.flight_state = state;
+    flightData.timestamp = timestamp;
+    flightData.altitude = altitude;
+    flightData.flight_state = state;
 }
 
-void CommsInit() {
-    Serial1.begin(BAUD_RATE, SERIAL_8N1, CTR_RX_PIN, CTR_TX_PIN);
-    Serial2.begin(COMMS_BAUD_RATE, SERIAL_8N1, CAM_OBC_RX_PIN,  CAM_OBC_TX_PIN);
+void CommsInit() { // Añadir verificación de inicialización
+    Serial1.begin(BAUD_RATE, SERIAL_8N1, CTR_RX, CTR_TX);
+    Serial2.begin(BAUD_RATE, SERIAL_8N1, CAM_RX,  CAM_TX);
 
-    memset(&ctrData, 0, sizeof(CommsCTRData));
-    memset(&camData, 0, sizeof(CommsCAMData));
+    memset(&ctrData, 0, sizeof(CommsCtrData));
+    memset(&camData, 0, sizeof(CommsCamData));
     memset(&flightData, 0, sizeof(CommsFlightData));
 
     LAST_CTR_SEND_MS = 0;
@@ -186,7 +187,7 @@ void CommsInit() {
     LAST_FLIGHT_SEND_MS = 0;
     LAST_TEST_SEND_MS = 0;
 
-    println("initialized UART1 and UART2 communication"):
+    println("initialized UART1 and UART2 communication");
 }
 
 void CommsTick() {

@@ -8,17 +8,12 @@ extern BluetoothSerial SerialBT;
 
 void InitPCB() {
     uint8_t blinkCount = 0;
-    uint16_t previousMilis = millis();
-    while (blinkCount < 6) {
-        uint16_t currentMilis = millis();
-        if (currentMilis - previousMilis >= 1000) {
-            previousMilis = currentMilis;
-            ColorRGB(0, 0, 255);
-            blinkCount++;
-        }
-        else{
-            ColorRGB(0, 0, 0);
-        }
+    while (blinkCount < 3) {
+        ColorRGB(0, 0, 255);
+        delay(BLINK);
+        ColorRGB(0, 0, 0);
+        delay(BLINK);
+        blinkCount++;
     }
 }
 

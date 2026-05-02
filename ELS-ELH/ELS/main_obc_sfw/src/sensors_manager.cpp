@@ -39,9 +39,10 @@ CalibrationDataBMP bmpCalib;
 CalibrationDataBNO bnoCalib;
 CalibrationDataBME bmeCalib;
 
-Preferences preferences;
+StructInitSensor initSensor;
+StructCalibSensor calibSensor;
 
-int numCalib = 0;
+Preferences preferences;
 
 void InitLedBuzzerActuators(){
 ledcSetup(RED_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
@@ -62,8 +63,10 @@ void InitMPU6050(){
     byte status = mpu.begin();
     if (status != 0) {
         CriticalErrorSensor("MPU6050 initialization failed");
+        initSensor.initMPU = 0;
     } else {
         println("MPU6050 sensor initialized successfully");
+        initSensor.initMPU = 1;
     };
 }
 void InitQMC5883L(){
@@ -72,6 +75,7 @@ void InitQMC5883L(){
     Wire.write(0x02); 
     if (Wire.endTransmission() != 0) {
         CriticalErrorSensor("Failed to open MPU6050 Bypass");
+        initSensor.initQMC = 0;
         return;
     }
 
@@ -86,31 +90,39 @@ void InitQMC5883L(){
     
     if (Wire.endTransmission() != 0) {
         CriticalErrorSensor("QMC5883L not found on 0x0D");
+        initSensor.initQMC = 0;
     } else {
         println("QMC5883L initialized successfully");
+        initSensor.initQMC = 1;
     }
 }
 void InitBMP180(){
     if (!bmp.begin()) {
 	    CriticalErrorSensor("BMP180 initialization failed");
+        initSensor.initBMP = 0;
     } else {
         println("BMP180 sensor initialized successfully");
+        initSensor.initBMP = 1;
     };
 }
 void InitBNO055() {
     // Code to initialize BNO055 sensor
     if (!bno.begin()) {
         CriticalErrorSensor("BNO055 initialization failed");
+        initSensor.initBNO = 0;
     } else {
         println("BNO055 sensor initialized successfully");
+        initSensor.initBNO = 1;
     };
 }
 void InitBME280() {
     // Code to initialize BME280 sensor
     if (!bme.begin()) {
         CriticalErrorSensor("BME280 initialization failed");
+        initSensor.initBME = 0;
     } else {
         println("BME280 sensor initialized successfully");
+        initSensor.initBME = 1;
     }
 }
 void InitUblox() {
@@ -132,13 +144,14 @@ void InitUblox() {
     }
     if (!GPSInitialized) {
         CriticalErrorSensor("Ublox initialization failed");
+        initSensor.initGPS = 0;
     } else {
         println("Ublox sensor initialized successfully");
+        initSensor.initGPS = 1;
     }
 }
 // Sensor calibration functions
 void CalibrateSensors() {
-    // Variables temporales para el proceso de calibración
     float gSumX = 0, gSumY = 0, gSumZ = 0;
     float aSumX = 0, aSumY = 0, aSumZ = 0;
     float tSum = 0;
@@ -150,8 +163,7 @@ void CalibrateSensors() {
     uint32_t previousCalibMilis = millis();
 
     // Data collection loop for calibration
-    Serial.println("Calibration loop");
-    SerialBT.println("Calibration loop");
+    println("Calibration loop.");
     while (numReadings < MAX_MU) {
         uint32_t calibMilis = millis();
         if (calibMilis - previousCalibMilis >= 150) {
@@ -174,8 +186,11 @@ void CalibrateSensors() {
 
             numReadings++;
         }
-        SerialBT.print("Numbers of readings: ");
-        SerialBT.println(numReadings);
+        if (numReadings == 1000){
+            calibSensor.calibMPU = 1;
+            calibSensor.calibBME = 1;
+            calibSensor.calibBMP =1;
+        }
     }
 
     // MPU6050 calibration
@@ -191,6 +206,7 @@ void CalibrateSensors() {
     mpuCalib.gyroTCO = 0.5; // 0.5 deg/s 
     mpuCalib.accTCO = 0.0015;  // 1.5 mg = 0.0015 G
 
+
     // BMP180 calibration
     bmpCalib.bmpPresRef = pSumBMP / float(numReadings);
 /*
@@ -199,7 +215,6 @@ void CalibrateSensors() {
     bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
     Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
     if (bno.isFullyCalibrated() && !calibrated) {
-        Serial.println("BNO055 sensor fully calibrated.");
         adafruit_bno055_offsets_t newOffsets;
         preferences.begin("bno_data", false);
         bno.getSensorOffsets(newOffsets);
@@ -207,6 +222,7 @@ void CalibrateSensors() {
         preferences.end();
         Serial.println("BNO055 calibration data saved to preferences.");
         calibrated = true;
+        calibSensor.calibBNO = 1;
     }
     if (!bno.isFullyCalibrated()) {
         preferences.begin("bno_data", true);
@@ -217,9 +233,11 @@ void CalibrateSensors() {
             bno.setSensorOffsets(savedOffsets);
             Serial.println("BNO055 calibration data loaded.");
             preferences.end();
+            calibSensor.calibBNO = 1;
         } 
     else {
         Serial.println("No BNO055 calibration data found.");
+        calibSensor.calibBNO = 0;
         }
     }
 */
@@ -257,7 +275,6 @@ void CalibrateSensors() {
 
     // BME280 calibration
     bmeCalib.bmePresRef = pSumBME / float(numReadings);
-    // numCalib = 1;
 
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
@@ -266,7 +283,7 @@ void CalibrateSensors() {
     }
     if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
         GPSConected = true;
-        // numCalib = 2;
+        calibSensor.calibGPS = 1;
     }
 }
 
@@ -302,8 +319,10 @@ void CalibratMagnetometer() {
             }
             if (previousCalibMagMillis == 30000){
                 calibrated = true;
+                calibSensor.calibQMC = 1;
             }
         }
+
     }
     qmcCalib.qmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
     qmcCalib.qmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0;

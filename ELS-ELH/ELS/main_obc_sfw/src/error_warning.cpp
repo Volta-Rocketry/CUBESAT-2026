@@ -13,21 +13,15 @@ void CriticalErrorSensor(const char* messages) {
     Serial.println(messages);
     SerialBT.print("Critical [ERROR]: ");
     SerialBT.println(messages);
-
-    uint32_t previousErrorCountMilis = millis();
     uint8_t blinkCount = 0;
-    while (blinkCount < 6) {
-        uint32_t ErrorCountMilis = millis();
-        if (ErrorCountMilis - previousErrorCountMilis >= 500) {
-            previousErrorCountMilis = ErrorCountMilis;
-            ColorRGB(255, 0, 0);
-            PWMBuzzer(2500, 150);
-            blinkCount++;
-        }
-        else{
-            ColorRGB(0, 0, 0);
-            PWMBuzzer(0, 0);
-        }
+    while (blinkCount < 3) {
+        ColorRGB(255, 0, 0);
+        PWMBuzzer(2500, 150);
+        delay(BLINK);
+        ColorRGB(0, 0, 0);
+        PWMBuzzer(0, 0);
+        delay(BLINK);
+        blinkCount++;
     }
 }
 

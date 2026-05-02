@@ -26,9 +26,9 @@ void setup() {
     InitBME280();
     InitUblox();
     comms_init();
-    Serial.println("CUBESAT-1 Flight Computer Starting...");
+    CalibrateSensors();
+    flight_computer_init();
     InitPCB();
-    filtroNav.setInitialAltitude(0.0f); 
 }
 
 void loop() {

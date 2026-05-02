@@ -3,8 +3,6 @@
 #include "constants.h"
 #include "error_warning.h"
 
-extern int numCalib;
-
 void InitLedBuzzerActuators();
 void InitMPU6050();
 void InitQMC5883L();

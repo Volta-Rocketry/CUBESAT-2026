@@ -155,7 +155,9 @@ void VerifyFlashContent() {
 void flight_computer_init() {
 
     FlashInit();
+    // filtroNav.setInitialAltitude(0.0f);
 
+    // quitar
     println("Erasing FLASH...");
     FlashEraseChip();
     println("FLASH erased");
@@ -186,7 +188,8 @@ void flight_computer_update() {
 
     uint32_t now = millis();
 
-//---------- Verify implementation - Where to implement the dt time
+/*
+---------- Verify implementation - Where to implement the dt time
     ReadMPU6050();
     ReadBME280();
 
@@ -206,7 +209,7 @@ void flight_computer_update() {
     else {
         kfNav.setRBaro(2.0f); 
     }
-//-----------
+*/
 
     switch (gState) {
 

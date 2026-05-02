@@ -1,12 +1,15 @@
 #pragma once
 
 #include <stdint.h>
+/**
+ * @brief Pins definitions and data structure definitions.
+ *
+ * This file contains all the pin configurations for the sensors (GY87, BNO055, BME280, UBLOX),
+ * memory configuration (Flash, SD), actuators, and the necessary structures to store telemetry and calibration data.
+ */
 
-
-// Baud Rate
-#define BAUD_RATE 115200
-
-// GPS Baud Rate
+/** @name Baud Rates */ 
+#define BAUD_RATE 115200  ///< Baude
 #define GPS_BAUD 9600
 
 // GY87 PIN DEFINITIONS

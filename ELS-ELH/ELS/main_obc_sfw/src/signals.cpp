@@ -16,6 +16,9 @@ void InitPCB() {
             ColorRGB(0, 0, 255);
             blinkCount++;
         }
+        else{
+            ColorRGB(0, 0, 0);
+        }
     }
 }
 

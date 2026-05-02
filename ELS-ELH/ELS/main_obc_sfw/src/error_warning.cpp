@@ -24,6 +24,10 @@ void CriticalErrorSensor(const char* messages) {
             PWMBuzzer(2500, 150);
             blinkCount++;
         }
+        else{
+            ColorRGB(0, 0, 0);
+            PWMBuzzer(0, 0);
+        }
     }
 }
 

@@ -1,14 +1,14 @@
 (footprint "IRLZ44N"
-	(version 20241229)
+	(version 20260206)
 	(generator "pcbnew")
-	(generator_version "9.0")
+	(generator_version "10.0")
 	(layer "F.Cu")
 	(property "Reference" "REF**"
 		(at 5.1 0.75 0)
 		(unlocked yes)
 		(layer "F.SilkS")
 		(hide yes)
-		(uuid "ca651806-621b-4793-9994-4308d2b0e140")
+		(uuid "c7d2d9d6-310c-4a13-ba4b-f7e935bffaa9")
 		(effects
 			(font
 				(size 1 1)
@@ -20,7 +20,8 @@
 		(at 5.1 2.25 0)
 		(unlocked yes)
 		(layer "F.Fab")
-		(uuid "b39fcd5a-6fea-45a3-b92a-0767c799e11e")
+		(hide yes)
+		(uuid "ee6168ed-eab1-41c7-a8fe-91b9101eb75e")
 		(effects
 			(font
 				(size 1 1)
@@ -33,7 +34,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "4779b6e4-0d92-46e3-9733-3a12cc45a085")
+		(uuid "661eff21-4f0f-4d24-a03b-7c9beba51a98")
 		(effects
 			(font
 				(size 1 1)
@@ -46,7 +47,7 @@
 		(unlocked yes)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "a075ef13-9951-41c3-87f4-c5a8b35270c2")
+		(uuid "abb20d44-6136-42ac-a347-7744f54e1aef")
 		(effects
 			(font
 				(size 1 1)
@@ -55,6 +56,7 @@
 		)
 	)
 	(attr through_hole)
+	(duplicate_pad_numbers_are_jumpers no)
 	(fp_rect
 		(start 0 0)
 		(end 10.2 4.8)
@@ -64,7 +66,7 @@
 		)
 		(fill no)
 		(layer "F.SilkS")
-		(uuid "9101b653-2fb5-47dc-a27a-9bcfa600b9f7")
+		(uuid "d23a276f-1c2d-4265-a15b-2f9fd988a1d0")
 	)
 	(fp_rect
 		(start -0.25 -0.25)
@@ -75,13 +77,13 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "ba5f42bb-f4f2-448b-b196-a6e5dfbb738a")
+		(uuid "8644de52-9090-4d6c-95b7-de105dac1e9a")
 	)
 	(fp_text user "IRLZ44N"
-		(at 1.8 1.4 0)
+		(at 1.8 -0.4 0)
 		(unlocked yes)
 		(layer "F.SilkS")
-		(uuid "8e813b0b-4d37-488a-a66a-5ea76eaef44f")
+		(uuid "379cff00-8625-46c5-ad86-a9012f74b75d")
 		(effects
 			(font
 				(size 1 1)
@@ -91,16 +93,43 @@
 			(justify left bottom)
 		)
 	)
-	(fp_text user "${REFERENCE}"
-		(at 5.1 3.75 0)
+	(fp_text user "G"
+		(at 1.8 1.6 0)
 		(unlocked yes)
-		(layer "F.Fab")
-		(uuid "40f194b0-ff96-43b3-bd2c-5139ace32a2a")
+		(layer "F.SilkS")
+		(uuid "e8105ebb-3aef-46ae-b263-246125865115")
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.15)
+				(thickness 0.1)
 			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "D"
+		(at 4.4 1.6 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "ab495f5c-8dfa-43c4-b191-735f8fbf4b17")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
+	)
+	(fp_text user "S"
+		(at 7 1.6 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "be489d22-ec80-413c-9d8f-d825c479b51d")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom)
 		)
 	)
 	(pad "1" thru_hole oval
@@ -110,7 +139,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "7d6d44cf-a95f-42c2-bb4f-dc5c5aab276a")
+		(uuid "2cf99c89-1b8e-4cbd-b0be-4f6ca5bb50c2")
 	)
 	(pad "2" thru_hole oval
 		(at 5 3.1)
@@ -119,7 +148,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "4f2c6dd6-0823-4d14-bb9f-cd9f38844965")
+		(uuid "5bdb0550-4532-4f03-b6ec-219e0f5d3179")
 	)
 	(pad "3" thru_hole oval
 		(at 7.5 3.1)
@@ -128,7 +157,7 @@
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 		(solder_mask_margin 0.102)
-		(uuid "94c8a7a9-54dd-4132-ae7f-8698e5cce4a1")
+		(uuid "64bd13fc-f73e-4cf4-9c6e-6223cf90c6b0")
 	)
 	(embedded_fonts no)
 	(model "C:/Users/sofia/Documents/repos/Volta/CUBESAT-2026/ELS-ELH/ELH/Library/Models_3d/irlz44n.stp"

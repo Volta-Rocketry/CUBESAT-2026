@@ -195,7 +195,8 @@
       ],
       "track_widths": [
         0.0,
-        0.5
+        0.35,
+        0.8
       ],
       "tuning_pattern_settings": {
         "diff_pair_defaults": {
@@ -524,7 +525,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "../Fab_outputs/PCB_B/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
@@ -677,7 +678,7 @@
         "uuid": "8ce3d015-2fa7-4d89-b6ca-9a5bdbe9d762"
       }
     ],
-    "used_designators": "R6",
+    "used_designators": "J6,J8-9,J16,#PWR48-50",
     "variants": []
   },
   "sheets": [

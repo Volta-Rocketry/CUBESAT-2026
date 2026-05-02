@@ -197,6 +197,8 @@
         0.0,
         0.25,
         0.5,
+        0.8,
+        1.0,
         1.5,
         2.0
       ],
@@ -527,7 +529,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "../Fab_outputs/PCB_A/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "C:/Users/andre/Downloads/PCB_A.step",
@@ -659,7 +661,7 @@
       {
         "filename": "PCB_A.kicad_sch",
         "name": "PCB_A",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "uuid": "6aec2650-5a34-45ab-bea8-78bd6e422a1f"
       }
     ],
     "used_designators": "",
@@ -668,7 +670,7 @@
   "sheets": [
     [
       "6aec2650-5a34-45ab-bea8-78bd6e422a1f",
-      "Root"
+      "PCB_A"
     ]
   ],
   "text_variables": {},

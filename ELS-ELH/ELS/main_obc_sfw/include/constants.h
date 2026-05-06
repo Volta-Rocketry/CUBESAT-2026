@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "flight_computer.h"
 
 /**
  * @brief Pins definitions and data structure definitions.
@@ -308,6 +307,42 @@ struct StructInitCom{
 };
 
 // ==========================
+// FLASH DATA STRUCTURES
+// ==========================
+
+typedef enum {
+    // Test states 
+    STATE_IDLE,
+    STATE_INIT,
+    STATE_INTEGRATION,
+    // Flight states
+    STATE_PAD,
+    STATE_ASCENT,
+    STATE_EYECTION,
+    STATE_CONTROL,
+    STATE_DRAIN,
+    STATE_RECOVERY,
+    STATE_DOWNLOAD
+} FlightState;
+
+typedef struct __attribute__((packed)) {
+    uint8_t packet_id;   
+    uint32_t timestamp_ms; 
+    StructMPU6050 mpu;         
+    StructBNO055 bno;
+    uint16_t checksum;      
+} FastFlightPacket;
+
+typedef struct __attribute__((packed)) {
+    uint8_t packet_id;    
+    uint32_t timestamp_ms;  
+    StructBME280 bme;
+    StructBMP180 bmpData;        
+    StructUblox gps;           
+    uint16_t checksum;      
+} SlowFlightPacket;
+
+// ==========================
 // COMMUNICATION DATA STRUCTURES
 // ==========================
 
@@ -364,3 +399,5 @@ extern CommsFlightData flightData;      ///< Global instance for flight data to 
 extern StructInitSensor initSensor;
 extern StructCalibSensor calibSensor;
 extern StructInitCom initCom;
+extern FastFlightPacket fastP;
+extern SlowFlightPacket slowP;

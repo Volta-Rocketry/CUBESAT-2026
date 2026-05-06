@@ -4,38 +4,6 @@
 #include "flash_storage.h"
 #include "sensors_manager.h"
 
-typedef struct __attribute__((packed)) {
-    uint8_t packet_id;   
-    uint32_t timestamp_ms; 
-    StructMPU6050 mpu;         
-    StructBNO055 bno;
-    uint16_t checksum;      
-} FastFlightPacket;
-
-typedef struct __attribute__((packed)) {
-    uint8_t packet_id;    
-    uint32_t timestamp_ms;  
-    StructBME280 bme;
-    StructBMP180 bmpData;        
-    StructUblox gps;           
-    uint16_t checksum;      
-} SlowFlightPacket;
-
-typedef enum {
-    // Test states 
-    STATE_IDLE,
-    STATE_INIT,
-    STATE_INTEGRATION,
-    // Flight states
-    STATE_PAD,
-    STATE_ASCENT,
-    STATE_EYECTION,
-    STATE_CONTROL,
-    STATE_DRAIN,
-    STATE_RECOVERY,
-    STATE_DOWNLOAD
-} FlightState;
-
 void FlightComputerInit();
 void FlightComputerUpdate();
 FlightState FlightComputerGetState();

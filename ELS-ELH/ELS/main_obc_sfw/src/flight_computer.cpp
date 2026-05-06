@@ -11,6 +11,13 @@
 #include <string.h>
 #include <stdio.h>
 
+StructMPU6050 mpu;
+StructBNO055 bno;
+StructBME280 bme;
+StructUblox gps;
+StructBMP180 bmpData;
+
+FlightState FlightComputerGetState();
 static FlightState gState = STATE_INIT;
 static uint32_t gFlashWriteAddr = 0;
 static uint8_t gPageBuf[FLASH_PAGE_SIZE];
@@ -418,6 +425,7 @@ void flight_computer_update() {
     }
 }
 
-FlightState FlightComputerGetState() {
-    return gState;
+// En el archivo .cpp
+FlightState FlightComputerGetState() { 
+    return gState; 
 }

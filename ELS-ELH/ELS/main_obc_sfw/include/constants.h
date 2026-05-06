@@ -105,12 +105,15 @@
 #define ID_CTR_TP 0x10               ///< ID of the control package
 #define ID_CAM_TP 0x11               ///< ID of the camera package
 #define ID_FLIGHT_SP 0X20            ///< ID of the flight package
+#define ID_INIT_CMD 0XF0
 #define CTR_TP_PAYLOAD_LEN 53        ///< Length of the control package payload data
 #define CAM_TP_PAYLOAD_LEN 28        ///< Length of the camera package payload data
 #define FLIGHT_SP_PAYLOAD_LEN 9      ///< Length of the flight package payload data
+#define INIT_SP_PAYLOAD_LEN 1
 #define CTR_TP_FRAME_SIZE (2 + 1 + 1 + CTR_TP_PAYLOAD_LEN + 2)       ///< Length of the control package frame
 #define CAM_TP_FRAME_SIZE (2 + 1 + 1 + CAM_TP_PAYLOAD_LEN + 2)       ///< Length of the camera package frame
 #define FLIGHT_SP_FRAME_SIZE (2 + 1 + 1 + FLIGHT_SP_PAYLOAD_LEN + 2) ///< Length of the flight package frame
+#define INIT_SP_FRAME_SIZE (2 + 1 + 1 + INIT_SP_PAYLOAD_LEN + 2)
 #define CTR_TP_INTERVAL_MS 10        ///< Time interval to send the control obc package
 #define CAM_TP_INTERVAL_MS 10        ///< Time interval for camera package sending
 #define FLIGHT_SP_INTERVAL_MS 1000   ///< Time interval for flight package sending
@@ -307,9 +310,13 @@ struct StructInitCom{
 };
 
 // ==========================
-// FLASH DATA STRUCTURES
+// FLIGHTSTATE TYPE
 // ==========================
 
+/**
+ * @enum FlightState
+ * @brief List the flight states.
+ */
 typedef enum {
     // Test states 
     STATE_IDLE,
@@ -325,6 +332,14 @@ typedef enum {
     STATE_DOWNLOAD
 } FlightState;
 
+// ==========================
+// FLIGHT DATA STRUCTURES
+// ==========================
+
+/**
+ * @struct SlowFlightPacket
+ * @brief Data package thats contains data from high frequency sensors.
+ */
 typedef struct __attribute__((packed)) {
     uint8_t packet_id;   
     uint32_t timestamp_ms; 
@@ -333,6 +348,10 @@ typedef struct __attribute__((packed)) {
     uint16_t checksum;      
 } FastFlightPacket;
 
+/**
+ * @struct SlowFlightPacket
+ * @brief Data package thats contains data from low frequency sensors.
+ */
 typedef struct __attribute__((packed)) {
     uint8_t packet_id;    
     uint32_t timestamp_ms;  
@@ -380,6 +399,10 @@ struct CommsFlightData{
     FlightState flight_state; // Flight State
 };
 
+struct CommsInitData{
+    uint8_t id_ctr_tp;
+};
+
 // ==========================
 // EXTERNAL GLOBAL VARIABLES
 // ==========================
@@ -395,9 +418,10 @@ extern StructBME280 bmeData;            ///< Global instance for BME280 data
 extern StructUblox ubloxData;           ///< Global instance for Ublox GPS data
 extern CommsCtrData ctrData;            ///< Global instance for data to be sent to Control
 extern CommsCamData camData;            ///< Global instance for data to be sent to Camera
-extern CommsFlightData flightData;      ///< Global instance for flight data to be sent 
+extern CommsFlightData flightData;      ///< Global instance for flight data to be sent
+exter CommsInitData initData;
 extern StructInitSensor initSensor;
 extern StructCalibSensor calibSensor;
-extern StructInitCom initCom;
+extern StructInitCom initCom;    //no se si eso va o es otra q ya esta en el archivo
 extern FastFlightPacket fastP;
 extern SlowFlightPacket slowP;

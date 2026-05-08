@@ -279,7 +279,7 @@ void flight_computer_update() {
             if (total_accel > LAUNCH_ACCEL_THRESHOLD_MS2) {
                 if (accelStartMs == 0) accelStartMs = now;
                 
-                if ((now - accelStartMs >= 5000) {
+                if ((now - accelStartMs >= 500) {
                     println("Boost detected. Transition to ASCENT.");
                     gState = STATE_ASCENT;
                     digitalWrite(LED_RED_PIN, LOW);
@@ -305,7 +305,7 @@ void flight_computer_update() {
             record_slow_packet(); // 1 Hz
             
             //---
-            if (bmeData.altitude > maxAltitude) {
+            if (bmeData.altitude < maxAltitude) {
                 if (altitudeStartMs == 0) altitudeStartMs = now;
                 
                 if (now - altitudeStartMs >= 500) {
@@ -316,7 +316,8 @@ void flight_computer_update() {
                 }
             } 
             else {
-                accelStartMs = 0;
+                if (bmeData.altitude > maxAltitude) maxAltitude = bmeData.altitude;
+                altitudeStartMs = 0;
             }
         }
         break;

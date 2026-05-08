@@ -393,18 +393,9 @@ struct CommsCamData{
     float gx, gy, gz; // BNO055 angular velocity on the X, Y and Z axis
 };
 
-/**
- * @struct CommsFlightmData
- * @brief Data package of flight state for sending.
- */
-struct CommsFlightData{
-    uint32_t timestamp; // Timestamp
-    float altitude; // BME280 altitude
-    FlightState flight_state; // Flight State
-};
 
 struct CommsInitData{
-    uint8_t id_ctr_tp;
+    uint8_t id_to_init;
 };
 
 // ==========================
@@ -422,7 +413,6 @@ extern StructBME280 bmeData;            ///< Global instance for BME280 data
 extern StructUblox ubloxData;           ///< Global instance for Ublox GPS data
 extern CommsCtrData ctrData;            ///< Global instance for data to be sent to Control
 extern CommsCamData camData;            ///< Global instance for data to be sent to Camera
-extern CommsFlightData flightData;      ///< Global instance for flight data to be sent
 extern CommsInitData initData;
 extern StructInitSensor initSensor;
 extern StructCalibSensor calibSensor;

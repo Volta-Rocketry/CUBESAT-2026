@@ -1,5 +1,5 @@
 #include "flight_computer.h"
-
+#include "comm_manager.h"
 #include "constants.h"
 #include "sensors_manager.h"    
 #include "error_warning.h"      
@@ -11,11 +11,14 @@
 #include <string.h>
 #include <stdio.h>
 
+/*
 StructMPU6050 mpu;
 StructBNO055 bno;
 StructBME280 bme;
 StructUblox gps;
 StructBMP180 bmpData;
+*/
+
 CommsInitData dataToInit;
 
 uint32_t gFlashWriteAddr = 0;
@@ -32,16 +35,6 @@ static uint16_t gPageBufIdx = 0;
  * @param length Number of bytes in the data array.
  * @return uint16_t The calculated 16-bit checksum.
  */
-static uint16_t crc16(const uint8_t* data, size_t len) {
-    uint16_t crc = 0xFFFF;
-    for (size_t i = 0; i < len; i++) {
-        crc ^= (uint16_t)data[i] << 8;
-        for (int b = 0; b < 8; b++) {
-            crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : (crc << 1);
-        }
-    }
-    return crc;
-}
 
 /**
  * @brief Page Buffer Execution.
@@ -95,7 +88,7 @@ static void RecordFastPacket() {
     fast_pkt.mpu = mpuData;
     fast_pkt.bno = bnoData;
 
-    fast_pkt.checksum = crc16((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
+    fast_pkt.checksum = crc16_ccitt((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
 
     PageBufWrite((uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
 }
@@ -113,7 +106,7 @@ static void RecordSlowPacket() {
     slow_pkt.bme = bmeData;
     slow_pkt.gps = ubloxData;
 
-    slow_pkt.checksum = crc16((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
+    slow_pkt.checksum = crc16_ccitt((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
 
     PageBufWrite((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
 }
@@ -140,7 +133,7 @@ void flight_computer_init() {
     dataToInit.id_to_init = ID_CTR_TP;
     bool ctr_ok = CommsInit(Serial2, CTR_RX, CTR_TX, &dataToInit);
 
-    memset(&dataToInit, 0, sizeof(CommsInitData)); /
+    memset(&dataToInit, 0, sizeof(CommsInitData)); 
     dataToInit.id_to_init = ID_CAM_TP;
     bool cam_ok = CommsInit(Serial1, CAM_RX, CAM_TX, &dataToInit);
 

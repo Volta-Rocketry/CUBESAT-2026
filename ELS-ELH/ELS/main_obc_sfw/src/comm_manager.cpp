@@ -6,7 +6,7 @@
 
 CommsCtrData ctrData;
 CommsCamData camData;
-CommsFlightData flightData;
+CommsInitData initData;
 
 static uint32_t LAST_CTR_SEND_MS = 0;
 static uint32_t LAST_CAM_SEND_MS = 0;
@@ -22,7 +22,7 @@ static uint32_t LAST_TEST_SEND_MS = 0;
  * @param length Number of bytes in the data array.
  * @return uint16_t The calculated 16-bit checksum.
  */
-static uint16_t crc16_ccitt(const uint8_t* data, uint16_t length) {
+uint16_t crc16_ccitt(const uint8_t* data, uint16_t length) {
     uint16_t crc = 0xFFFF;
 
     for (uint16_t i = 0; i < length; i++) {
@@ -275,7 +275,7 @@ bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInit
     while(serialPort.available()) { serialPort.read(); }
 
     Serial.printf("Initializing communications for ID: 0x%02X\n", d->id_to_init);
-    send_init_frame(serialPort, d);
+    send_test_frame(serialPort, d);
 
     uint32_t start_time = millis();
     uint8_t rx_buf[INIT_SP_FRAME_SIZE];

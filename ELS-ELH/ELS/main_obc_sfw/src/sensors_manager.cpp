@@ -44,6 +44,9 @@ StructCalibSensor calibSensor;
 
 Preferences preferences;
 
+bool offsetsLoaded = false;
+bool offsetsSaved = false;
+
 void InitLedBuzzerActuators(){
 ledcSetup(RED_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
     ledcSetup(GREEN_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
@@ -98,6 +101,7 @@ void InitQMC5883L(){
     }
 }
 void InitBMP180(){
+    Wire.begin();
     if (!bmp.begin()) {
 	    CriticalErrorSensor("BMP180 initialization failed");
         initSensor.initBMP = 0;
@@ -107,7 +111,6 @@ void InitBMP180(){
     };
 }
 void InitBNO055() {
-    // Code to initialize BNO055 sensor
     if (!bno.begin()) {
         CriticalErrorSensor("BNO055 initialization failed");
         initSensor.initBNO = 0;
@@ -117,7 +120,6 @@ void InitBNO055() {
     };
 }
 void InitBME280() {
-    // Code to initialize BME280 sensor
     if (!bme.begin()) {
         CriticalErrorSensor("BME280 initialization failed");
         initSensor.initBME = 0;
@@ -151,7 +153,8 @@ void InitUblox() {
         initSensor.initGPS = 1;
     }
 }
-// Sensor calibration functions
+
+
 void CalibrateSensors() {
     float gSumX = 0, gSumY = 0, gSumZ = 0;
     float aSumX = 0, aSumY = 0, aSumZ = 0;
@@ -204,87 +207,28 @@ void CalibrateSensors() {
 
     // Temperature calibration
     mpuCalib.tempRef = tSum / float(numReadings);
-    mpuCalib.gyroTCO = 0.5; // 0.5 deg/s 
-    mpuCalib.accTCO = 0.0015;  // 1.5 mg = 0.0015 G
-
+    mpuCalib.gyroTCO = 0.5; 
+    mpuCalib.accTCO = 0.0015;
 
     // BMP180 calibration
     bmpCalib.bmpPresRef = pSumBMP / float(numReadings);
-/*
-    // Get calibration from BNO055
-    bool calibrated = false;
-    bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
-    Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
-    if (bno.isFullyCalibrated() && !calibrated) {
-        adafruit_bno055_offsets_t newOffsets;
-        preferences.begin("bno_data", false);
-        bno.getSensorOffsets(newOffsets);
-        preferences.putBytes("bno_offsets", &newOffsets, sizeof(newOffsets));
-        preferences.end();
-        Serial.println("BNO055 calibration data saved to preferences.");
-        calibrated = true;
-        calibSensor.calibBNO = 1;
-    }
-    if (!bno.isFullyCalibrated()) {
-        preferences.begin("bno_data", true);
-        size_t dataLength = preferences.getBytesLength("bno_offsets");
-        if (dataLength > 0 ){
-            adafruit_bno055_offsets_t savedOffsets;
-            preferences.getBytes("bno_offsets", &savedOffsets, sizeof(savedOffsets));
-            bno.setSensorOffsets(savedOffsets);
-            Serial.println("BNO055 calibration data loaded.");
-            preferences.end();
-            calibSensor.calibBNO = 1;
-        } 
-    else {
-        Serial.println("No BNO055 calibration data found.");
-        calibSensor.calibBNO = 0;
-        }
-    }
-*/
-
-/*
-    while (!bno.isFullyCalibrated()) {
-        bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
-        Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
-        Serial.println("Calibrating BNO055... Please follow the calibration procedure.");
-        if (bnoCalib.bnoGyroStatus < 3){
-            Serial.println("Calibrate Gyroscope: Keep the sensor stationary on a flat surface.");
-        }
-        else if (bnoCalib.bnoGyroStatus == 3){
-            Serial.println("Gyroscope calibrated.");
-        }
-        else if (bnoCalib.bnoMagStatus < 3){
-            Serial.println("Calibrate Magnetometer: Move the sensor in a figure-eight pattern.");
-        }
-        else if (bnoCalib.bnoMagStatus == 3){
-            Serial.println("Magnetometer calibrated.");
-        } 
-        if (bnoCalib.bnoAccStatus < 3){
-            Serial.println("Calibrate Accelerometer: Move the sensor in different positions.");
-        }
-        else if (bnoCalib.bnoAccStatus == 3){
-            Serial.println("Accelerometer calibrated.");
-        }
-        delay(1000);
-    }
-    if (bno.isFullyCalibrated()){
-        Serial.println("BNO055 sensor fully calibrated.");
-    }
-    */
-
 
     // BME280 calibration
     bmeCalib.bmePresRef = pSumBME / float(numReadings);
 
+    // BNO055 calibration
+    ///bno.getCalibration(&sys, &gyro, &acc, &mag);
+
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
-    while (gpsSerial.available() > 0) {
-        gps.encode(gpsSerial.read());
-    }
-    if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
-        GPSConected = true;
-        calibSensor.calibGPS = 1;
+    while(!GPSConected){
+        while (gpsSerial.available() > 0) {
+            gps.encode(gpsSerial.read());
+        }
+        if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
+            GPSConected = true;
+            calibSensor.calibGPS = 1;
+        }
     }
 }
 
@@ -292,56 +236,73 @@ void CalibratMagnetometer() {
     float magMin[3] = {32767, 32767, 32767};
     float magMax[3] = {-32768, -32768, -32768};
 
-    uint32_t previousCalibMagMillis = millis();
+    uint32_t previousCalibMagMillis = 0;
+    uint32_t startTime = millis();
+
     bool calibrated = false;
-    while (!calibrated) {
-        uint32_t calibMagSec = millis();
-        if (calibMagSec - previousCalibMagMillis >= 500) {
-            previousCalibMagMillis = calibMagSec;
+
+     while (!calibrated) {
+
+        uint32_t calibMag = millis();
+
+        if (calibMag - previousCalibMagMillis >= 500) {
+
+            previousCalibMagMillis = calibMag;
 
             Wire.beginTransmission(0x0D);
             Wire.write(0x00);
             Wire.endTransmission();
+
             Wire.requestFrom(0x0D, 6);
 
             if (Wire.available() == 6) {
 
-                float mx = (int16_t)(Wire.read() | (Wire.read() << 8));
-                float my = (int16_t)(Wire.read() | (Wire.read() << 8));
-                float mz = (int16_t)(Wire.read() | (Wire.read() << 8));
+                int16_t rawX = (int16_t)(Wire.read() | (Wire.read() << 8));
+                int16_t rawY = (int16_t)(Wire.read() | (Wire.read() << 8));
+                int16_t rawZ = (int16_t)(Wire.read() | (Wire.read() << 8));
 
-                if (mx < magMin[0]) magMin[0] = mx;
-                if (my < magMin[1]) magMin[1] = my;
-                if (mz < magMin[2]) magMin[2] = mz;
+                // ===== UPDATE MIN =====
+                if (rawX < magMin[0]) magMin[0] = rawX;
+                if (rawY < magMin[1]) magMin[1] = rawY;
+                if (rawZ < magMin[2]) magMin[2] = rawZ;
 
-                if (mx > magMax[0]) magMax[0] = mx;
-                if (my > magMax[1]) magMax[1] = my;
-                if (mz > magMax[2]) magMax[2] = mz;
-            }
-            if (previousCalibMagMillis == 30000){
-                calibrated = true;
-                calibSensor.calibQMC = 1;
+                // ===== UPDATE MAX =====
+                if (rawX > magMax[0]) magMax[0] = rawX;
+                if (rawY > magMax[1]) magMax[1] = rawY;
+                if (rawZ > magMax[2]) magMax[2] = rawZ;
+
             }
         }
 
+        if (millis() - startTime >= 30000) {
+            calibrated = true;
+            calibSensor.calibQMC = 1;
+        }
+
+        delay(1);
     }
-    qmcCalib.qmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
-    qmcCalib.qmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0;
-    qmcCalib.qmcMagOffsetZ = (magMax[2] + magMin[2]) / 2.0;
 
-    float radioX = (magMax[0] - magMin[0]) / 2.0;
-    float radioY = (magMax[1] - magMin[1]) / 2.0;
-    float radioZ = (magMax[2] - magMin[2]) / 2.0;
+    qmcCalib.qmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0f;
+    qmcCalib.qmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0f;
+    qmcCalib.qmcMagOffsetZ = (magMax[2] + magMin[2]) / 2.0f;
 
-    float radioPromedio = (radioX + radioY + radioZ) / 3.0;
+    float radioX = (magMax[0] - magMin[0]) / 2.0f;
+    float radioY = (magMax[1] - magMin[1]) / 2.0f;
+    float radioZ = (magMax[2] - magMin[2]) / 2.0f;
+
+    if (radioX == 0) radioX = 1;
+    if (radioY == 0) radioY = 1;
+    if (radioZ == 0) radioZ = 1;
+
+    float radioPromedio = (radioX + radioY + radioZ) / 3.0f;
 
     qmcCalib.qmcMagScaleX = radioPromedio / radioX;
     qmcCalib.qmcMagScaleY = radioPromedio / radioY;
     qmcCalib.qmcMagScaleZ = radioPromedio / radioZ;
+
 }
 
 
-// Sensor reading functions
 void ReadMPU6050(){
     mpu.update();
     mpuData.timestamp = millis();
@@ -349,16 +310,6 @@ void ReadMPU6050(){
     mpuData.MPU_temp = mpu.getTemp();
     float deltaTemp = mpuData.MPU_temp - mpuCalib.tempRef;
 
-    mpuData.MPU_ax = mpu.getAccX();
-    mpuData.MPU_ay = mpu.getAccY(); 
-    mpuData.MPU_az = mpu.getAccZ();
-    
-    mpuData.MPU_gx = mpu.getGyroX();
-    mpuData.MPU_gy = mpu.getGyroY();
-    mpuData.MPU_gz = mpu.getGyroZ();
-
-    // Codigo calibrado y en m/s2 y rad/s
-    /*
     float ax_g = mpu.getAccX() - mpuCalib.mpuAccBiasX - (mpuCalib.accTCO * deltaTemp);
     float ay_g = mpu.getAccY() - mpuCalib.mpuAccBiasY - (mpuCalib.accTCO * deltaTemp);
     float az_g = mpu.getAccZ() - mpuCalib.mpuAccBiasZ - (mpuCalib.accTCO * deltaTemp);
@@ -374,8 +325,8 @@ void ReadMPU6050(){
     mpuData.MPU_gx = gx_deg * 0.0174533;
     mpuData.MPU_gy = gy_deg * 0.0174533;
     mpuData.MPU_gz = gz_deg * 0.0174533;
-    */
 }
+
 void ReadQMC5883L(){
     Wire.beginTransmission(0x0D);
     Wire.write(0x00);
@@ -393,9 +344,9 @@ void ReadQMC5883L(){
         qmcData.QMC_mz = (rawZ / 3000.0f) * 1e-4f;
 
 /*
-        float correctedX = (rawX - hmcCalib.qmcMagOffsetX) * hmcCalib.qmcMagScaleX;
-        float correctedY = (rawY - hmcCalib.qmcMagOffsetY) * hmcCalib.qmcMagScaleY;
-        float correctedZ = (rawZ - hmcCalib.qmcMagOffsetZ) * hmcCalib.qmcMagScaleZ;
+        float correctedX = (rawX - qmcCalib.qmcMagOffsetX) * qmcCalib.qmcMagScaleX;
+        float correctedY = (rawY - qmcCalib.qmcMagOffsetY) * qmcCalib.qmcMagScaleY;
+        float correctedZ = (rawZ - qmcCalib.qmcMagOffsetZ) * qmcCalib.qmcMagScaleZ;
 
         qmcData.timestamp = millis();
 
@@ -404,14 +355,6 @@ void ReadQMC5883L(){
         qmcData.QMC_mz = (correctedZ / 3000.0f) * 1e-4f;
 */
     }
-}
-void ReadBMP180(){
-    float pressurePad1 = bmpCalib.bmpPresRef;
-    bmpData.timestamp = millis();
-    bmpData.temp = bmp.readTemperature();
-    bmpData.pressure = bmp.readPressure();
-    bmpData.altitude = bmp.readAltitude(pressurePad1);
-
 }
 void ReadBNO055() {
     // Code to read data from BNO055 sensor
@@ -434,9 +377,16 @@ void ReadBNO055() {
     bnoData.BNO_qy = quat.y();
     bnoData.BNO_qz = quat.z();
 }
+void ReadBMP180(){
+    float pressurePad1 = bmpCalib.bmpPresRef;
+    bmpData.timestamp = millis();
+    bmpData.temp = bmp.readTemperature();
+    bmpData.pressure = bmp.readPressure();
+    bmpData.altitude = bmp.readAltitude(pressurePad1);
+
+}
 void ReadBME280() {
-    // Code to read data from BME sensor
-    float pressurePad2 = bmeCalib.bmePresRef; 
+    float pressurePad2 = bmeCalib.bmePresRef / 100.0f; 
     bmeData.timestamp = millis();
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();
@@ -444,7 +394,6 @@ void ReadBME280() {
     bmeData.altitude = bme.readAltitude(pressurePad2);
 }
 void ReadUblox() {
-    // Code to read data from Ublox sensor
     ubloxData.timestamp = millis();
     while (gpsSerial.available() > 0) {
         gps.encode(gpsSerial.read());
@@ -481,25 +430,19 @@ void ReadUblox() {
     ubloxData.valid = gps.location.isValid();
 }
 
-
-// Actuator control functions
 void OpenActuators1Voltage() {
-    // Code to send voltage to actuators
     digitalWrite(ACTUATOR1_PIN, HIGH);
     digitalWrite(LED_GREEN_PIN, HIGH);
 }
 void CloseActuators1Voltage() {
-    // Code to stop voltage to actuators
     digitalWrite(ACTUATOR1_PIN, LOW);
     digitalWrite(LED_GREEN_PIN, LOW);
 }
 void OpenActuators2Voltage() {
-    // Code to send voltage to actuators
     digitalWrite(ACTUATOR2_PIN, HIGH);
     digitalWrite(LED_GREEN_PIN, HIGH);
 }
 void CloseActuators2Voltage() {
-    // Code to stop voltage to actuators
     digitalWrite(ACTUATOR2_PIN, LOW);
     digitalWrite(LED_GREEN_PIN, LOW);
 }

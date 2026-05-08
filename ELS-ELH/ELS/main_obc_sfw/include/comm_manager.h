@@ -1,9 +1,11 @@
 #pragma once
 
+#include <Arduino.h>
 #include <stdint.h>
 #include "flight_computer.h"
 #include "constants.h"
 
+uint16_t crc16_ccitt(const uint8_t* data, uint16_t length);
 bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInitData* d);
 void CommsTick();
 

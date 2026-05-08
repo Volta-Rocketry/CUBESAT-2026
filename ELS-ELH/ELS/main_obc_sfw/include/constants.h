@@ -340,19 +340,22 @@ typedef enum {
  * @struct SlowFlightPacket
  * @brief Data package thats contains data from high frequency sensors.
  */
-typedef struct __attribute__((packed)) {
-    uint8_t packet_id;   
-    uint32_t timestamp_ms; 
-    StructMPU6050 mpu;         
+#pragma pack(push, 1)
+typedef struct {
+    uint8_t packet_id;
+    uint32_t timestamp_ms;
+    StructMPU6050 mpu;
     StructBNO055 bno;
-    uint16_t checksum;      
+    uint16_t checksum;
 } FastFlightPacket;
+#pragma pack(pop)
 
 /**
  * @struct SlowFlightPacket
  * @brief Data package thats contains data from low frequency sensors.
  */
-typedef struct __attribute__((packed)) {
+#pragma pack(push, 1)
+typedef struct {
     uint8_t packet_id;    
     uint32_t timestamp_ms;  
     StructBME280 bme;
@@ -360,6 +363,7 @@ typedef struct __attribute__((packed)) {
     StructUblox gps;           
     uint16_t checksum;      
 } SlowFlightPacket;
+#pragma pack(pop)
 
 // ==========================
 // COMMUNICATION DATA STRUCTURES
@@ -419,7 +423,7 @@ extern StructUblox ubloxData;           ///< Global instance for Ublox GPS data
 extern CommsCtrData ctrData;            ///< Global instance for data to be sent to Control
 extern CommsCamData camData;            ///< Global instance for data to be sent to Camera
 extern CommsFlightData flightData;      ///< Global instance for flight data to be sent
-exter CommsInitData initData;
+extern CommsInitData initData;
 extern StructInitSensor initSensor;
 extern StructCalibSensor calibSensor;
 extern StructInitCom initCom;    //no se si eso va o es otra q ya esta en el archivo

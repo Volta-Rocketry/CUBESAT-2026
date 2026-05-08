@@ -17,51 +17,9 @@ void setup() {
     Serial.begin(BAUD_RATE);
     SerialBT.begin("ESP32_Robot"); 
     Serial.println("El dispositivo ya se puede emparejar vía Bluetooth.");
-    InitLedBuzzerActuators();
-    InitPCB();
-    InitMPU6050();
-    InitQMC5883L();
-    InitBMP180();
-    InitBNO055();
-    InitBME280();
-    InitUblox();
-    comms_init();
-    CalibrateSensors();
-    flight_computer_init();
-    InitPCB();
 }
 
 void loop() {
     currentMilis = millis();
-      comms_tick();
-    if (currentMilis - previousTelemetry >= 1000) {
-        previousTelemetry = currentMilis;
-        println("Collecting telemetry data...");
-        delay(2000);
-        if (SerialBT.available() >0 ){
-            String command = SerialBT.readStringUntil('\n');
-            command.trim();
-            Serial.println(command);
-            if (command == "LED") {
-                digitalWrite(LED_BLUE_PIN, HIGH);
-                SerialBT.println("LED blue");
-                Serial.println("LED BLUE");
-            }
-            else if (command == "A1"){
-                OpenActuators1Voltage();
-            }
-            else if (command == "A2"){
-                OpenActuators2Voltage();
-            }
-            else if (command == "C1"){
-                CloseActuators1Voltage();
-            }
-            else if (command == "C2"){
-                CloseActuators2Voltage();
-            }
-        }
-    }
-    
-    flight_computer_update();
 
 }

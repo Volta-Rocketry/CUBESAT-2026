@@ -77,9 +77,9 @@
 // ===========================
 
 /** @name FLIGHT LOGIC AND SAMPLING */
-#define LAUNCH_ACCEL_THRESHOLD_MS2 29.43f  ///< Acceleration threshold to detect launch
-#define FAST_SAMPLE_INTERVAL_MS 10         ///< Fast sampling interval in milliseconds
-#define SLOW_SAMPLE_INTERVAL_MS 1000       ///< Slow sampling interval in milliseconds
+#define LAUNCH_ACCEL_THRESHOLD_MS2 19.6133f ///< Acceleration threshold to detect launch
+#define FAST_SAMPLE_INTERVAL_MS 10          ///< Fast sampling interval in milliseconds
+#define SLOW_SAMPLE_INTERVAL_MS 1000        ///< Slow sampling interval in milliseconds
 
 // ======================
 // FLASH MEMORY COMMANDS

@@ -156,6 +156,7 @@ void flight_computer_init() {
     else {
         CriticalErrorSensor("CAM Communication initialization failed");
     }
+
     //---
 
     digitalWrite(LED_BLUE_PIN, HIGH);
@@ -184,6 +185,8 @@ void flight_computer_update() {
     switch (gState) {
 
     case STATE_IDLE: 
+
+        println("CURRENT STATE: IDLE");
 
         digitalWrite(LED_BLUE_PIN, HIGH);
 
@@ -276,7 +279,7 @@ void flight_computer_update() {
             if (total_accel > LAUNCH_ACCEL_THRESHOLD_MS2) {
                 if (accelStartMs == 0) accelStartMs = now;
                 
-                if ((now - accelStartMs >= 500) && (bmeData.altitude > 30.0f)) {
+                if ((now - accelStartMs >= 5000) {
                     println("Boost detected. Transition to ASCENT.");
                     gState = STATE_ASCENT;
                     digitalWrite(LED_RED_PIN, LOW);
@@ -300,21 +303,20 @@ void flight_computer_update() {
             ReadBME280();
             ReadUblox();
             record_slow_packet(); // 1 Hz
-
+            
+            //---
             if (bmeData.altitude > maxAltitude) {
-                maxAltitude = bmeData.altitude;
-                apogeeCount = 0;
-            } 
-            else if (bmeData.altitude < (maxAltitude - 5.0f)) {
-                apogeeCount++;
-                if (apogeeCount >= 10) {
-                    Serial.println("Apogee detected. transition to EJECTION.");
-                    gState = STATE_EYECTION;
-                    digitalWrite(LED_GREEN_PIN, LOW);
+                if (altitudeStartMs == 0) altitudeStartMs = now;
+                
+                if (now - altitudeStartMs >= 500) {
+                    println("Apogee detected. Transition to EJECTION.");
+                    gState = STATE_EJECTION;
+                    digitalWrite(LED_RED_PIN, LOW);
+                    digitalWrite(LED_GREEN_PIN, HIGH);
                 }
             } 
             else {
-                apogeeCount = 0;
+                accelStartMs = 0;
             }
         }
         break;
@@ -331,7 +333,7 @@ void flight_computer_update() {
                 mpuData.MPU_gz * mpuData.MPU_gz
             );
             
-            // Falta ademas comprobar que los kill switches dejaron de estar presionados
+            // IMPLEMENTAR DETECCION DE KILL SWITCHES Y DELAY
             if (total_gyro < 20.0f) {  // por que 20, cuando se estabilize no podria ser mayor?
                 if (stableStartMs == 0) stableStartMs = now;
                 if (now - stableStartMs > 2000) {
@@ -364,7 +366,7 @@ void flight_computer_update() {
             ReadUblox();
             record_slow_packet();
 
-            if (bmeData.altitude < 500.0f) {
+            if (bmeData.altitude < 50.0f) {
                 println("Drain threshold. Transition to DRAIN");
                 gState = STATE_DRAIN;
             }
@@ -385,7 +387,7 @@ void flight_computer_update() {
 
             if (fabsf(bmeData.altitude - lastLandedAlt) < 2.0f) {
                 if (landedStartMs == 0) landedStartMs = now;
-                if (now - landedStartMs > 5000) { 
+                if (now - landedStartMs > 4000) { 
 
                     PageBufFlush(); 
                     println("LANDING CONFIRMED. Transition to RECOVERY.");

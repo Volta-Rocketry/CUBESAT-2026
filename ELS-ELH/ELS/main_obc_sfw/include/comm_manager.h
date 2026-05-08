@@ -4,7 +4,7 @@
 #include "flight_computer.h"
 #include "constants.h"
 
-void CommsInit();
+bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInitData* d);
 void CommsTick();
 
 void CommsUpdateCTR(uint32_t timestamp,

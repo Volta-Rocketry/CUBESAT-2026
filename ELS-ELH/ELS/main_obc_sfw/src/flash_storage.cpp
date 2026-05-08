@@ -8,6 +8,7 @@
 
 SPIClass hspi(HSPI);
 
+
 static void FlashWaitBusy() {
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_READ_STATUS);
@@ -98,4 +99,73 @@ void FlashRead(uint32_t addr, uint8_t* buf, uint32_t len) {
     }
 
     digitalWrite(FLASH_CS, HIGH);
+}
+
+/**
+ * @brief Verifies and prints the content in flash.
+ * * Reads all the Flash memory where the data was stored, 
+ * identifies what type of packet each one is, and verifies if the information is complete
+ */
+void VerifyFlashContent() {
+    println("Starting FLASH Verification");
+    
+    if (gFlashWriteAddr == 0) {
+        println("FLASH is empty");
+        return;
+    }
+
+    println("Total written data: %lu bytes\n", gFlashWriteAddr);
+
+    uint32_t currentAddr = 0;
+    uint32_t countFast = 0;
+    uint32_t countSlow = 0;
+    uint32_t countCorrupt = 0;
+
+    while (currentAddr < gFlashWriteAddr) {
+        uint8_t id = 0;
+
+        FlashRead(currentAddr, &id, 1);
+
+        if (id == 0x01) {
+            FastFlightPacket p;
+            FlashRead(currentAddr, (uint8_t*)&p, sizeof(FastFlightPacket));
+            
+            uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
+            bool ok = (p.checksum == crc_calc);
+
+            Serial.printf("[FAST] Addr: 0x%06lX | TS: %lu | AccelX: %.2f | CRC: %s\n", 
+                          currentAddr, p.timestamp_ms, p.mpu.MPU_ax, ok ? "OK" : "ERROR");
+            
+            if (!ok) countCorrupt++;
+            countFast++;
+            currentAddr += sizeof(FastFlightPacket);
+        } 
+        else if (id == 0x02) {
+            SlowFlightPacket p;
+            FlashRead(currentAddr, (uint8_t*)&p, sizeof(SlowFlightPacket));
+            
+            uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
+            bool ok = (p.checksum == crc_calc);
+
+            Serial.printf("[SLOW] Addr: 0x%06lX | TS: %lu | Pres: %.2f | GPS_Lat: %.6f | CRC: %s\n", 
+                          currentAddr, p.timestamp_ms, p.bme.pressure, p.gps.latitude, ok ? "OK" : "ERROR");
+
+            if (!ok) countCorrupt++;
+            countSlow++;
+            currentAddr += sizeof(SlowFlightPacket);
+        } 
+        else {
+            Serial.printf("[?] Unknown byte in 0x%06lX: 0x%02X (Saltando...)\n", currentAddr, id);
+            currentAddr++; 
+            countCorrupt++;
+        }
+
+        if ((countFast + countSlow) % 50 == 0) delay(5);
+    }
+
+    println("Verification results");
+    Serial.printf("  - Fast Packets: %lu\n", countFast);
+    Serial.printf("  - Slow Packets: %lu\n", countSlow);
+    Serial.printf("  - Corrupted Bytes: %lu\n", countCorrupt);
+    println("Verification end");
 }

@@ -218,7 +218,7 @@ static void send_cam_frame() {
     Serial2.write(frame, CAM_TP_FRAME_SIZE);   
 }
 
-static void send_init_frame(HardwareSerial& serialPort, const CommsInitData* d) {
+static void send_test_frame(HardwareSerial& serialPort, const CommsInitData* d) {
     uint8_t frame[INIT_SP_FRAME_SIZE];    
     build_init_frame(frame, d);
 
@@ -331,12 +331,4 @@ void CommsTick() {
         send_cam_frame();
     }
 
-    if (now - LAST_FLIGHT_SEND_MS >= FLIGHT_SP_INTERVAL_MS) {
-        LAST_FLIGHT_SEND_MS = now;
-        send_flight_frame();
-    }
-    if (now - LAST_TEST_SEND_MS >= TEST_SP_INTERVAL_MS) {
-        LAST_TEST_SEND_MS = now;
-        send_test_frame();
-    }
 }

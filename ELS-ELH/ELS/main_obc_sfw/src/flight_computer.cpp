@@ -16,9 +16,10 @@ StructBNO055 bno;
 StructBME280 bme;
 StructUblox gps;
 StructBMP180 bmpData;
+CommsInitData dataToInit;
 
+uint32_t gFlashWriteAddr = 0;
 static FlightState gState = STATE_INIT;
-static uint32_t gFlashWriteAddr = 0;
 static uint8_t gPageBuf[FLASH_PAGE_SIZE];
 static uint16_t gPageBufIdx = 0;
 
@@ -174,6 +175,7 @@ void flight_computer_update() {
     static uint32_t lastFastSample = 0;
     static uint32_t lastSlowSample = 0;
     static uint32_t accelStartMs   = 0; 
+    static uint32_t altitudeStartMs   = 0; 
     static float    maxAltitude     = -999.0f;
     static uint8_t  apogeeCount     = 0;
     static uint32_t stableStartMs  = 0;
@@ -216,11 +218,11 @@ void flight_computer_update() {
                 }
                 else if (cmd == "SAVE SLOW DATA") {
                     Serial.println("Saving SLOW packet");
-                    record_slow_packet();
+                    RecordSlowPacket();
                 }
                 else if (cmd == "SAVE FAST DATA") {
                     Serial.println("Saving FAST packet");
-                    record_fast_packet();
+                    RecordFastPacket();
                 }
                 else if (cmd == "DOWNLOAD") {
                     Serial.println("Downloading data to FLASH");
@@ -253,7 +255,7 @@ void flight_computer_update() {
         if (now - lastSlowSample >= 5000) {
             lastSlowSample = now;
             ReadBME280();
-            record_slow_packet();
+            RecordSlowPacket();
         }
         break;
 
@@ -264,7 +266,7 @@ void flight_computer_update() {
 
             ReadBME280();
             ReadUblox();
-            record_slow_packet();
+            RecordSlowPacket();
         }
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
             lastFastSample = now;
@@ -279,7 +281,7 @@ void flight_computer_update() {
             if (total_accel > LAUNCH_ACCEL_THRESHOLD_MS2) {
                 if (accelStartMs == 0) accelStartMs = now;
                 
-                if ((now - accelStartMs >= 500) {
+                if ((now - accelStartMs) >= 500) {
                     println("Boost detected. Transition to ASCENT.");
                     gState = STATE_ASCENT;
                     digitalWrite(LED_RED_PIN, LOW);
@@ -296,13 +298,13 @@ void flight_computer_update() {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             ReadBNO055();
-            record_fast_packet(); // 100 Hz
+            RecordFastPacket(); // 100 Hz
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
             ReadBME280();
             ReadUblox();
-            record_slow_packet(); // 1 Hz
+            RecordSlowPacket(); // 1 Hz
             
             //---
             if (bmeData.altitude < maxAltitude) {
@@ -310,7 +312,7 @@ void flight_computer_update() {
                 
                 if (now - altitudeStartMs >= 500) {
                     println("Apogee detected. Transition to EJECTION.");
-                    gState = STATE_EJECTION;
+                    gState = STATE_EYECTION;
                     digitalWrite(LED_RED_PIN, LOW);
                     digitalWrite(LED_GREEN_PIN, HIGH);
                 }
@@ -326,7 +328,7 @@ void flight_computer_update() {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             ReadBNO055();
-            record_fast_packet();
+            RecordFastPacket();
 
             float total_gyro = sqrtf(
                 mpuData.MPU_gx * mpuData.MPU_gx +
@@ -350,7 +352,7 @@ void flight_computer_update() {
             lastSlowSample = now;
             ReadBME280();
             ReadUblox();
-            record_slow_packet();
+            RecordSlowPacket();
         }
         break;
 
@@ -359,13 +361,13 @@ void flight_computer_update() {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             ReadBNO055();
-            record_fast_packet();
+            RecordFastPacket();
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
             ReadBME280();
             ReadUblox();
-            record_slow_packet();
+            RecordSlowPacket();
 
             if (bmeData.altitude < 50.0f) {
                 println("Drain threshold. Transition to DRAIN");
@@ -378,13 +380,13 @@ void flight_computer_update() {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             ReadBNO055();
-            record_fast_packet();
+            RecordFastPacket();
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
             ReadBME280();
             ReadUblox();
-            record_slow_packet();
+            RecordSlowPacket();
 
             if (fabsf(bmeData.altitude - lastLandedAlt) < 2.0f) {
                 if (landedStartMs == 0) landedStartMs = now;

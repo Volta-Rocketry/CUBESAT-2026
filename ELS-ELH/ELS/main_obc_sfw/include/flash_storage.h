@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+extern uint32_t gFlashWriteAddr;
+
 void FlashInit();
 void FlashEraseChip();
 void FlashWrite(uint32_t addr, const uint8_t* data, uint16_t len);

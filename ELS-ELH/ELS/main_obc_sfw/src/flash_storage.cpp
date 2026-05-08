@@ -8,7 +8,6 @@
 
 SPIClass hspi(HSPI);
 
-
 static void FlashWaitBusy() {
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_READ_STATUS);

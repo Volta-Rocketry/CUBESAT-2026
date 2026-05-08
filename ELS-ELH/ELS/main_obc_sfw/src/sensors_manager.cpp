@@ -60,6 +60,7 @@ ledcSetup(RED_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
 }
 
 void InitMPU6050(){
+    Wire.begin();
     byte status = mpu.begin();
     if (status != 0) {
         CriticalErrorSensor("MPU6050 initialization failed");
@@ -405,7 +406,7 @@ void ReadQMC5883L(){
     }
 }
 void ReadBMP180(){
-    float pressurePad1 = bmpCalib.bmpPresRef / 100.0;
+    float pressurePad1 = bmpCalib.bmpPresRef;
     bmpData.timestamp = millis();
     bmpData.temp = bmp.readTemperature();
     bmpData.pressure = bmp.readPressure();
@@ -435,7 +436,7 @@ void ReadBNO055() {
 }
 void ReadBME280() {
     // Code to read data from BME sensor
-    float pressurePad2 = bmeCalib.bmePresRef / 100.0; 
+    float pressurePad2 = bmeCalib.bmePresRef; 
     bmeData.timestamp = millis();
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();

@@ -43,7 +43,8 @@ static void FlashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
 void FlashInit() {
     pinMode(FLASH_CS, OUTPUT);
     digitalWrite(FLASH_CS, HIGH);
-
+    delay(10);
+    
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_JEDEC_ID);
     uint8_t manufacturer = hspi.transfer(0x00);

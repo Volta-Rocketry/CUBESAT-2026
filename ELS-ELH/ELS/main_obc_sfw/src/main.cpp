@@ -17,7 +17,7 @@ void setup() {
     Serial.begin(BAUD_RATE);
     SerialBT.begin("ESP32_Robot"); 
     InitLedBuzzerActuators();
-    InitBME280();
+    FlashInit();
 }
 
 void loop() {

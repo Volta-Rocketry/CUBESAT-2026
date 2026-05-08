@@ -1,5 +1,5 @@
 #include "flash_storage.h"
-
+#include "comm_manager.h"
 #include "constants.h"
 #include "error_warning.h"
 #include "signals.h"
@@ -114,7 +114,7 @@ void VerifyFlashContent() {
         return;
     }
 
-    println("Total written data: %lu bytes\n", gFlashWriteAddr);
+    Serial.printf("Total written data: %lu bytes\n", gFlashWriteAddr);
 
     uint32_t currentAddr = 0;
     uint32_t countFast = 0;
@@ -130,7 +130,7 @@ void VerifyFlashContent() {
             FastFlightPacket p;
             FlashRead(currentAddr, (uint8_t*)&p, sizeof(FastFlightPacket));
             
-            uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
+            uint16_t crc_calc = crc16_ccitt((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
 
             Serial.printf("[FAST] Addr: 0x%06lX | TS: %lu | AccelX: %.2f | CRC: %s\n", 
@@ -144,7 +144,7 @@ void VerifyFlashContent() {
             SlowFlightPacket p;
             FlashRead(currentAddr, (uint8_t*)&p, sizeof(SlowFlightPacket));
             
-            uint16_t crc_calc = crc16((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
+            uint16_t crc_calc = crc16_ccitt((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
 
             Serial.printf("[SLOW] Addr: 0x%06lX | TS: %lu | Pres: %.2f | GPS_Lat: %.6f | CRC: %s\n", 

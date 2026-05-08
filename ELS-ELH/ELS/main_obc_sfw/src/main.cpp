@@ -16,7 +16,8 @@ uint32_t currentMilis;
 void setup() {
     Serial.begin(BAUD_RATE);
     SerialBT.begin("ESP32_Robot"); 
-    Serial.println("El dispositivo ya se puede emparejar vía Bluetooth.");
+    InitLedBuzzerActuators();
+    InitBME280();
 }
 
 void loop() {

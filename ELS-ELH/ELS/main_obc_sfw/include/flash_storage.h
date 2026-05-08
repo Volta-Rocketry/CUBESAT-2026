@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+extern SPIClass hspi;
 extern uint32_t gFlashWriteAddr;
 
 void FlashInit();

@@ -87,7 +87,7 @@
 
 /** @name FLASH COMMANDS AND DEFINITIONS */
 #define FLASH_PAGE_SIZE 256UL        ///< Flash memory page size in bytes
-#define FLASH_TOTAL_BYTES 16777216UL ///< Total Flash memory capacity
+#define FLASH_TOTAL_BYTES 4194304UL ///< Total Flash memory capacity
 
 #define CMD_WRITE_ENABLE 0x06        ///< SPI Command: Write enable
 #define CMD_CHIP_ERASE 0xC7          ///< SPI Command: Chip erase

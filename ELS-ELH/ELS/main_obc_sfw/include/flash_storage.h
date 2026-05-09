@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <SPI.h>
 
 extern SPIClass hspi;
 extern uint32_t gFlashWriteAddr;

@@ -3,27 +3,27 @@
 #include "constants.h"
 #include "error_warning.h"
 
-void InitLedBuzzerActuators();
-void InitMPU6050();
-void InitQMC5883L();
-void InitBMP180();
-void InitBNO055();
-void InitBME280();
-void InitUblox();
-void InitActuators1();
-void InitActuators2();
+void initLedBuzzerActuators();
+void initMPU6050();
+void initQMC5883L();
+void initBMP180();
+void initBNO055();
+void initBME280();
+void initUblox();
+void initActuators1();
+void initActuators2();
 
-void CalibrateSensors();
-void CalibratMagnetometer();
+void calibrateSensors();
+void calibrateMagnetometer();
 
-void ReadMPU6050();
-void ReadQMC5883L();
-void ReadBMP180();
-void ReadBNO055();
-void ReadBME280();
-void ReadUblox();
+void readMPU6050();
+void readQMC5883L();
+void readBMP180();
+void readBNO055();
+void readBME280();
+void readUblox();
 
-void OpenActuators1Voltage();
-void CloseActuators1Voltage();
-void OpenActuators2Voltage();
-void CloseActuators2Voltage();
+void openActuators1Voltage();
+void closeActuators1Voltage();
+void openActuators2Voltage();
+void closeActuators2Voltage();

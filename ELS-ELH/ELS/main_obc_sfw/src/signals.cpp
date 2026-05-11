@@ -6,12 +6,12 @@
 
 extern BluetoothSerial SerialBT;
 
-void InitPCB() {
+void initPCB() {
     uint8_t blinkCount = 0;
     while (blinkCount < 3) {
-        ColorRGB(0, 0, 255);
+        colorRGB(0, 0, 255);
         delay(BLINK);
-        ColorRGB(0, 0, 0);
+        colorRGB(0, 0, 0);
         delay(BLINK);
         blinkCount++;
     }
@@ -24,7 +24,7 @@ void println(const char* messages){
     SerialBT.println(messages);
 }
 
-void ColorRGB(int r, int g, int b) {
+void colorRGB(int r, int g, int b) {
   ledcWrite(RED_CHANNEL, constrain(r, 0, 255));
   ledcWrite(GREEN_CHANNEL, constrain(g, 0, 255));
   ledcWrite(BLUE_CHANNEL, constrain(b, 0, 255));

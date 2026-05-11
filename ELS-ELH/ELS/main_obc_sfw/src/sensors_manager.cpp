@@ -18,11 +18,12 @@
 #include <Preferences.h>
 #include "BluetoothSerial.h"
 
+extern SPIClass hspi;
 extern BluetoothSerial SerialBT;
 MPU6050 mpu(Wire);
 Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
-Adafruit_BME280 bme(BME_CS);
+Adafruit_BME280 bme(BME_CS, &hspi);
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
 
@@ -47,7 +48,7 @@ Preferences preferences;
 bool offsetsLoaded = false;
 bool offsetsSaved = false;
 
-void InitLedBuzzerActuators(){
+void initLedBuzzerActuators(){
 ledcSetup(RED_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
     ledcSetup(GREEN_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
     ledcSetup(BLUE_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
@@ -62,23 +63,23 @@ ledcSetup(RED_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
     pinMode(ACTUATOR2_PIN, OUTPUT);
 }
 
-void InitMPU6050(){
+void initMPU6050(){
     Wire.begin();
     byte status = mpu.begin();
     if (status != 0) {
-        CriticalErrorSensor("MPU6050 initialization failed");
+        criticalErrorSensor("MPU6050 initialization failed");
         initSensor.initMPU = 0;
     } else {
         println("MPU6050 sensor initialized successfully");
         initSensor.initMPU = 1;
     };
 }
-void InitQMC5883L(){
+void initQMC5883L(){
     Wire.beginTransmission(0x68); 
     Wire.write(0x37);
     Wire.write(0x02); 
     if (Wire.endTransmission() != 0) {
-        CriticalErrorSensor("Failed to open MPU6050 Bypass");
+        criticalErrorSensor("Failed to open MPU6050 Bypass");
         initSensor.initQMC = 0;
         return;
     }
@@ -93,42 +94,42 @@ void InitQMC5883L(){
     Wire.write(0x01); 
     
     if (Wire.endTransmission() != 0) {
-        CriticalErrorSensor("QMC5883L not found on 0x0D");
+        criticalErrorSensor("QMC5883L not found on 0x0D");
         initSensor.initQMC = 0;
     } else {
         println("QMC5883L initialized successfully");
         initSensor.initQMC = 1;
     }
 }
-void InitBMP180(){
+void initBMP180(){
     Wire.begin();
     if (!bmp.begin()) {
-	    CriticalErrorSensor("BMP180 initialization failed");
+	    criticalErrorSensor("BMP180 initialization failed");
         initSensor.initBMP = 0;
     } else {
         println("BMP180 sensor initialized successfully");
         initSensor.initBMP = 1;
     };
 }
-void InitBNO055() {
+void initBNO055() {
     if (!bno.begin()) {
-        CriticalErrorSensor("BNO055 initialization failed");
+        criticalErrorSensor("BNO055 initialization failed");
         initSensor.initBNO = 0;
     } else {
         println("BNO055 sensor initialized successfully");
         initSensor.initBNO = 1;
     };
 }
-void InitBME280() {
+void initBME280() {
     if (!bme.begin()) {
-        CriticalErrorSensor("BME280 initialization failed");
+        criticalErrorSensor("BME280 initialization failed");
         initSensor.initBME = 0;
     } else {
         println("BME280 sensor initialized successfully");
         initSensor.initBME = 1;
     }
 }
-void InitUblox() {
+void initUblox() {
     gpsSerial.begin(GPS_BAUD, SERIAL_8N1, UBLOX_RX, UBLOX_TX);
 
     unsigned long startTime = millis();
@@ -146,7 +147,7 @@ void InitUblox() {
         }
     }
     if (!GPSInitialized) {
-        CriticalErrorSensor("Ublox initialization failed");
+        criticalErrorSensor("Ublox initialization failed");
         initSensor.initGPS = 0;
     } else {
         println("Ublox sensor initialized successfully");
@@ -155,7 +156,7 @@ void InitUblox() {
 }
 
 
-void CalibrateSensors() {
+void calibrateSensors() {
     float gSumX = 0, gSumY = 0, gSumZ = 0;
     float aSumX = 0, aSumY = 0, aSumZ = 0;
     float tSum = 0;
@@ -232,7 +233,7 @@ void CalibrateSensors() {
     }
 }
 
-void CalibratMagnetometer() {
+void calibratMagnetometer() {
     float magMin[3] = {32767, 32767, 32767};
     float magMax[3] = {-32768, -32768, -32768};
 
@@ -303,7 +304,7 @@ void CalibratMagnetometer() {
 }
 
 
-void ReadMPU6050(){
+void readMPU6050(){
     mpu.update();
     mpuData.timestamp = millis();
 
@@ -327,7 +328,7 @@ void ReadMPU6050(){
     mpuData.MPU_gz = gz_deg * 0.0174533;
 }
 
-void ReadQMC5883L(){
+void readQMC5883L(){
     Wire.beginTransmission(0x0D);
     Wire.write(0x00);
     Wire.endTransmission();
@@ -356,7 +357,7 @@ void ReadQMC5883L(){
 */
     }
 }
-void ReadBNO055() {
+void readBNO055() {
     // Code to read data from BNO055 sensor
     bnoData.timestamp = millis();
     imu::Vector<3> lin_accel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
@@ -377,7 +378,7 @@ void ReadBNO055() {
     bnoData.BNO_qy = quat.y();
     bnoData.BNO_qz = quat.z();
 }
-void ReadBMP180(){
+void readBMP180(){
     float pressurePad1 = bmpCalib.bmpPresRef;
     bmpData.timestamp = millis();
     bmpData.temp = bmp.readTemperature();
@@ -385,7 +386,7 @@ void ReadBMP180(){
     bmpData.altitude = bmp.readAltitude(pressurePad1);
 
 }
-void ReadBME280() {
+void readBME280() {
     float pressurePad2 = bmeCalib.bmePresRef / 100.0f; 
     bmeData.timestamp = millis();
     bmeData.temp = bme.readTemperature();
@@ -393,7 +394,7 @@ void ReadBME280() {
     bmeData.pressure = bme.readPressure();
     bmeData.altitude = bme.readAltitude(pressurePad2);
 }
-void ReadUblox() {
+void readUblox() {
     ubloxData.timestamp = millis();
     while (gpsSerial.available() > 0) {
         gps.encode(gpsSerial.read());
@@ -430,19 +431,19 @@ void ReadUblox() {
     ubloxData.valid = gps.location.isValid();
 }
 
-void OpenActuators1Voltage() {
+void openActuators1Voltage() {
     digitalWrite(ACTUATOR1_PIN, HIGH);
     digitalWrite(LED_GREEN_PIN, HIGH);
 }
-void CloseActuators1Voltage() {
+void closeActuators1Voltage() {
     digitalWrite(ACTUATOR1_PIN, LOW);
     digitalWrite(LED_GREEN_PIN, LOW);
 }
-void OpenActuators2Voltage() {
+void openActuators2Voltage() {
     digitalWrite(ACTUATOR2_PIN, HIGH);
     digitalWrite(LED_GREEN_PIN, HIGH);
 }
-void CloseActuators2Voltage() {
+void closeActuators2Voltage() {
     digitalWrite(ACTUATOR2_PIN, LOW);
     digitalWrite(LED_GREEN_PIN, LOW);
 }

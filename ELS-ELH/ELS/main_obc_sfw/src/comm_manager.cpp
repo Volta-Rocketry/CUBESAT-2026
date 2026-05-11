@@ -8,10 +8,9 @@ CommsCtrData ctrData;
 CommsCamData camData;
 CommsInitData initData;
 
-static uint32_t LAST_CTR_SEND_MS = 0;
-static uint32_t LAST_CAM_SEND_MS = 0;
-static uint32_t LAST_FLIGHT_SEND_MS = 0;
-static uint32_t LAST_TEST_SEND_MS = 0;
+static uint32_t lastCtrSendMs = 0;
+static uint32_t lastCamSendMs = 0;
+static uint32_t lastTestSendMs = 0;
 
 /**
  * @brief Calculates the CRC16-CCITT checksum for a data block.
@@ -22,7 +21,7 @@ static uint32_t LAST_TEST_SEND_MS = 0;
  * @param length Number of bytes in the data array.
  * @return uint16_t The calculated 16-bit checksum.
  */
-uint16_t crc16_ccitt(const uint8_t* data, uint16_t length) {
+uint16_t crc16CCITT(const uint8_t* data, uint16_t length) {
     uint16_t crc = 0xFFFF;
 
     for (uint16_t i = 0; i < length; i++) {
@@ -43,7 +42,7 @@ uint16_t crc16_ccitt(const uint8_t* data, uint16_t length) {
  * @param val 8-bit value (uint8_t) to be written.
  * @return uint8_t The next available position in the buffer (pos + 1).
  */
-static uint8_t write_u8(uint8_t* buf, uint8_t pos, uint8_t val) {
+static uint8_t writeU8(uint8_t* buf, uint8_t pos, uint8_t val) {
     buf[pos] = val;
     return pos + 1;
 }
@@ -58,7 +57,7 @@ static uint8_t write_u8(uint8_t* buf, uint8_t pos, uint8_t val) {
  * @param val The 16-bit value to be serialized.
  * @return uint8_t The updated position index (pos + 2).
  */
-static uint8_t write_u16_le(uint8_t* buf, uint8_t pos, uint16_t val) {
+static uint8_t writeU16Le(uint8_t* buf, uint8_t pos, uint16_t val) {
     buf[pos]     = (uint8_t)(val & 0xFF);
     buf[pos + 1] = (uint8_t)((val >> 8) & 0xFF);
     return pos + 2;
@@ -75,7 +74,7 @@ static uint8_t write_u16_le(uint8_t* buf, uint8_t pos, uint16_t val) {
  * @param val The 32-bit value to be serialized (e.g., system timestamp).
  * @return uint8_t The updated position index (pos + 4).
  */
-static uint8_t write_u32_le(uint8_t* buf, uint8_t pos, uint32_t val) {
+static uint8_t writeU32Le(uint8_t* buf, uint8_t pos, uint32_t val) {
     buf[pos]     = (uint8_t)(val & 0xFF);
     buf[pos + 1] = (uint8_t)((val >> 8)  & 0xFF);
     buf[pos + 2] = (uint8_t)((val >> 16) & 0xFF);
@@ -86,18 +85,18 @@ static uint8_t write_u32_le(uint8_t* buf, uint8_t pos, uint32_t val) {
 /**
  * @brief Writes a 32-bit floating-point number to the buffer in Little Endian format.
  * * This function converts a float to its raw binary representation (IEEE 754) 
- * and serializes it into four consecutive bytes. It reuses the write_u32_le 
+ * and serializes it into four consecutive bytes. It reuses the writeU32Le 
  * logic to ensure the bytes are stored from Least Significant to Most Significant.
  * * @param buf Pointer to the destination data buffer.
  * @param pos Current write index within the buffer.
  * @param val The float value to be serialized (e.g., altitude, acceleration).
  * @return uint8_t The updated position index (pos + 4).
  */
-static uint8_t write_float_le(uint8_t* buf, uint8_t pos, float val) {
+static uint8_t writeFloatLe(uint8_t* buf, uint8_t pos, float val) {
     uint32_t raw;
     memcpy(&raw, &val, sizeof(float));
 
-    return write_u32_le(buf, pos, raw);
+    return writeU32Le(buf, pos, raw);
 }
 
 /**
@@ -111,33 +110,33 @@ static uint8_t write_float_le(uint8_t* buf, uint8_t pos, float val) {
  * * @param frame Pointer to the buffer where the binary frame will be stored.
  * @param d Pointer to the source CommsCtrData structure containing telemetry.
  */
-static void build_ctr_frame(uint8_t* frame, const CommsCtrData* d) {
+static void buildCtrFrame(uint8_t* frame, const CommsCtrData* d) {
     uint8_t pos = 0;
 
-    pos = write_u8(frame, pos, COMM_SYNC_1);
-    pos = write_u8(frame, pos, COMM_SYNC_2);
-    pos = write_u8(frame, pos, ID_CTR_TP);
-    pos = write_u8(frame, pos, CTR_TP_PAYLOAD_LEN);
+    pos = writeU8(frame, pos, COMM_SYNC_1);
+    pos = writeU8(frame, pos, COMM_SYNC_2);
+    pos = writeU8(frame, pos, ID_CTR_TP);
+    pos = writeU8(frame, pos, CTR_TP_PAYLOAD_LEN);
 
     uint8_t payload_start = pos;
 
-    pos = write_u32_le(frame, pos, d->timestamp);        
-    pos = write_float_le(frame, pos, d->altitude);   
-    pos = write_float_le(frame, pos, d->vertical_velocity);
-    pos = write_float_le(frame, pos, d->ax);          
-    pos = write_float_le(frame, pos, d->ay);               
-    pos = write_float_le(frame, pos, d->az);            
-    pos = write_float_le(frame, pos, d->gx);             
-    pos = write_float_le(frame, pos, d->gy);             
-    pos = write_float_le(frame, pos, d->gz);   
-    pos = write_float_le(frame, pos, d->qw);    
-    pos = write_float_le(frame, pos, d->qx);        
-    pos = write_float_le(frame, pos, d->qy);         
-    pos = write_float_le(frame, pos, d->qz);
-    pos = write_u8(frame, pos, (uint8_t)d->flight_state);
+    pos = writeU32Le(frame, pos, d->timestamp);        
+    pos = writeFloatLe(frame, pos, d->altitude);   
+    pos = writeFloatLe(frame, pos, d->vertical_velocity);
+    pos = writeFloatLe(frame, pos, d->ax);          
+    pos = writeFloatLe(frame, pos, d->ay);               
+    pos = writeFloatLe(frame, pos, d->az);            
+    pos = writeFloatLe(frame, pos, d->gx);             
+    pos = writeFloatLe(frame, pos, d->gy);             
+    pos = writeFloatLe(frame, pos, d->gz);   
+    pos = writeFloatLe(frame, pos, d->qw);    
+    pos = writeFloatLe(frame, pos, d->qx);        
+    pos = writeFloatLe(frame, pos, d->qy);         
+    pos = writeFloatLe(frame, pos, d->qz);
+    pos = writeU8(frame, pos, (uint8_t)d->flight_state);
 
-    uint16_t crc = crc16_ccitt(frame, payload_start + CTR_TP_PAYLOAD_LEN);
-    pos = write_u16_le(frame, pos, crc);
+    uint16_t crc = crc16CCITT(frame, payload_start + CTR_TP_PAYLOAD_LEN);
+    pos = writeU16Le(frame, pos, crc);
 }
 
 /**
@@ -151,55 +150,55 @@ static void build_ctr_frame(uint8_t* frame, const CommsCtrData* d) {
  * * @param frame Pointer to the buffer where the binary frame will be stored.
  * @param d Pointer to the source CommsCamData structure.
  */
-static void build_cam_frame(uint8_t* frame, const CommsCamData* d) {
+static void buildCamFrame(uint8_t* frame, const CommsCamData* d) {
     uint8_t pos = 0;
 
-    pos = write_u8(frame, pos, COMM_SYNC_1);
-    pos = write_u8(frame, pos, COMM_SYNC_2);
-    pos = write_u8(frame, pos, ID_CAM_TP);
-    pos = write_u8(frame, pos, CAM_TP_PAYLOAD_LEN);
+    pos = writeU8(frame, pos, COMM_SYNC_1);
+    pos = writeU8(frame, pos, COMM_SYNC_2);
+    pos = writeU8(frame, pos, ID_CAM_TP);
+    pos = writeU8(frame, pos, CAM_TP_PAYLOAD_LEN);
 
     uint8_t payload_start = pos;
 
-    pos = write_u32_le(frame, pos, d->timestamp);
-    pos = write_float_le(frame, pos, d->ax);          
-    pos = write_float_le(frame, pos, d->ay);               
-    pos = write_float_le(frame, pos, d->az);            
-    pos = write_float_le(frame, pos, d->gx);             
-    pos = write_float_le(frame, pos, d->gy);             
-    pos = write_float_le(frame, pos, d->gz);
+    pos = writeU32Le(frame, pos, d->timestamp);
+    pos = writeFloatLe(frame, pos, d->ax);          
+    pos = writeFloatLe(frame, pos, d->ay);               
+    pos = writeFloatLe(frame, pos, d->az);            
+    pos = writeFloatLe(frame, pos, d->gx);             
+    pos = writeFloatLe(frame, pos, d->gy);             
+    pos = writeFloatLe(frame, pos, d->gz);
 
-    uint16_t crc = crc16_ccitt(frame, payload_start + CAM_TP_PAYLOAD_LEN);
-    pos = write_u16_le(frame, pos, crc);
+    uint16_t crc = crc16CCITT(frame, payload_start + CAM_TP_PAYLOAD_LEN);
+    pos = writeU16Le(frame, pos, crc);
 }
 
-static void build_init_frame(uint8_t* frame, const CommsInitData* d) {
+static void buildInitFrame(uint8_t* frame, const CommsInitData* d) {
     uint8_t pos = 0;
-    pos = write_u8(frame, pos, COMM_SYNC_1);
-    pos = write_u8(frame, pos, COMM_SYNC_2);
-    pos = write_u8(frame, pos, ID_INIT_CMD);
-    pos = write_u8(frame, pos, INIT_SP_PAYLOAD_LEN);
+    pos = writeU8(frame, pos, COMM_SYNC_1);
+    pos = writeU8(frame, pos, COMM_SYNC_2);
+    pos = writeU8(frame, pos, ID_INIT_CMD);
+    pos = writeU8(frame, pos, INIT_SP_PAYLOAD_LEN);
 
     uint8_t payload_start = pos;
     
-    pos = write_u8(frame, pos, d->id_to_init); 
+    pos = writeU8(frame, pos, d->id_to_init); 
 
-    uint16_t crc = crc16_ccitt(frame, payload_start + INIT_SP_PAYLOAD_LEN);
-    pos = write_u16_le(frame, pos, crc);
+    uint16_t crc = crc16CCITT(frame, payload_start + INIT_SP_PAYLOAD_LEN);
+    pos = writeU16Le(frame, pos, crc);
 }
 
 /**
  * @brief Orchestrates the assembly and transmission of the Control (CTR) telemetry frame.
  * * This function performs the following steps:
  * 1. Allocates a local byte buffer of size CTR_TP_FRAME_SIZE.
- * 2. Calls build_ctr_frame() to serialize the current global 'ctrData' into the buffer.
+ * 2. Calls buildCtrFrame() to serialize the current global 'ctrData' into the buffer.
  * 3. Transmits the raw binary packet through the Serial1 interface.
  * * @note This function depends on the global instance 'ctrData' being updated 
  * prior to the call.
  */
-static void send_ctr_frame() {
+static void sendCtrFrame() {
     uint8_t frame[CTR_TP_FRAME_SIZE];    
-    build_ctr_frame(frame, &ctrData);
+    buildCtrFrame(frame, &ctrData);
     Serial1.write(frame, CTR_TP_FRAME_SIZE);   
 }
 
@@ -207,20 +206,20 @@ static void send_ctr_frame() {
  * @brief Orchestrates the assembly and transmission of the Camera (CAM) telemetry frame.
  * * This function performs the following steps:
  * 1. Allocates a local byte buffer of size CAM_TP_FRAME_SIZE.
- * 2. Calls build_cam_frame() to serialize the current global 'camData' into the buffer.
+ * 2. Calls buildCamFrame() to serialize the current global 'camData' into the buffer.
  * 3. Transmits the raw binary packet through the Serial2 interface.
  * * @note This function depends on the global instance 'camData' being updated 
  * prior to the call.
  */
-static void send_cam_frame() {
+static void sendCamFrame() {
     uint8_t frame[CAM_TP_FRAME_SIZE];         
-    build_cam_frame(frame, &camData);
+    buildCamFrame(frame, &camData);
     Serial2.write(frame, CAM_TP_FRAME_SIZE);   
 }
 
-static void send_test_frame(HardwareSerial& serialPort, const CommsInitData* d) {
+static void sendTestFrame(HardwareSerial& serialPort, const CommsInitData* d) {
     uint8_t frame[INIT_SP_FRAME_SIZE];    
-    build_init_frame(frame, d);
+    buildInitFrame(frame, d);
 
     //------------
     Serial.print("[TX DEBUG] plot: ");
@@ -233,7 +232,7 @@ static void send_test_frame(HardwareSerial& serialPort, const CommsInitData* d) 
     serialPort.write(frame, INIT_SP_FRAME_SIZE);   
 }
 
-void comms_update_ctr(uint32_t timestamp, float altitude, float vertical_velocity,
+void commsUpdateCtr(uint32_t timestamp, float altitude, float vertical_velocity,
                       float ax, float ay, float az,
                       float gx, float gy, float gz,
                       float qw, float qx, float qy, float qz,
@@ -248,7 +247,7 @@ void comms_update_ctr(uint32_t timestamp, float altitude, float vertical_velocit
     ctrData.flight_state = state;
 }
 
-void comms_update_cam(uint32_t timestamp,
+void commsUpdateCtam(uint32_t timestamp,
                       float ax, float ay, float az,
                       float gx, float gy, float gz) {
 
@@ -275,7 +274,7 @@ bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInit
     while(serialPort.available()) { serialPort.read(); }
 
     Serial.printf("Initializing communications for ID: 0x%02X\n", d->id_to_init);
-    send_test_frame(serialPort, d);
+    sendTestFrame(serialPort, d);
 
     uint32_t start_time = millis();
     uint8_t rx_buf[INIT_SP_FRAME_SIZE];
@@ -299,7 +298,7 @@ bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInit
                     }
                     Serial.println();
                     uint16_t crc_rx = rx_buf[5] | (rx_buf[6] << 8);
-                    uint16_t crc_calc = crc16_ccitt(rx_buf, 5);
+                    uint16_t crc_calc = crc16CCITT(rx_buf, 5);
 
                     if (crc_rx == crc_calc) {
                         Serial.println("[COMMS OK] Package sended and recived.");
@@ -321,14 +320,14 @@ bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInit
 void CommsTick() {
     uint32_t now = millis();
 
-    if (now - LAST_CTR_SEND_MS >= CTR_TP_INTERVAL_MS) {
-        LAST_CTR_SEND_MS = now;
-        send_ctr_frame();
+    if (now - lastCtrSendMs >= CTR_TP_INTERVAL_MS) {
+        lastCtrSendMs = now;
+        sendCtrFrame();
     }
 
-    if (now - LAST_CAM_SEND_MS >= CAM_TP_INTERVAL_MS) {
-        LAST_CAM_SEND_MS = now;
-        send_cam_frame();
+    if (now - lastCamSendMs >= CAM_TP_INTERVAL_MS) {
+        lastCamSendMs = now;
+        sendCamFrame();
     }
 
 }

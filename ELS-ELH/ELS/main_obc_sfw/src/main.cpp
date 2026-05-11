@@ -16,8 +16,8 @@ uint32_t currentMilis;
 void setup() {
     Serial.begin(BAUD_RATE);
     SerialBT.begin("ESP32_Robot"); 
-    InitLedBuzzerActuators();
-    FlashInit();
+    initLedBuzzerActuators();
+    flashInit();
 }
 
 void loop() {

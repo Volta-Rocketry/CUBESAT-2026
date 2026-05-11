@@ -8,22 +8,22 @@
 
 SPIClass hspi(HSPI);
 
-static void FlashWaitBusy() {
+static void flashWaitBusy() {
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_READ_STATUS);
     while (hspi.transfer(0x00) & 0x01);
     digitalWrite(FLASH_CS, HIGH);
 }
 
-static void FlashWriteEnable() {
+static void flashWriteEnable() {
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_WRITE_ENABLE);
     digitalWrite(FLASH_CS, HIGH);
     delayMicroseconds(5);
 }
 
-static void FlashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
-    FlashWriteEnable();
+static void flashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
+    flashWriteEnable();
 
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_PAGE_PROGRAM); 
@@ -37,10 +37,10 @@ static void FlashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
     }
 
     digitalWrite(FLASH_CS, HIGH);
-    FlashWaitBusy();
+    flashWaitBusy();
 }
 
-void FlashInit() {
+void flashInit() {
     pinMode(FLASH_CS, OUTPUT);
     digitalWrite(FLASH_CS, HIGH);
     delay(10);
@@ -56,19 +56,19 @@ void FlashInit() {
         println("Initialized FLASH");
     }
     else {
-        CriticalErrorSensor("FLASH not found");
+        criticalErrorSensor("FLASH not found");
     }
 }
 
-void FlashEraseChip() {
-    FlashWriteEnable();
+void flashEraseChip() {
+    flashWriteEnable();
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_CHIP_ERASE);
     digitalWrite(FLASH_CS, HIGH);
-    FlashWaitBusy();
+    flashWaitBusy();
 }
 
-void FlashWrite(uint32_t addr, const uint8_t* data, uint16_t len) {
+void flashWrite(uint32_t addr, const uint8_t* data, uint16_t len) {
     uint16_t written = 0;
     uint32_t currentAddr = addr;
     const uint8_t* currentData = data;
@@ -78,7 +78,7 @@ void FlashWrite(uint32_t addr, const uint8_t* data, uint16_t len) {
         uint16_t spaceInPage = FLASH_PAGE_SIZE - pageOffset;
 
         uint16_t toWrite = (len - written) < spaceInPage ? (len - written) : spaceInPage;
-        FlashWritePage(currentAddr, currentData, toWrite);
+        flashWritePage(currentAddr, currentData, toWrite);
 
         written += toWrite;
         currentAddr += toWrite;
@@ -86,7 +86,7 @@ void FlashWrite(uint32_t addr, const uint8_t* data, uint16_t len) {
     }
 }
 
-void FlashRead(uint32_t addr, uint8_t* buf, uint32_t len) {
+void flashRead(uint32_t addr, uint8_t* buf, uint32_t len) {
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_READ_DATA);
 
@@ -106,7 +106,7 @@ void FlashRead(uint32_t addr, uint8_t* buf, uint32_t len) {
  * * Reads all the Flash memory where the data was stored, 
  * identifies what type of packet each one is, and verifies if the information is complete
  */
-void VerifyFlashContent() {
+void verifyFlashContent() {
     println("Starting FLASH Verification");
     
     if (gFlashWriteAddr == 0) {
@@ -124,13 +124,13 @@ void VerifyFlashContent() {
     while (currentAddr < gFlashWriteAddr) {
         uint8_t id = 0;
 
-        FlashRead(currentAddr, &id, 1);
+        flashRead(currentAddr, &id, 1);
 
         if (id == 0x01) {
             FastFlightPacket p;
-            FlashRead(currentAddr, (uint8_t*)&p, sizeof(FastFlightPacket));
+            flashRead(currentAddr, (uint8_t*)&p, sizeof(FastFlightPacket));
             
-            uint16_t crc_calc = crc16_ccitt((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
+            uint16_t crc_calc = crc16CCITT((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
 
             Serial.printf("[FAST] Addr: 0x%06lX | TS: %lu | AccelX: %.2f | CRC: %s\n", 
@@ -142,9 +142,9 @@ void VerifyFlashContent() {
         } 
         else if (id == 0x02) {
             SlowFlightPacket p;
-            FlashRead(currentAddr, (uint8_t*)&p, sizeof(SlowFlightPacket));
+            flashRead(currentAddr, (uint8_t*)&p, sizeof(SlowFlightPacket));
             
-            uint16_t crc_calc = crc16_ccitt((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
+            uint16_t crc_calc = crc16CCITT((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
 
             Serial.printf("[SLOW] Addr: 0x%06lX | TS: %lu | Pres: %.2f | GPS_Lat: %.6f | CRC: %s\n", 

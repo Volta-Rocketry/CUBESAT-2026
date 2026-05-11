@@ -11,14 +11,6 @@
 #include <string.h>
 #include <stdio.h>
 
-/*
-StructMPU6050 mpu;
-StructBNO055 bno;
-StructBME280 bme;
-StructUblox gps;
-StructBMP180 bmpData;
-*/
-
 CommsInitData dataToInit;
 
 uint32_t gFlashWriteAddr = 0;
@@ -41,7 +33,7 @@ static uint16_t gPageBufIdx = 0;
  * * Send the data to be written by flash when the 
  * buffer is already the size of a flash page.
  */
-static void PageBufFlush() {
+static void pageBufFlush() {
     if (gPageBufIdx == 0) return;
 
     if (gFlashWriteAddr + gPageBufIdx > FLASH_TOTAL_BYTES) {
@@ -49,7 +41,7 @@ static void PageBufFlush() {
         return;
     }
 
-    FlashWrite(gFlashWriteAddr, gPageBuf, gPageBufIdx);
+    flashWrite(gFlashWriteAddr, gPageBuf, gPageBufIdx);
     gFlashWriteAddr += gPageBufIdx;
     gPageBufIdx = 0;
 }
@@ -59,7 +51,7 @@ static void PageBufFlush() {
  * * It organizes the data in the buffer until 
  * it reaches the size of the Flash page.
  */
-static void PageBufWrite(const uint8_t* data, uint16_t len) {
+static void pageBufWrite(const uint8_t* data, uint16_t len) {
     uint16_t written = 0;
     while (written < len) {
         uint16_t space = FLASH_PAGE_SIZE - gPageBufIdx;
@@ -70,7 +62,7 @@ static void PageBufWrite(const uint8_t* data, uint16_t len) {
         written += toCopy;
 
         if (gPageBufIdx == FLASH_PAGE_SIZE) {
-            PageBufFlush();
+            pageBufFlush();
         }
     }
 }
@@ -80,7 +72,7 @@ static void PageBufWrite(const uint8_t* data, uint16_t len) {
  * * It obtains the data from the sensors and stores it 
  * according to the structure, for sending to the buffer.
  */
-static void RecordFastPacket() {
+static void recordFastPacket() {
     FastFlightPacket fast_pkt;
     memset(&fast_pkt, 0, sizeof(FastFlightPacket));
     fast_pkt.packet_id = 0x01;
@@ -88,9 +80,9 @@ static void RecordFastPacket() {
     fast_pkt.mpu = mpuData;
     fast_pkt.bno = bnoData;
 
-    fast_pkt.checksum = crc16_ccitt((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
+    fast_pkt.checksum = crc16CCITT((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
 
-    PageBufWrite((uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
+    pageBufWrite((uint8_t*)&fast_pkt, sizeof(FastFlightPacket));
 }
 
 /**
@@ -98,7 +90,7 @@ static void RecordFastPacket() {
  * * It obtains the data from the sensors and stores it 
  * according to the structure, for sending to the buffer.
  */
-static void RecordSlowPacket() {
+static void recordSlowPacket() {
     SlowFlightPacket slow_pkt;
     memset(&slow_pkt, 0, sizeof(SlowFlightPacket));
     slow_pkt.packet_id = 0x02;
@@ -106,18 +98,18 @@ static void RecordSlowPacket() {
     slow_pkt.bme = bmeData;
     slow_pkt.gps = ubloxData;
 
-    slow_pkt.checksum = crc16_ccitt((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
+    slow_pkt.checksum = crc16CCITT((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
 
-    PageBufWrite((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
+    pageBufWrite((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket));
 }
 
 /**
  * @brief Initializes the flight computer.
  * * Verifies flash space avaiable and initial flight state.
  */
-void flight_computer_init() {
+void flightComputerInit() {
 
-    FlashInit();
+    flashInit();
 
     gFlashWriteAddr = 0;
     gPageBufIdx = 0;
@@ -131,24 +123,24 @@ void flight_computer_init() {
 
     memset(&dataToInit, 0, sizeof(CommsInitData));
     dataToInit.id_to_init = ID_CTR_TP;
-    bool ctr_ok = CommsInit(Serial2, CTR_RX, CTR_TX, &dataToInit);
+    bool ctr_ok = commsInit(Serial2, CTR_RX, CTR_TX, &dataToInit);
 
     memset(&dataToInit, 0, sizeof(CommsInitData)); 
     dataToInit.id_to_init = ID_CAM_TP;
-    bool cam_ok = CommsInit(Serial1, CAM_RX, CAM_TX, &dataToInit);
+    bool cam_ok = commsInit(Serial1, CAM_RX, CAM_TX, &dataToInit);
 
     if (ctr_ok) {
         println("CTR Communication initialization completed");
     }
     else {
-        CriticalErrorSensor("CTR Communication initialization failed");
+        criticalErrorSensor("CTR Communication initialization failed");
     }
 
         if (cam_ok) {
         println("CAM Communication initialization completed");
     }
     else {
-        CriticalErrorSensor("CAM Communication initialization failed");
+        criticalErrorSensor("CAM Communication initialization failed");
     }
 
     //---
@@ -163,7 +155,7 @@ void flight_computer_init() {
  * * Determines functions and actions in each phase of flight, 
  * in addition to establishing the conditions for phase transition.
  */
-void flight_computer_update() {
+void flightComputerUpdate() {
 
     static uint32_t lastFastSample = 0;
     static uint32_t lastSlowSample = 0;
@@ -187,9 +179,9 @@ void flight_computer_update() {
 
         if (now - lastSlowSample >= 1000) {
             lastSlowSample = now;
-            ReadBME280();
-            ReadUblox();
-            ReadBNO055();
+            readBME280();
+            readUblox();
+            readBNO055();
 /*
             Serial.printf("[IDLE] OK, Actuators inhibided, BME280 T: %.2fC P: %.2fPa A: %.2fm, Ublox Lat: %.6f Lon: %.6f Alt: %.2fm Spd: %.2fm/s, MPU9250 Accel: (%.2f, %.2f, %.2f) m/s², BNO055 Accel: (%.2f, %.2f, %.2f) m/s²\n",
                 bmeData.temp, bmeData.pressure, bmeData.altitude,
@@ -211,11 +203,11 @@ void flight_computer_update() {
                 }
                 else if (cmd == "SAVE SLOW DATA") {
                     Serial.println("Saving SLOW packet");
-                    RecordSlowPacket();
+                    recordSlowPacket();
                 }
                 else if (cmd == "SAVE FAST DATA") {
                     Serial.println("Saving FAST packet");
-                    RecordFastPacket();
+                    recordFastPacket();
                 }
                 else if (cmd == "DOWNLOAD") {
                     Serial.println("Downloading data to FLASH");
@@ -223,7 +215,7 @@ void flight_computer_update() {
                 }
                 else if (cmd == "ERASE") {
                     Serial.println("Erasing FLASH");
-                    FlashEraseChip();
+                    flashEraseChip();
                     gFlashWriteAddr = 0;
                     gPageBufIdx = 0;
                 }
@@ -247,8 +239,8 @@ void flight_computer_update() {
     case STATE_INTEGRATION:
         if (now - lastSlowSample >= 5000) {
             lastSlowSample = now;
-            ReadBME280();
-            RecordSlowPacket();
+            readBME280();
+            recordSlowPacket();
         }
         break;
 
@@ -257,13 +249,13 @@ void flight_computer_update() {
         if (now - lastSlowSample >= 10000) {
             lastSlowSample = now;
 
-            ReadBME280();
-            ReadUblox();
-            RecordSlowPacket();
+            readBME280();
+            readUblox();
+            recordSlowPacket();
         }
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
             lastFastSample = now;
-            ReadBME280(); 
+            readBME280(); 
 
             float total_accel = sqrtf(
                 mpuData.MPU_ax * mpuData.MPU_ax +
@@ -290,14 +282,14 @@ void flight_computer_update() {
     case STATE_ASCENT:
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            ReadBNO055();
-            RecordFastPacket(); // 100 Hz
+            readBNO055();
+            recordFastPacket(); // 100 Hz
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
-            ReadBME280();
-            ReadUblox();
-            RecordSlowPacket(); // 1 Hz
+            readBME280();
+            readUblox();
+            recordSlowPacket(); // 1 Hz
             
             //---
             if (bmeData.altitude < maxAltitude) {
@@ -320,8 +312,8 @@ void flight_computer_update() {
     case STATE_EYECTION:
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            ReadBNO055();
-            RecordFastPacket();
+            readBNO055();
+            recordFastPacket();
 
             float total_gyro = sqrtf(
                 mpuData.MPU_gx * mpuData.MPU_gx +
@@ -343,9 +335,9 @@ void flight_computer_update() {
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
-            ReadBME280();
-            ReadUblox();
-            RecordSlowPacket();
+            readBME280();
+            readUblox();
+            recordSlowPacket();
         }
         break;
 
@@ -353,14 +345,14 @@ void flight_computer_update() {
 
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            ReadBNO055();
-            RecordFastPacket();
+            readBNO055();
+            recordFastPacket();
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
-            ReadBME280();
-            ReadUblox();
-            RecordSlowPacket();
+            readBME280();
+            readUblox();
+            recordSlowPacket();
 
             if (bmeData.altitude < 50.0f) {
                 println("Drain threshold. Transition to DRAIN");
@@ -372,20 +364,20 @@ void flight_computer_update() {
     case STATE_DRAIN:
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            ReadBNO055();
-            RecordFastPacket();
+            readBNO055();
+            recordFastPacket();
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
-            ReadBME280();
-            ReadUblox();
-            RecordSlowPacket();
+            readBME280();
+            readUblox();
+            recordSlowPacket();
 
             if (fabsf(bmeData.altitude - lastLandedAlt) < 2.0f) {
                 if (landedStartMs == 0) landedStartMs = now;
                 if (now - landedStartMs > 4000) { 
 
-                    PageBufFlush(); 
+                    pageBufFlush(); 
                     println("LANDING CONFIRMED. Transition to RECOVERY.");
                     gState = STATE_RECOVERY;
                     digitalWrite(LED_RED_PIN, LOW);
@@ -404,7 +396,7 @@ void flight_computer_update() {
 
         if (now - lastSlowSample >= 10000) {
             lastSlowSample = now;
-            ReadBME280(); 
+            readBME280(); 
         }
         break;
 
@@ -417,6 +409,6 @@ void flight_computer_update() {
  * @brief Gets the flight state.
  * * Obtains the current flight state.
  */
-FlightState FlightComputerGetState() { 
+FlightState flightComputerGetState() { 
     return gState; 
 }

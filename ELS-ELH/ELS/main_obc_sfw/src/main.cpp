@@ -17,10 +17,11 @@ void setup() {
     Serial.begin(BAUD_RATE);
     SerialBT.begin("ESP32_Robot"); 
     initLedBuzzerActuators();
-    flashInit();
+    initPCB();
+    flightComputerInit();
+    initPCB();
 }
 
 void loop() {
     currentMilis = millis();
-
 }

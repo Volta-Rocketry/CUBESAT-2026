@@ -268,7 +268,7 @@ void commsUpdateCtam(uint32_t timestamp,
  * @return true If the module responds with a valid, non-corrupt frame.
  * @return false If timeout occurs or verification fails.
  */
-bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInitData* d) {
+bool commsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInitData* d) {
     serialPort.begin(BAUD_RATE, SERIAL_8N1, rxPin, txPin);
     
     while(serialPort.available()) { serialPort.read(); }
@@ -317,7 +317,7 @@ bool CommsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInit
     return false;
 }
 
-void CommsTick() {
+void commsTick() {
     uint32_t now = millis();
 
     if (now - lastCtrSendMs >= CTR_TP_INTERVAL_MS) {

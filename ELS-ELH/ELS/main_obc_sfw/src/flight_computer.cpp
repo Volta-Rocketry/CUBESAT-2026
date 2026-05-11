@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 CommsInitData dataToInit;
+StructInitCom initCom;
 
 uint32_t gFlashWriteAddr = 0;
 static FlightState gState = STATE_INIT;
@@ -109,45 +110,86 @@ static void recordSlowPacket() {
  */
 void flightComputerInit() {
 
-    flashInit();
+    uint32_t time1= millis();
+
+    while (!initCom.comControl && !initCom.comCamera) {
+
+        if (!initCom.comControl) {
+            memset(&dataToInit, 0, sizeof(CommsInitData));
+            dataToInit.id_to_init = ID_CTR_TP;
+            bool ctrOk = commsInit(Serial1, CTR_RX, CTR_TX, &dataToInit);
+            
+            if (ctrOk) {
+                println("CTR Communication initialization completed");
+                initCom.comControl = 1;
+            }
+            else {
+                criticalErrorSensor("CTR Communication initialization failed");
+                initCom.comControl = 0;
+            }
+        }
+
+        if (!initCom.comCamera) {
+            memset(&dataToInit, 0, sizeof(CommsInitData)); 
+            dataToInit.id_to_init = ID_CAM_TP;
+            bool camOk = commsInit(Serial2, CAM_RX, CAM_TX, &dataToInit);
+
+            if (camOk) {
+                println("CAM Communication initialization completed");
+                initCom.comCamera = 1;
+            }
+            else {
+                criticalErrorSensor("CAM Communication initialization failed");
+                initCom.comCamera = 0;
+            }
+        }
+
+        if (millis() - time1 >= 5000) {
+            criticalErrorSensor("Communication initialization failed");
+            break;
+        }
+    }
+
+    uint32_t time2= millis();
+    while (!initSensor.initBNO && !initSensor.initMPU) {
+        flashInit();
+        initMPU6050();
+        initBMP180();
+        initQMC5883L();
+        initBNO055();
+        initBME280();
+        initUblox();
+        delay(1);
+        if (millis() - time2 >= 5000) {
+            criticalErrorSensor("Sensor initialization failed");
+            break;
+        }
+    }
 
     gFlashWriteAddr = 0;
     gPageBufIdx = 0;
 
-    Serial.printf("Flash: %lu MB avaiable.\n", 
-        FLASH_TOTAL_BYTES / (1024UL * 1024UL));
-    Serial.printf("Estimated: ~%.1f flight min (FastPackets 100Hz)\n", 
-        (float)(FLASH_TOTAL_BYTES / sizeof(FastFlightPacket)) / 6000.0f);
-
-    //---
-
-    memset(&dataToInit, 0, sizeof(CommsInitData));
-    dataToInit.id_to_init = ID_CTR_TP;
-    bool ctr_ok = commsInit(Serial2, CTR_RX, CTR_TX, &dataToInit);
-
-    memset(&dataToInit, 0, sizeof(CommsInitData)); 
-    dataToInit.id_to_init = ID_CAM_TP;
-    bool cam_ok = commsInit(Serial1, CAM_RX, CAM_TX, &dataToInit);
-
-    if (ctr_ok) {
-        println("CTR Communication initialization completed");
-    }
-    else {
-        criticalErrorSensor("CTR Communication initialization failed");
+    uint32_t time3= millis();
+    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
+        calibrateSensors();
+        delay(1);
+        if (millis() - time3 >= 5000) {
+            criticalErrorSensor("Sensor calibration failed");
+            break;
+        }
     }
 
-        if (cam_ok) {
-        println("CAM Communication initialization completed");
+    if (initSensor.initFlash && initCom.comControl && initCom.comCamera &&
+        initSensor.initMPU && initSensor.initBMP && initSensor.initQMC &&
+        initSensor.initBNO && initSensor.initBME && initSensor.initGPS) {
+        println("All systems initialized successfully");
+    } else {
+        criticalErrorSensor("Initialization failed for one or more components");
     }
-    else {
-        criticalErrorSensor("CAM Communication initialization failed");
-    }
+    
 
-    //---
-
-    digitalWrite(LED_BLUE_PIN, HIGH);
-    gState = STATE_IDLE; //Para prueba (cambiar a STATE_PAD para vuelo)
-    println("TEST MODE");
+    gState = STATE_PAD;
+    println("PAD MODE");
 }
 
 /**
@@ -236,7 +278,7 @@ void flightComputerUpdate() {
         //arranque del sistema
         break;
 
-    case STATE_INTEGRATION:
+    case STATE_INTEGRATION: // should be deleted
         if (now - lastSlowSample >= 5000) {
             lastSlowSample = now;
             readBME280();
@@ -255,13 +297,20 @@ void flightComputerUpdate() {
         }
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
             lastFastSample = now;
-            readBME280(); 
-
+            readBNO055(); 
+            //commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
+            //                bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz); // sensor change to MPU6050 according to initialization
+            
+            commsUpdateCAM(10, 11, 12, 13,
+                            14, 15, 16);
+            
             float total_accel = sqrtf(
                 mpuData.MPU_ax * mpuData.MPU_ax +
                 mpuData.MPU_ay * mpuData.MPU_ay +
                 mpuData.MPU_az * mpuData.MPU_az
-            );
+            ); // should be BNO instead of mpu
+        
+        commsTick();
 
             if (total_accel > LAUNCH_ACCEL_THRESHOLD_MS2) {
                 if (accelStartMs == 0) accelStartMs = now;
@@ -273,10 +322,13 @@ void flightComputerUpdate() {
                     digitalWrite(LED_GREEN_PIN, HIGH);
                 }
             } 
+            
             else {
                 accelStartMs = 0;
             }
+
         }
+        
         break;
 
     case STATE_ASCENT:
@@ -284,14 +336,18 @@ void flightComputerUpdate() {
             lastFastSample = now;
             readBNO055();
             recordFastPacket(); // 100 Hz
+            commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
+                            bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz);
+
         }
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
             readBME280();
             readUblox();
             recordSlowPacket(); // 1 Hz
-            
-            //---
+
+        commsTick();          
+
             if (bmeData.altitude < maxAltitude) {
                 if (altitudeStartMs == 0) altitudeStartMs = now;
                 

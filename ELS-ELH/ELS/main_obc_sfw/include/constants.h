@@ -118,10 +118,10 @@
 #define CAM_TP_INTERVAL_MS 10        ///< Time interval for camera package sending
 #define FLIGHT_SP_INTERVAL_MS 1000   ///< Time interval for flight package sending
 #define TEST_SP_INTERVAL_MS 1000     ///< Time interval for test package sending
-#define CTR_TX 43                    ///< Reception pin (TX) to the Control OBC
-#define CTR_RX 44                    ///< Reception pin (RX) to the Control OBC
-#define CAM_TX 15                    ///< Reception pin (TX) to the Camera
-#define CAM_RX 16                    ///< Reception pin (RX) to the Camera
+#define CTR_TX 33                    ///< Reception pin (TX) to the Control OBC
+#define CTR_RX 34                    ///< Reception pin (RX) to the Control OBC
+#define CAM_TX 32                    ///< Reception pin (TX) to the Camera
+#define CAM_RX 35                    ///< Reception pin (RX) to the Camera
 
 #define BLINK 500
 
@@ -416,6 +416,6 @@ extern CommsCamData camData;            ///< Global instance for data to be sent
 extern CommsInitData initData;
 extern StructInitSensor initSensor;
 extern StructCalibSensor calibSensor;
-extern StructInitCom initCom;    //no se si eso va o es otra q ya esta en el archivo
+extern StructInitCom initCom;
 extern FastFlightPacket fastP;
 extern SlowFlightPacket slowP;

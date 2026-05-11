@@ -54,9 +54,11 @@ void flashInit() {
     digitalWrite(FLASH_CS, HIGH);
     if (manufacturer == 0xEF && memType == 0x40 && capacity == 0x16) {
         println("Initialized FLASH");
+        initSensor.initFlash = 1;
     }
     else {
         criticalErrorSensor("FLASH not found");
+        initSensor.initFlash = 0;
     }
 }
 

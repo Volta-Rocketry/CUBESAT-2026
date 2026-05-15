@@ -208,130 +208,123 @@ void flightComputerUpdate() {
     static uint32_t stableStartMs  = 0;
     static uint32_t landedStartMs  = 0;
     static float    lastLandedAlt  = 0.0f;
+    float totalAccel = 0.0f;
 
     uint32_t now = millis();
 
     switch (gState) {
 
-    case STATE_IDLE: 
+    case STATE_IDLE: {
 
         println("CURRENT STATE: IDLE");
 
-        digitalWrite(LED_BLUE_PIN, HIGH);
+        colorRGB(0, 0, 255);
 
         if (now - lastSlowSample >= 1000) {
             lastSlowSample = now;
             readBME280();
             readUblox();
             readBNO055();
-/*
-            Serial.printf("[IDLE] OK, Actuators inhibided, BME280 T: %.2fC P: %.2fPa A: %.2fm, Ublox Lat: %.6f Lon: %.6f Alt: %.2fm Spd: %.2fm/s, MPU9250 Accel: (%.2f, %.2f, %.2f) m/s², BNO055 Accel: (%.2f, %.2f, %.2f) m/s²\n",
-                bmeData.temp, bmeData.pressure, bmeData.altitude,
-                ubloxData.latitude, ubloxData.longitude, ubloxData.altitude, ubloxData.speed,
-                mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
-                bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az
-            );
-*/
-            println("Write a command: ");
+        }
 
-            if (Serial.available() > 0) {
-                String cmd = Serial.readStringUntil('\n');
-                cmd.trim();
-                if (cmd == "INTEGRATION") {
-                    println("Transition to INTEGRATION");
-                    gState = STATE_INTEGRATION;
-                    digitalWrite(LED_BLUE_PIN, LOW);
-                    digitalWrite(LED_GREEN_PIN, HIGH);
-                }
-                else if (cmd == "SAVE SLOW DATA") {
-                    Serial.println("Saving SLOW packet");
-                    recordSlowPacket();
-                }
-                else if (cmd == "SAVE FAST DATA") {
-                    Serial.println("Saving FAST packet");
-                    recordFastPacket();
-                }
-                else if (cmd == "DOWNLOAD") {
-                    Serial.println("Downloading data to FLASH");
-                    //// download_flash_to_sd();
-                }
-                else if (cmd == "ERASE") {
-                    Serial.println("Erasing FLASH");
-                    flashEraseChip();
-                    gFlashWriteAddr = 0;
-                    gPageBufIdx = 0;
-                }
-                if (cmd == "PAD") {
-                    Serial.println("Transition to PAD");
-                    gState = STATE_PAD;
-                    digitalWrite(LED_BLUE_PIN, LOW);
-                    digitalWrite(LED_RED_PIN, HIGH);
-                }
+        println("Write a command: ");
+
+        if (Serial.available() > 0) {
+            String cmd = Serial.readStringUntil('\n');
+            cmd.trim();
+
+            if (cmd == "SAVE SLOW DATA") {
+                Serial.println("Saving SLOW packet");
+                recordSlowPacket();
             }
-
-            
+            else if (cmd == "SAVE FAST DATA") {
+                Serial.println("Saving FAST packet");
+                recordFastPacket();
+            }
+            else if (cmd == "ERASE") {
+                Serial.println("Erasing FLASH");
+                flashEraseChip();
+                gFlashWriteAddr = 0;
+                gPageBufIdx = 0;
+            }
+            else if (cmd == "PAD") {
+                Serial.println("Transition to PAD");
+                gState = STATE_PAD;
+                colorRGB(0, 0, 0);
+                colorRGB(255, 0, 0);
+            }
+            else {
+                Serial.println("Unknown command");
+            }
         }
-        
+
         break;
+    }
 
-    case STATE_INIT:
-        //arranque del sistema
-        break;
-
-    case STATE_INTEGRATION: // should be deleted
-        if (now - lastSlowSample >= 5000) {
-            lastSlowSample = now;
-            readBME280();
-            recordSlowPacket();
-        }
-        break;
-
-    case STATE_PAD:
-
+    case STATE_PAD: { 
+        colorRGB(0, 0, 0);
         if (now - lastSlowSample >= 10000) {
             lastSlowSample = now;
-
             readBME280();
+            readBMP180();
             readUblox();
             recordSlowPacket();
         }
+
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
             lastFastSample = now;
-            readBNO055(); 
-            //commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
-            //                bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz); // sensor change to MPU6050 according to initialization
-            
-            commsUpdateCAM(10, 11, 12, 13,
-                            14, 15, 16);
-            
-            float total_accel = sqrtf(
-                mpuData.MPU_ax * mpuData.MPU_ax +
-                mpuData.MPU_ay * mpuData.MPU_ay +
-                mpuData.MPU_az * mpuData.MPU_az
-            ); // should be BNO instead of mpu
-        
-        commsTick();
 
-            if (total_accel > LAUNCH_ACCEL_THRESHOLD_MS2) {
-                if (accelStartMs == 0) accelStartMs = now;
-                
-                if ((now - accelStartMs) >= 500) {
-                    println("Boost detected. Transition to ASCENT.");
+            if(initSensor.initBNO){
+                readBNO055(); 
+                commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
+                                bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz);
+                totalAccel = sqrtf(
+                    bnoData.BNO_ax * bnoData.BNO_ax +
+                    bnoData.BNO_ay * bnoData.BNO_ay +
+                    bnoData.BNO_az * bnoData.BNO_az); 
+                if (initSensor.initMPU) {
+                    readMPU6050(); 
+                    recordFastPacket();
+                }
+                recordFastPacket();
+            }
+            else if(initSensor.initMPU && !initSensor.initBNO){
+                readMPU6050(); 
+                commsUpdateCAM(mpuData.timestamp, mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
+                                mpuData.MPU_gx, mpuData.MPU_gy, mpuData.MPU_gz);
+                totalAccel = sqrtf(
+                    mpuData.MPU_ax * mpuData.MPU_ax +
+                    mpuData.MPU_ay * mpuData.MPU_ay +
+                    mpuData.MPU_az * mpuData.MPU_az); 
+
+                recordFastPacket();
+            }
+            else {
+                totalAccel = 0.0f;
+            }
+
+            if (totalAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
+                if (accelStartMs == 0) {
+                    accelStartMs = now;
+                }
+                if ((now - accelStartMs) >= 500) 
                     gState = STATE_ASCENT;
-                    digitalWrite(LED_RED_PIN, LOW);
-                    digitalWrite(LED_GREEN_PIN, HIGH);
+
+                    colorRGB(0, 0, 0);
+                    colorRGB(0, 255, 0);
                 }
             } 
-            
             else {
                 accelStartMs = 0;
             }
-
         }
-        
-        break;
 
-    case STATE_ASCENT:
+        commsTick();
+
+        break;
+    }
+
+    case STATE_ASCENT: {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             readBNO055();
@@ -364,8 +357,9 @@ void flightComputerUpdate() {
             }
         }
         break;
+    }
 
-    case STATE_EYECTION:
+    case STATE_EYECTION: {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             readBNO055();
@@ -396,8 +390,9 @@ void flightComputerUpdate() {
             recordSlowPacket();
         }
         break;
+    }
 
-    case STATE_CONTROL:
+    case STATE_CONTROL: {
 
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
@@ -416,8 +411,9 @@ void flightComputerUpdate() {
             }
         }
         break;
+    }
 
-    case STATE_DRAIN:
+    case STATE_DRAIN:{
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             readBNO055();
@@ -445,8 +441,9 @@ void flightComputerUpdate() {
             }
         }
         break;
+    }
 
-    case STATE_RECOVERY:
+    case STATE_RECOVERY: {
 
         digitalWrite(LED_GREEN_PIN, (now % 1000) < 500 ? HIGH : LOW);
 

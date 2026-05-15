@@ -134,7 +134,8 @@ void verifyFlashContent() {
             
             uint16_t crc_calc = crc16CCITT((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
-
+            
+            //verificar q este bien esto
             Serial.printf("[FAST] Addr: 0x%06lX | TS: %lu | AccelX: %.2f | CRC: %s\n", 
                           currentAddr, p.timestamp_ms, p.mpu.MPU_ax, ok ? "OK" : "ERROR");
             

@@ -321,13 +321,12 @@ typedef enum {
     // Test states 
     STATE_IDLE,
     STATE_INIT,
-    STATE_INTEGRATION,
     // Flight states
     STATE_PAD,
     STATE_ASCENT,
     STATE_EYECTION,
     STATE_CONTROL,
-    STATE_DRAIN,
+    STATE_CUTOFF,
     STATE_RECOVERY,
     STATE_DOWNLOAD
 } FlightState;
@@ -346,6 +345,7 @@ typedef struct {
     uint32_t timestamp_ms;
     StructMPU6050 mpu;
     StructBNO055 bno;
+    MadgwickState madgwick;
     uint16_t checksum;
 } FastFlightPacket;
 #pragma pack(pop)
@@ -393,9 +393,26 @@ struct CommsCamData{
     float gx, gy, gz; // BNO055 angular velocity on the X, Y and Z axis
 };
 
-
 struct CommsInitData{
     uint8_t id_to_init;
+};
+
+// ==========================
+// FILTERS DATA STRUCTURES
+// ==========================
+
+struct MadgwickState{
+    float q0;    ///< Componente escalar del cuaternión (parte real)
+    float q1;    ///< Componente vectorial i (eje X)                           
+    float q2;    ///< Componente vectorial j (eje Y)                             
+    float q3;    ///< Componente vectorial k (eje Z)                             
+    float beta;  ///< Ganancia del gradiente descendente [rad/s]                  
+};
+
+struct EulerAngles{
+    float roll;    ///< rotación alrededor de x
+    float pitch;   ///< rotación alrededor de y
+    float yaw;     ///< rotación alrededor de z
 };
 
 // ==========================
@@ -419,3 +436,5 @@ extern StructCalibSensor calibSensor;
 extern StructInitCom initCom;
 extern FastFlightPacket fastP;
 extern SlowFlightPacket slowP;
+extern MadgwickState madgwickState;
+extern EulerAngles eulerAngles;

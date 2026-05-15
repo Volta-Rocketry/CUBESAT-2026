@@ -21,16 +21,6 @@ static uint8_t gPageBuf[FLASH_PAGE_SIZE];
 static uint16_t gPageBufIdx = 0;
 
 /**
- * @brief Calculates the CRC16-CCITT checksum for a data block.
- * * This function implements the CRC-16/CCITT-FALSE algorithm using the polynomial 0x1021.
- * It processes the data byte by byte, applying bitwise XOR and shift operations 
- * to generate a 16-bit cyclic redundancy check.
- * * @param data Pointer to the byte array to be processed.
- * @param length Number of bytes in the data array.
- * @return uint16_t The calculated 16-bit checksum.
- */
-
-/**
  * @brief Page Buffer Execution.
  * * Send the data to be written by flash when the 
  * buffer is already the size of a flash page.
@@ -81,6 +71,7 @@ void recordFastPacket() {
     fast_pkt.timestamp_ms = millis();
     fast_pkt.mpu = mpuData;
     fast_pkt.bno = bnoData;
+    fast_pkt.madgwick = madgwickState;
 
     fast_pkt.checksum = crc16CCITT((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
 
@@ -277,6 +268,8 @@ void flightComputerUpdate() {
             lastFastSample =  now;
             totalAccel = processFastSensors(); 
         }
+        
+        commsTick();
 
         if (totalAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
             if (accelStartMs == 0) {
@@ -288,12 +281,12 @@ void flightComputerUpdate() {
                 colorRGB(0, 0, 0);
                 colorRGB(0, 255, 0);
             }
-        } 
+        }
+
         else {
             accelStartMs = 0;
         }
 
-        commsTick();
         break;
     }
 
@@ -340,6 +333,14 @@ void flightComputerUpdate() {
             lastFastSample = now;
             processFastSensors(); 
 
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
+            processSlowSensors();
+        }
+
+        commsTick();
+
+//----------------------- IS NOT THE TRANSITION CONDITION DISCUSSED
             totalGyro = sqrtf(
                 bnoData.BNO_gx * bnoData.BNO_gx +
                 bnoData.BNO_gy * bnoData.BNO_gy +
@@ -361,14 +362,9 @@ void flightComputerUpdate() {
             else {
                 stableStartMs = 0;
             }
-        }
-        
-        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
-            lastSlowSample = now;
-            processSlowSensors();
-        }
+//-----------------------
 
-        commsTick();
+        }
 
         break;
     }
@@ -387,25 +383,16 @@ void flightComputerUpdate() {
         commsTick();
 
         if (bmeData.altitude < 50.0f) {
-            if (drainStartMs == 0) {
-                drainStartMs = now;
-            }
+            gState = STATE_CUTOFF;
             
-            if (now - drainStartMs > 1000) {
-                gState = STATE_DRAIN;
-                
-                colorRGB(0, 0, 0);
-                colorRGB(0, 255, 255);
-            }
-        } 
-        else {
-            drainStartMs = 0;
+            colorRGB(0, 0, 0);
+            colorRGB(0, 255, 255);
         }
 
         break;
     }
 
-    case STATE_DRAIN: {
+    case STATE_CUTOFF: {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             processFastSensors();
@@ -429,6 +416,7 @@ void flightComputerUpdate() {
                     colorRGB(255, 0, 255);
                 }
             }
+
             else {
                 lastLandedAlt = bmeData.altitude;
                 landedStartMs = 0;
@@ -449,12 +437,11 @@ void flightComputerUpdate() {
         }
 
         if (now - lastSlowSample >= 20000) {
-            lastSlowSample = now;
-            
+            lastSlowSample = now;            
             readBME280();
             readUblox();
-
         }
+
         commsTick(); 
 
         break;

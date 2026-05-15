@@ -5,6 +5,7 @@
 #include "error_warning.h"      
 #include "signals.h"
 #include "flash_storage.h"    
+#include "sensor.h"
 #include <Arduino.h>
 #include <SD.h>
 #include <math.h>
@@ -73,7 +74,7 @@ static void pageBufWrite(const uint8_t* data, uint16_t len) {
  * * It obtains the data from the sensors and stores it 
  * according to the structure, for sending to the buffer.
  */
-static void recordFastPacket() {
+void recordFastPacket() {
     FastFlightPacket fast_pkt;
     memset(&fast_pkt, 0, sizeof(FastFlightPacket));
     fast_pkt.packet_id = 0x01;
@@ -91,7 +92,7 @@ static void recordFastPacket() {
  * * It obtains the data from the sensors and stores it 
  * according to the structure, for sending to the buffer.
  */
-static void recordSlowPacket() {
+void recordSlowPacket() {
     SlowFlightPacket slow_pkt;
     memset(&slow_pkt, 0, sizeof(SlowFlightPacket));
     slow_pkt.packet_id = 0x02;
@@ -206,11 +207,13 @@ void flightComputerUpdate() {
     static float    maxAltitude     = -999.0f;
     static uint8_t  apogeeCount     = 0;
     static uint32_t stableStartMs  = 0;
+    static uint32_t drainStartMs   = 0;
     static uint32_t landedStartMs  = 0;
     static float    lastLandedAlt  = 0.0f;
     float totalAccel = 0.0f;
+    float totalGyro = 0.0f;
 
-    uint32_t now = millis();
+    unsigned long now = millis();
 
     switch (gState) {
 
@@ -220,7 +223,7 @@ void flightComputerUpdate() {
 
         colorRGB(0, 0, 255);
 
-        if (now - lastSlowSample >= 1000) {
+        if ( now - lastSlowSample >= 1000) {
             lastSlowSample = now;
             readBME280();
             readUblox();
@@ -263,59 +266,172 @@ void flightComputerUpdate() {
 
     case STATE_PAD: { 
         colorRGB(0, 0, 0);
-        if (now - lastSlowSample >= 10000) {
-            lastSlowSample = now;
-            readBME280();
-            readBMP180();
-            readUblox();
-            recordSlowPacket();
+        colorRGB(255, 0, 0);
+
+        if ( now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample =  now;
+            processSlowSensors();
         }
 
-        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
+        if ( now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
+            lastFastSample =  now;
+            totalAccel = processFastSensors(); 
+        }
+
+        if (totalAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
+            if (accelStartMs == 0) {
+                accelStartMs =  now;
+            }
+            
+            if (( now - accelStartMs) >= 500) { 
+                gState = STATE_ASCENT;
+                colorRGB(0, 0, 0);
+                colorRGB(0, 255, 0);
+            }
+        } 
+        else {
+            accelStartMs = 0;
+        }
+
+        commsTick();
+        break;
+    }
+
+    case STATE_ASCENT: {
+
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
+            processFastSensors();
+        }
 
-            if(initSensor.initBNO){
-                readBNO055(); 
-                commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
-                                bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz);
-                totalAccel = sqrtf(
-                    bnoData.BNO_ax * bnoData.BNO_ax +
-                    bnoData.BNO_ay * bnoData.BNO_ay +
-                    bnoData.BNO_az * bnoData.BNO_az); 
-                if (initSensor.initMPU) {
-                    readMPU6050(); 
-                    recordFastPacket();
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
+            processSlowSensors();
+            
+            if (bmeData.altitude > maxAltitude) {
+                maxAltitude = bmeData.altitude;
+            }
+        }
+
+        commsTick();          
+
+        if (bmeData.altitude < (maxAltitude - 1.5)) { 
+            
+            if (altitudeStartMs == 0) {
+                altitudeStartMs = now;
+            }
+            
+            if (now - altitudeStartMs >= 500) {
+                gState = STATE_EYECTION; 
+
+                colorRGB(0, 0, 0);
+                colorRGB(255, 255, 0);
+            }
+        } 
+        else {
+            altitudeStartMs = 0;
+        }
+        
+        break;
+    }
+
+    case STATE_EYECTION: {
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
+            processFastSensors(); 
+
+            totalGyro = sqrtf(
+                bnoData.BNO_gx * bnoData.BNO_gx +
+                bnoData.BNO_gy * bnoData.BNO_gy +
+                bnoData.BNO_gz * bnoData.BNO_gz
+            );
+            
+            if (totalGyro < 20.0f) {  
+                if (stableStartMs == 0) {
+                    stableStartMs = now;
                 }
-                recordFastPacket();
-            }
-            else if(initSensor.initMPU && !initSensor.initBNO){
-                readMPU6050(); 
-                commsUpdateCAM(mpuData.timestamp, mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
-                                mpuData.MPU_gx, mpuData.MPU_gy, mpuData.MPU_gz);
-                totalAccel = sqrtf(
-                    mpuData.MPU_ax * mpuData.MPU_ax +
-                    mpuData.MPU_ay * mpuData.MPU_ay +
-                    mpuData.MPU_az * mpuData.MPU_az); 
-
-                recordFastPacket();
-            }
-            else {
-                totalAccel = 0.0f;
-            }
-
-            if (totalAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
-                if (accelStartMs == 0) {
-                    accelStartMs = now;
-                }
-                if ((now - accelStartMs) >= 500) 
-                    gState = STATE_ASCENT;
-
+                
+                if (now - stableStartMs > 2000) {
+                    gState = STATE_CONTROL;
+                    
                     colorRGB(0, 0, 0);
-                    colorRGB(0, 255, 0);
+                    colorRGB(0, 0, 255);
                 }
             } 
             else {
-                accelStartMs = 0;
+                stableStartMs = 0;
+            }
+        }
+        
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
+            processSlowSensors();
+        }
+
+        commsTick();
+
+        break;
+    }
+
+    case STATE_CONTROL: {
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
+            processFastSensors();
+        }
+        
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
+            processSlowSensors();
+        }
+
+        commsTick();
+
+        if (bmeData.altitude < 50.0f) {
+            if (drainStartMs == 0) {
+                drainStartMs = now;
+            }
+            
+            if (now - drainStartMs > 1000) {
+                gState = STATE_DRAIN;
+                
+                colorRGB(0, 0, 0);
+                colorRGB(0, 255, 255);
+            }
+        } 
+        else {
+            drainStartMs = 0;
+        }
+
+        break;
+    }
+
+    case STATE_DRAIN: {
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
+            processFastSensors();
+        }
+        
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
+            processSlowSensors(); 
+
+            if (fabsf(bmeData.altitude - lastLandedAlt) < 2.0f) {
+                
+                if (landedStartMs == 0) {
+                    landedStartMs = now;
+                }
+            
+                if (now - landedStartMs > 10000) { 
+                    pageBufFlush();
+                    gState = STATE_RECOVERY;
+                    
+                    colorRGB(0, 0, 0);
+                    colorRGB(255, 0, 255);
+                }
+            }
+            else {
+                lastLandedAlt = bmeData.altitude;
+                landedStartMs = 0;
             }
         }
 
@@ -324,138 +440,32 @@ void flightComputerUpdate() {
         break;
     }
 
-    case STATE_ASCENT: {
-        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
-            lastFastSample = now;
-            readBNO055();
-            recordFastPacket(); // 100 Hz
-            commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
-                            bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz);
-
-        }
-        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
-            lastSlowSample = now;
-            readBME280();
-            readUblox();
-            recordSlowPacket(); // 1 Hz
-
-        commsTick();          
-
-            if (bmeData.altitude < maxAltitude) {
-                if (altitudeStartMs == 0) altitudeStartMs = now;
-                
-                if (now - altitudeStartMs >= 500) {
-                    println("Apogee detected. Transition to EJECTION.");
-                    gState = STATE_EYECTION;
-                    digitalWrite(LED_RED_PIN, LOW);
-                    digitalWrite(LED_GREEN_PIN, HIGH);
-                }
-            } 
-            else {
-                if (bmeData.altitude > maxAltitude) maxAltitude = bmeData.altitude;
-                altitudeStartMs = 0;
-            }
-        }
-        break;
-    }
-
-    case STATE_EYECTION: {
-        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
-            lastFastSample = now;
-            readBNO055();
-            recordFastPacket();
-
-            float total_gyro = sqrtf(
-                mpuData.MPU_gx * mpuData.MPU_gx +
-                mpuData.MPU_gy * mpuData.MPU_gy +
-                mpuData.MPU_gz * mpuData.MPU_gz
-            );
-            
-            // IMPLEMENTAR DETECCION DE KILL SWITCHES Y DELAY
-            if (total_gyro < 20.0f) {  // por que 20, cuando se estabilize no podria ser mayor?
-                if (stableStartMs == 0) stableStartMs = now;
-                if (now - stableStartMs > 2000) {
-                    println("Control safety conditions. Transition to CONTROL.");
-                    gState = STATE_CONTROL;
-                }
-            } 
-            else {
-                stableStartMs = 0;
-            }
-        }
-        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
-            lastSlowSample = now;
-            readBME280();
-            readUblox();
-            recordSlowPacket();
-        }
-        break;
-    }
-
-    case STATE_CONTROL: {
-
-        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
-            lastFastSample = now;
-            readBNO055();
-            recordFastPacket();
-        }
-        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
-            lastSlowSample = now;
-            readBME280();
-            readUblox();
-            recordSlowPacket();
-
-            if (bmeData.altitude < 50.0f) {
-                println("Drain threshold. Transition to DRAIN");
-                gState = STATE_DRAIN;
-            }
-        }
-        break;
-    }
-
-    case STATE_DRAIN:{
-        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
-            lastFastSample = now;
-            readBNO055();
-            recordFastPacket();
-        }
-        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
-            lastSlowSample = now;
-            readBME280();
-            readUblox();
-            recordSlowPacket();
-
-            if (fabsf(bmeData.altitude - lastLandedAlt) < 2.0f) {
-                if (landedStartMs == 0) landedStartMs = now;
-                if (now - landedStartMs > 4000) { 
-
-                    pageBufFlush(); 
-                    println("LANDING CONFIRMED. Transition to RECOVERY.");
-                    gState = STATE_RECOVERY;
-                    digitalWrite(LED_RED_PIN, LOW);
-                }
-            }
-            else {
-                lastLandedAlt = bmeData.altitude;
-                landedStartMs = 0;
-            }
-        }
-        break;
-    }
-
     case STATE_RECOVERY: {
 
-        digitalWrite(LED_GREEN_PIN, (now % 1000) < 500 ? HIGH : LOW);
-
-        if (now - lastSlowSample >= 10000) {
-            lastSlowSample = now;
-            readBME280(); 
+        if ((now % 1000) < 100) {
+            colorRGB(0, 255, 0);
+        } else {
+            colorRGB(0, 0, 0);
         }
-        break;
 
-    default:
+        if (now - lastSlowSample >= 20000) {
+            lastSlowSample = now;
+            
+            readBME280();
+            readUblox();
+
+        }
+        commsTick(); 
+
         break;
     }
+
+    default: {
+        gState = STATE_RECOVERY; 
+        break;
+    }
+
+    } 
 }
 
 /**

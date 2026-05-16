@@ -27,22 +27,25 @@ float processFastSensors() {
     static uint32_t lastTime = 0;
     FlightState flightState;
 
-    if (initSensor.initBNO) {
-        uint32_t now = millis();
+    uint32_t now = millis();
+    float dt = ( now - lastTime ) / 1000.0f;
 
+    if ( lastTime == 0 || dt < 0.001f || dt > 0.1f ) {
+        dt = 0.01f;
+    }
+
+    lastTime = now;
+
+    if (initSensor.initBNO) {
         readBNO055();
         readBME280();
         flightState = flightComputerGetState();
 
-        float dt = ( now - lastTime ) / 1000.0;
-        if ( lastTime == 0 ) {
-            dt = 0.01f;
-        }
-
-        lastTime = now;
-
         verticalVelocity += bnoData.BNO_global_az * dt;
         
+        if (verticalVelocity > 500.0f) verticalVelocity = 500.0f;
+        if (verticalVelocity < -200.0f) verticalVelocity = -200.0f;
+
         altitudeFilter.verticalAccel = bnoData.BNO_global_az;
         altitudeFilter.verticalVelocity = verticalVelocity;
 
@@ -71,16 +74,6 @@ float processFastSensors() {
     }
 
     else if (initSensor.initMPU && !initSensor.initBNO) {
-        uint32_t now = millis();
-
-        float dt = ( now - lastTime ) / 1000.0;
-        
-        if ( lastTime == 0 ) {
-            dt = 0.01f;
-        }
-
-        lastTime = now;
-
         readMPU6050(); 
         readBME280();
         flightState = flightComputerGetState();
@@ -89,6 +82,9 @@ float processFastSensors() {
         float verticalAccel = getVerticalAccel(&madgwickState, &mpuData);
 
         verticalVelocity += verticalAccel * dt;
+
+        if (verticalVelocity > 500.0f) verticalVelocity = 500.0f;
+        if (verticalVelocity < -200.0f) verticalVelocity = -200.0f;
 
         altitudeFilter.verticalAccel = verticalAccel;
         altitudeFilter.verticalVelocity = verticalVelocity;

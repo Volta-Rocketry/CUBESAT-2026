@@ -168,7 +168,11 @@ float getVerticalAccel(const MadgwickState *filter, const StructMPU6050 *data) {
     return verticalAccelMs2;
 }
 
-void altitudeFilterUpdate(float dt) {
+void altitudeFilterUpdate(float dt) { // Para cambio si se emplea alpha fijo por estabilidad
+
+    if (dt < 0.001f || dt > 0.1f) {
+        dt = 0.01f;
+    }
 
     float predictedAltitude = altitudeFilter.filteredAltitude + (altitudeFilter.verticalVelocity * dt) + (0.5f * altitudeFilter.verticalAccel * dt * dt);
     float predictedVelocity = altitudeFilter.verticalVelocity + (altitudeFilter.verticalAccel * dt);

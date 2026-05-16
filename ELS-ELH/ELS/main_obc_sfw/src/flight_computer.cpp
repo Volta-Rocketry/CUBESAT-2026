@@ -314,7 +314,7 @@ void flightComputerUpdate() {
 
     case STATE_ASCENT: {
 
-        madgwickState.beta = 0.0f;
+        madgwickState.beta = 0.005f;
         altitudeFilter.alpha= 1.0f;        
 
         if (altitudeFilter.verticalAccel > LAUNCH_ACCEL_THRESHOLD_MS2 || altitudeFilter.verticalVelocity > MACH_VELOCITY_THRESHOLD_MS2) {
@@ -391,7 +391,7 @@ void flightComputerUpdate() {
 
     case STATE_CONTROL: {
 
-        madgwickState.beta = 0.01f;
+        madgwickState.beta = 0.02f;
         altitudeFilter.alpha= 0.9f; 
 
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {

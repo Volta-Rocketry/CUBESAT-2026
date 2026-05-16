@@ -377,6 +377,36 @@ void readBNO055() {
     bnoData.BNO_qx = quat.x();
     bnoData.BNO_qy = quat.y();
     bnoData.BNO_qz = quat.z();
+
+    float ax = bnoData.BNO_ax;
+    float ay = bnoData.BNO_ay;
+    float az = bnoData.BNO_az;
+
+    float qw = bnoData.BNO_qw;
+    float qx = bnoData.BNO_qx;
+    float qy = bnoData.BNO_qy;
+    float qz = bnoData.BNO_qz;
+
+    float R11 = 1.0f - 2.0f*qy*qy - 2.0f*qz*qz;
+    float R12 = 2.0f*qx*qy - 2.0f*qz*qw;
+    float R13 = 2.0f*qx*qz + 2.0f*qy*qw;
+
+    float R21 = 2.0f*qx*qy + 2.0f*qz*qw;
+    float R22 = 1.0f - 2.0f*qx*qx - 2.0f*qz*qz;
+    float R23 = 2.0f*qy*qz - 2.0f*qx*qw;
+
+    float R31 = 2.0f*qx*qz - 2.0f*qy*qw;
+    float R32 = 2.0f*qy*qz + 2.0f*qx*qw;
+    float R33 = 1.0f - 2.0f*qx*qx - 2.0f*qy*qy;
+
+    bnoData.BNO_global_ax =
+        R11*ax + R12*ay + R13*az;
+
+    bnoData.BNO_global_ay =
+        R21*ax + R22*ay + R23*az;
+
+    bnoData.BNO_global_az =
+        R31*ax + R32*ay + R33*az;
 }
 void readBMP180(){
     float pressurePad1 = bmpCalib.bmpPresRef;

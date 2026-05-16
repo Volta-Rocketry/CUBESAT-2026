@@ -185,6 +185,9 @@ struct StructBNO055{
     float BNO_qx;       ///< Quaternion orientation X component
     float BNO_qy;       ///< Quaternion orientation Y component
     float BNO_qz;       ///< Quaternion orientation Z component
+    float BNO_global_ax;
+    float BNO_global_ay;
+    float BNO_global_az;
 };
 
 /**

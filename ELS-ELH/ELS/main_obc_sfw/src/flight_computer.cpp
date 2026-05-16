@@ -5,7 +5,7 @@
 #include "error_warning.h"      
 #include "signals.h"
 #include "flash_storage.h"    
-#include "sensor.h"
+#include "data_processing.h"
 #include "madgwick_filter.h"
 #include <Arduino.h>
 #include <SD.h>

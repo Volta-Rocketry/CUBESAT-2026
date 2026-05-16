@@ -13,6 +13,9 @@ void initUblox();
 void initActuators1();
 void initActuators2();
 
+bool loadOffsets();
+void saveOffsets();
+void manualCalibrationBNO055();
 void calibrateSensors();
 void calibrateMagnetometer();
 

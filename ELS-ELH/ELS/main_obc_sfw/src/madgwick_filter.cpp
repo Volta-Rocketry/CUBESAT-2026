@@ -5,6 +5,7 @@
 
 MadgwickState madgwickState;
 EulerAngles eulerAngles;
+AltitudeFilter altitudeFilter;
 
 void madgwickInit(MadgwickState *filter, float beta) {
 
@@ -38,6 +39,13 @@ void madgwickUpdate(MadgwickState *filter, const StructMPU6050 *data, float dt) 
         filter->q1 = q1 + 0.5f * ( q0*gx + q2*gz - q3*gy) * dt;
         filter->q2 = q2 + 0.5f * ( q0*gy - q1*gz + q3*gx) * dt;
         filter->q3 = q3 + 0.5f * ( q0*gz + q1*gy - q2*gx) * dt;
+    
+        float normQ = sqrtf(filter->q0*filter->q0 + filter->q1*filter->q1 + filter->q2*filter->q2 + filter->q3*filter->q3);
+        filter->q0 /= normQ;
+        filter->q1 /= normQ;
+        filter->q2 /= normQ;
+        filter->q3 /= normQ;
+        
     }
 
     else {
@@ -58,12 +66,20 @@ void madgwickUpdate(MadgwickState *filter, const StructMPU6050 *data, float dt) 
                                                     
         float norm_grad = sqrtf(grad0*grad0 + grad1*grad1 +
                                 grad2*grad2 + grad3*grad3);
+
         if (norm_grad < 1e-6f) {
 
             filter->q0 = q0 + 0.5f * (-q1*gx - q2*gy - q3*gz) * dt;
             filter->q1 = q1 + 0.5f * ( q0*gx + q2*gz - q3*gy) * dt;
             filter->q2 = q2 + 0.5f * ( q0*gy - q1*gz + q3*gx) * dt;
             filter->q3 = q3 + 0.5f * ( q0*gz + q1*gy - q2*gx) * dt;
+        
+            float normQ = sqrtf(filter->q0*filter->q0 + filter->q1*filter->q1 + filter->q2*filter->q2 + filter->q3*filter->q3);
+            filter->q0 /= normQ;
+            filter->q1 /= normQ;
+            filter->q2 /= normQ;
+            filter->q3 /= normQ;
+
         }
 
         else {
@@ -123,11 +139,11 @@ void quaternionToEuler(const MadgwickState *filter, EulerAngles *euler) {
     }
 
     euler->pitch = asinf(sin_pitch) * 57.2957795f;
-
     euler->yaw = atan2f(2.0f*(q1*q2 + q0*q3), 1.0f - 2.0f*(q2*q2 + q3*q3)) * 57.2957795f;
+
 }
 
-float getLinearAccel(const MadgwickState *filter, const StructMPU6050 *data) {
+float getVerticalAccel(const MadgwickState *filter, const StructMPU6050 *data) {
 
     float q0 = filter->q0;
     float q1 = filter->q1;
@@ -138,15 +154,26 @@ float getLinearAccel(const MadgwickState *filter, const StructMPU6050 *data) {
     float gy = 2.0f * (q0*q1 + q2*q3);
     float gz = 1.0f - 2.0f * (q1*q1 + q2*q2);
 
-    //si MPU esta en Gs
-    float linAccelX = data->MPU_ax - gx;
-    float linAccelY = data->MPU_ay - gy;
-    float linAccelZ = data->MPU_az - gz;
+    float g_mss = 9.80665f;
+    float gx_mss = gx * g_mss;
+    float gy_mss = gy * g_mss;
+    float gz_mss = gz * g_mss;
 
-    float linearAccelG = (gx * linAccelX) + (gy * linAccelY) + (gz * linAccelZ);
+    float linearAccelX = data->MPU_ax - gx_mss;
+    float linearAccelY = data->MPU_ay - gy_mss;
+    float linearAccelZ = data->MPU_az - gz_mss;
+
+    float verticalAccelMs2 = (gx * linearAccelX) + (gy * linearAccelY) + (gz * linearAccelZ);
+
+    return verticalAccelMs2;
+}
+
+void altitudeFilterUpdate(float dt) {
+
+    float predictedAltitude = altitudeFilter.filteredAltitude + (altitudeFilter.verticalVelocity * dt) + (0.5f * altitudeFilter.verticalAccel * dt * dt);
+    float predictedVelocity = altitudeFilter.verticalVelocity + (altitudeFilter.verticalAccel * dt);
+
+    altitudeFilter.filteredAltitude = (altitudeFilter.alpha * predictedAltitude) + ((1.0f - altitudeFilter.alpha) * bmeData.altitude);
     
-    //Gs to ,/s
-    float linearAccelMs2 = linearAccelG * 9.80665f;
-
-    return linearAccelMs2;
+    altitudeFilter.verticalVelocity = altitudeFilter.alpha * predictedVelocity + (1.0f - altitudeFilter.alpha) * ((altitudeFilter.filteredAltitude - predictedAltitude) / dt);
 }

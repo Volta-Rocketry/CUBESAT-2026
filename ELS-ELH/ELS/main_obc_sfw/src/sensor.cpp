@@ -11,17 +11,20 @@
 #include <Arduino.h>
 
 void processSlowSensors() {
+    FlightState flightState;
     readBME280();
     readBMP180();
     readUblox();
-    recordSlowPacket();
+    flightState = flightComputerGetState();
+    if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
+        recordFastPacket(); // falta agregar bmp al parquete y creo q qmc tmb
+    }
 }
 
 float processFastSensors() {
     float currentAccel = 0.0f;
-    float verticalVelocity = 0.0f;
-    float linearAccel = 0.0f;
-    uint32_t lastTime = 0;
+    static float verticalVelocity = 0.0f;
+    static uint32_t lastTime = 0;
     FlightState flightState;
 
     if (initSensor.initBNO) {
@@ -32,9 +35,18 @@ float processFastSensors() {
         flightState = flightComputerGetState();
 
         float dt = ( now - lastTime ) / 1000.0;
+        if ( lastTime == 0 ) {
+            dt = 0.01f;
+        }
+
         lastTime = now;
 
-        // verticalVelocity += bnoData.linearAccel * dt;
+        verticalVelocity += bnoData.BNO_global_az * dt;
+        
+        altitudeFilter.verticalAccel = bnoData.BNO_global_az;
+        altitudeFilter.verticalVelocity = verticalVelocity;
+
+        altitudeFilterUpdate(dt);
 
         commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
                        bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz);
@@ -52,13 +64,21 @@ float processFastSensors() {
             readMPU6050();
             madgwickUpdate(&madgwickState, &mpuData, dt);
         }
-        recordFastPacket();
+
+        if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
+            recordFastPacket();
+        }
     }
 
     else if (initSensor.initMPU && !initSensor.initBNO) {
         uint32_t now = millis();
 
         float dt = ( now - lastTime ) / 1000.0;
+        
+        if ( lastTime == 0 ) {
+            dt = 0.01f;
+        }
+
         lastTime = now;
 
         readMPU6050(); 
@@ -66,9 +86,14 @@ float processFastSensors() {
         flightState = flightComputerGetState();
         madgwickUpdate(&madgwickState, &mpuData, dt);
 
-        float linearAccel = getLinearAccel(&madgwickState, &mpuData);
+        float verticalAccel = getVerticalAccel(&madgwickState, &mpuData);
 
-        verticalVelocity += linearAccel * dt;
+        verticalVelocity += verticalAccel * dt;
+
+        altitudeFilter.verticalAccel = verticalAccel;
+        altitudeFilter.verticalVelocity = verticalVelocity;
+
+        altitudeFilterUpdate(dt);
 
         commsUpdateCAM(mpuData.timestamp, mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
                        mpuData.MPU_gx, mpuData.MPU_gy, mpuData.MPU_gz);
@@ -81,8 +106,10 @@ float processFastSensors() {
             mpuData.MPU_ax * mpuData.MPU_ax +
             mpuData.MPU_ay * mpuData.MPU_ay +
             mpuData.MPU_az * mpuData.MPU_az); 
-
-        recordFastPacket();
+        
+        if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
+            recordFastPacket();
+        }
     }
 
     return currentAccel;

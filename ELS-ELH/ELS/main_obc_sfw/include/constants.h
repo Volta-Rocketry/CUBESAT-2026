@@ -78,6 +78,7 @@
 
 /** @name FLIGHT LOGIC AND SAMPLING */
 #define LAUNCH_ACCEL_THRESHOLD_MS2 19.6133f ///< Acceleration threshold to detect launch
+#define MACH_VELOCITY_THRESHOLD_MS2 250.0f
 #define FAST_SAMPLE_INTERVAL_MS 10          ///< Fast sampling interval in milliseconds
 #define SLOW_SAMPLE_INTERVAL_MS 1000        ///< Slow sampling interval in milliseconds
 
@@ -327,12 +328,36 @@ typedef enum {
     // Flight states
     STATE_PAD,
     STATE_ASCENT,
-    STATE_EYECTION,
+    STATE_EJECTION,
     STATE_CONTROL,
     STATE_CUTOFF,
-    STATE_RECOVERY,
-    STATE_DOWNLOAD
+    STATE_RECOVERY
 } FlightState;
+
+// ==========================
+// FILTERS DATA STRUCTURES
+// ==========================
+
+struct MadgwickState{
+    float q0;    ///< Componente escalar del cuaternión (parte real)
+    float q1;    ///< Componente vectorial i (eje X)                           
+    float q2;    ///< Componente vectorial j (eje Y)                             
+    float q3;    ///< Componente vectorial k (eje Z)                             
+    float beta;  ///< Ganancia del gradiente descendente [rad/s]                  
+};
+
+struct EulerAngles{
+    float roll;    ///< rotación alrededor de x
+    float pitch;   ///< rotación alrededor de y
+    float yaw;     ///< rotación alrededor de z
+};
+
+struct AltitudeFilter{
+    float filteredAltitude;
+    float verticalVelocity;
+    float verticalAccel;
+    float alpha;
+};
 
 // ==========================
 // FLIGHT DATA STRUCTURES
@@ -349,6 +374,7 @@ typedef struct {
     StructMPU6050 mpu;
     StructBNO055 bno;
     MadgwickState madgwick;
+    AltitudeFilter filter;
     uint16_t checksum;
 } FastFlightPacket;
 #pragma pack(pop)
@@ -401,24 +427,6 @@ struct CommsInitData{
 };
 
 // ==========================
-// FILTERS DATA STRUCTURES
-// ==========================
-
-struct MadgwickState{
-    float q0;    ///< Componente escalar del cuaternión (parte real)
-    float q1;    ///< Componente vectorial i (eje X)                           
-    float q2;    ///< Componente vectorial j (eje Y)                             
-    float q3;    ///< Componente vectorial k (eje Z)                             
-    float beta;  ///< Ganancia del gradiente descendente [rad/s]                  
-};
-
-struct EulerAngles{
-    float roll;    ///< rotación alrededor de x
-    float pitch;   ///< rotación alrededor de y
-    float yaw;     ///< rotación alrededor de z
-};
-
-// ==========================
 // EXTERNAL GLOBAL VARIABLES
 // ==========================
 
@@ -441,3 +449,4 @@ extern FastFlightPacket fastP;
 extern SlowFlightPacket slowP;
 extern MadgwickState madgwickState;
 extern EulerAngles eulerAngles;
+extern AltitudeFilter altitudeFilter;

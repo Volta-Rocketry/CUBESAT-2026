@@ -123,6 +123,24 @@ void verifyFlashContent() {
     uint32_t countSlow = 0;
     uint32_t countCorrupt = 0;
 
+    Serial.println("TYPE,Timestamp_ms,"
+                "MPU_ax,MPU_ay,MPU_az,"
+                "MPU_gx,MPU_gy,MPU_gz,MPU_temp,"
+                "BNO_ax,BNO_ay,BNO_az,"
+                "BNO_gx,BNO_gy,BNO_gz,"
+                "BNO_mx,BNO_my,BNO_mz,"
+                "BNO_qw,BNO_qx,BNO_qy,BNO_qz,"
+                "BNO_gax,BNO_gay,BNO_gaz,"
+                "Madg_q0,Madg_q1,Madg_q2,Madg_q3,Madg_beta,"
+                "Filt_Alt,Filt_Vel,Filt_Acc,Filt_Alpha,CRC_Status");
+    
+    Serial.println("TYPE,Timestamp_ms,"
+                "BME_temp,BME_hum,BME_pres,BME_alt,"
+                "BMP_temp,BMP_pres,BMP_alt,"
+                "GPS_year,GPS_month,GPS_day,GPS_hour,GPS_min,GPS_sec,"
+                "GPS_lat,GPS_lon,GPS_alt,GPS_speed,GPS_course,"
+                "GPS_sats,GPS_hdop,GPS_valid,CRC_Status");
+
     while (currentAddr < gFlashWriteAddr) {
         uint8_t id = 0;
 
@@ -134,24 +152,39 @@ void verifyFlashContent() {
             
             uint16_t crc_calc = crc16CCITT((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
-            
-            //verificar q este bien esto
-            Serial.printf("[FAST] Addr: 0x%06lX | TS: %lu | AccelX: %.2f | CRC: %s\n", 
-                          currentAddr, p.timestamp_ms, p.mpu.MPU_ax, ok ? "OK" : "ERROR");
+
+            Serial.printf("FAST,%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.4f,%.4f,%.4f,%.4f,%.2f,%.2f,%.2f,%.4f,%.4f,%.4f,%.4f,%.4f,%.2f,%.2f,%.2f,%.3f,%d\n",
+                            p.timestamp_ms,
+                            p.mpu.MPU_ax, p.mpu.MPU_ay, p.mpu.MPU_az,
+                            p.mpu.MPU_gx, p.mpu.MPU_gy, p.mpu.MPU_gz, p.mpu.MPU_temp,
+                            p.bno.BNO_ax, p.bno.BNO_ay, p.bno.BNO_az,
+                            p.bno.BNO_gx, p.bno.BNO_gy, p.bno.BNO_gz,
+                            p.bno.BNO_mx, p.bno.BNO_my, p.bno.BNO_mz,
+                            p.bno.BNO_qw, p.bno.BNO_qx, p.bno.BNO_qy, p.bno.BNO_qz,
+                            p.bno.BNO_global_ax, p.bno.BNO_global_ay, p.bno.BNO_global_az,
+                            p.madgwick.q0, p.madgwick.q1, p.madgwick.q2, p.madgwick.q3, p.madgwick.beta,
+                            p.filter.filteredAltitude, p.filter.verticalVelocity, p.filter.verticalAccel, p.filter.alpha,
+                            ok ? 1 : 0);
             
             if (!ok) countCorrupt++;
             countFast++;
             currentAddr += sizeof(FastFlightPacket);
         } 
         else if (id == 0x02) {
-            SlowFlightPacket p;
-            flashRead(currentAddr, (uint8_t*)&p, sizeof(SlowFlightPacket));
+            SlowFlightPacket s;
+            flashRead(currentAddr, (uint8_t*)&s, sizeof(SlowFlightPacket));
             
-            uint16_t crc_calc = crc16CCITT((uint8_t*)&p, sizeof(SlowFlightPacket) - 2);
-            bool ok = (p.checksum == crc_calc);
+            uint16_t crc_calc = crc16CCITT((uint8_t*)&s, sizeof(SlowFlightPacket) - 2);
+            bool ok = (s.checksum == crc_calc);
 
-            Serial.printf("[SLOW] Addr: 0x%06lX | TS: %lu | Pres: %.2f | GPS_Lat: %.6f | CRC: %s\n", 
-                          currentAddr, p.timestamp_ms, p.bme.pressure, p.gps.latitude, ok ? "OK" : "ERROR");
+            Serial.printf("SLOW,%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%d,%d,%d,%d,%d,%d,%.6lf,%.6lf,%.2f,%.2f,%.2f,%d,%.2f,%d,%d\n",
+                            s.timestamp_ms,
+                            s.bme.temp, s.bme.humidity, s.bme.pressure, s.bme.altitude,
+                            s.bmpData.temp, s.bmpData.pressure, s.bmpData.altitude,
+                            s.gps.year, s.gps.month, s.gps.day, s.gps.hour, s.gps.minute, s.gps.second,
+                            s.gps.latitude, s.gps.longitude, s.gps.altitude, s.gps.speed, s.gps.course,
+                            s.gps.satellites, s.gps.hdop, s.gps.valid ? 1 : 0,
+                            ok ? 1 : 0);
 
             if (!ok) countCorrupt++;
             countSlow++;

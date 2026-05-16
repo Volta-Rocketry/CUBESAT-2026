@@ -6,6 +6,7 @@
 #include "signals.h"
 #include "flash_storage.h"    
 #include "sensor.h"
+#include "madgwick_filter.h"
 #include <Arduino.h>
 #include <SD.h>
 #include <math.h>
@@ -19,6 +20,7 @@ uint32_t gFlashWriteAddr = 0;
 static FlightState gState = STATE_INIT;
 static uint8_t gPageBuf[FLASH_PAGE_SIZE];
 static uint16_t gPageBufIdx = 0;
+static float beta = 0.3;
 
 /**
  * @brief Page Buffer Execution.
@@ -72,6 +74,7 @@ void recordFastPacket() {
     fast_pkt.mpu = mpuData;
     fast_pkt.bno = bnoData;
     fast_pkt.madgwick = madgwickState;
+    fast_pkt.filter = altitudeFilter;
 
     fast_pkt.checksum = crc16CCITT((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
 
@@ -104,7 +107,7 @@ void flightComputerInit() {
 
     uint32_t time1= millis();
 
-    while (!initCom.comControl && !initCom.comCamera) {
+    while (!initCom.comControl || !initCom.comCamera) {
 
         if (!initCom.comControl) {
             memset(&dataToInit, 0, sizeof(CommsInitData));
@@ -143,7 +146,7 @@ void flightComputerInit() {
     }
 
     uint32_t time2= millis();
-    while (!initSensor.initBNO && !initSensor.initMPU) {
+    while (!initSensor.initBNO || !initSensor.initMPU) {
         flashInit();
         initMPU6050();
         initBMP180();
@@ -179,6 +182,12 @@ void flightComputerInit() {
         criticalErrorSensor("Initialization failed for one or more components");
     }
     
+    madgwickInit(&madgwickState, beta);
+
+    altitudeFilter.filteredAltitude = 0.0f;
+    altitudeFilter.verticalVelocity = 0.0f;    
+    altitudeFilter.verticalAccel = 0.0f;
+    altitudeFilter.alpha = 0.9f;
 
     gState = STATE_PAD;
     println("PAD MODE");
@@ -227,11 +236,11 @@ void flightComputerUpdate() {
             String cmd = Serial.readStringUntil('\n');
             cmd.trim();
 
-            if (cmd == "SAVE SLOW DATA") {
+            if (cmd == "SLOW DATA") {
                 Serial.println("Saving SLOW packet");
                 recordSlowPacket();
             }
-            else if (cmd == "SAVE FAST DATA") {
+            else if (cmd == "FAST DATA") {
                 Serial.println("Saving FAST packet");
                 recordFastPacket();
             }
@@ -240,6 +249,16 @@ void flightComputerUpdate() {
                 flashEraseChip();
                 gFlashWriteAddr = 0;
                 gPageBufIdx = 0;
+            }
+            else if (cmd == "DOWNLOAD") {
+                Serial.println("Downloading FLASH content");
+                pageBufFlush();
+                verifyFlashContent();
+            }
+            else if (cmd == "SEND CTR") {
+                Serial.println("Sending CTR package");
+                readBNO055();
+                commsTick();
             }
             else if (cmd == "PAD") {
                 Serial.println("Transition to PAD");
@@ -258,6 +277,9 @@ void flightComputerUpdate() {
     case STATE_PAD: { 
         colorRGB(0, 0, 0);
         colorRGB(255, 0, 0);
+
+        madgwickState.beta = 0.05f;
+        altitudeFilter.alpha= 0.9f;
 
         if ( now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample =  now;
@@ -292,6 +314,17 @@ void flightComputerUpdate() {
 
     case STATE_ASCENT: {
 
+        madgwickState.beta = 0.0f;
+        altitudeFilter.alpha= 1.0f;        
+
+        if (altitudeFilter.verticalAccel > LAUNCH_ACCEL_THRESHOLD_MS2 || altitudeFilter.verticalVelocity > MACH_VELOCITY_THRESHOLD_MS2) {
+            altitudeFilter.alpha = 0.999f; 
+        }    
+
+        else {
+           altitudeFilter.alpha = 0.95f;
+        }
+
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             processFastSensors();
@@ -301,21 +334,21 @@ void flightComputerUpdate() {
             lastSlowSample = now;
             processSlowSensors();
             
-            if (bmeData.altitude > maxAltitude) {
-                maxAltitude = bmeData.altitude;
+            if (altitudeFilter.filteredAltitude > maxAltitude) {
+                maxAltitude = altitudeFilter.filteredAltitude;
             }
         }
 
         commsTick();          
 
-        if (bmeData.altitude < (maxAltitude - 1.5)) { 
+        if (altitudeFilter.filteredAltitude < (maxAltitude - 1.5)) { 
             
             if (altitudeStartMs == 0) {
                 altitudeStartMs = now;
             }
             
             if (now - altitudeStartMs >= 500) {
-                gState = STATE_EYECTION; 
+                gState = STATE_EJECTION; 
 
                 colorRGB(0, 0, 0);
                 colorRGB(255, 255, 0);
@@ -328,10 +361,12 @@ void flightComputerUpdate() {
         break;
     }
 
-    case STATE_EYECTION: {
+    case STATE_EJECTION: {
+
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             processFastSensors(); 
+        }
 
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
@@ -339,37 +374,26 @@ void flightComputerUpdate() {
         }
 
         commsTick();
-
-//----------------------- IS NOT THE TRANSITION CONDITION DISCUSSED
-            totalGyro = sqrtf(
-                bnoData.BNO_gx * bnoData.BNO_gx +
-                bnoData.BNO_gy * bnoData.BNO_gy +
-                bnoData.BNO_gz * bnoData.BNO_gz
-            );
+ 
+        if (stableStartMs == 0) {
+            stableStartMs = now;
+        }
+        
+        if (now - stableStartMs > 5000) {
+            gState = STATE_CONTROL;
             
-            if (totalGyro < 20.0f) {  
-                if (stableStartMs == 0) {
-                    stableStartMs = now;
-                }
-                
-                if (now - stableStartMs > 2000) {
-                    gState = STATE_CONTROL;
-                    
-                    colorRGB(0, 0, 0);
-                    colorRGB(0, 0, 255);
-                }
-            } 
-            else {
-                stableStartMs = 0;
-            }
-//-----------------------
-
+            colorRGB(0, 0, 0);
+            colorRGB(0, 0, 255);
         }
 
         break;
     }
 
     case STATE_CONTROL: {
+
+        madgwickState.beta = 0.01f;
+        altitudeFilter.alpha= 0.9f; 
+
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             processFastSensors();

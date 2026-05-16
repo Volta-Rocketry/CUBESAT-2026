@@ -232,7 +232,7 @@ static void sendTestFrame(HardwareSerial& serialPort, const CommsInitData* d) {
     serialPort.write(frame, INIT_SP_FRAME_SIZE);   
 }
 
-void commsUpdateCtr(uint32_t timestamp, float altitude, float vertical_velocity,
+void commsUpdateCTR(uint32_t timestamp, float altitude, float vertical_velocity,
                       float ax, float ay, float az,
                       float gx, float gy, float gz,
                       float qw, float qx, float qy, float qz,
@@ -247,7 +247,7 @@ void commsUpdateCtr(uint32_t timestamp, float altitude, float vertical_velocity,
     ctrData.flight_state = state;
 }
 
-void commsUpdateCtam(uint32_t timestamp,
+void commsUpdateCAM(uint32_t timestamp,
                       float ax, float ay, float az,
                       float gx, float gy, float gz) {
 

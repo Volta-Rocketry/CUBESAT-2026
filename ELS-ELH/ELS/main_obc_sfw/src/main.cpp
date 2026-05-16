@@ -24,4 +24,6 @@ void setup() {
 
 void loop() {
     currentMilis = millis();
+    flightComputerUpdate();
+    delay(1);
 }

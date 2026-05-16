@@ -156,6 +156,119 @@ void initUblox() {
     }
 }
 
+bool loadOffsets() {
+  preferences.begin(NVS_NAMESPACE, true);
+
+  uint8_t version = preferences.getUChar(VERSION_KEY, 0);
+  if (version != OFFSETS_VERSION) {
+    criticalErrorSensor("Offset version mismatch, discarding data...");
+    preferences.end();
+    return false;
+  }
+
+  size_t offsetsLen = preferences.getBytesLength(OFFSETS_KEY);
+  size_t calLen     = preferences.getBytesLength(CAL_LEVELS_KEY);
+
+  if (offsetsLen != sizeof(adafruit_bno055_offsets_t) ||
+      calLen     != sizeof(CalibrationDataBNO)) {
+    criticalErrorSensor("Incomplete or corrupted data in NVS");
+    preferences.end();
+    return false;
+  }
+
+  adafruit_bno055_offsets_t offsets;
+
+  preferences.getBytes(OFFSETS_KEY, &offsets, sizeof(offsets));
+  preferences.getBytes(CAL_LEVELS_KEY, &bnoCalib, sizeof(bnoCalib));
+  preferences.end();
+  
+  Serial.println("Offsets encontrados en NVS:");
+  Serial.print("  SYS: ");  Serial.print(bnoCalib.bnoSystemStatus);
+  Serial.print("  GYR: ");  Serial.print(bnoCalib.bnoGyroStatus);
+  Serial.print("  ACC: ");  Serial.print(bnoCalib.bnoAccStatus);
+  Serial.print("  MAG: ");  Serial.println(bnoCalib.bnoMagStatus);
+
+  bno.setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  bno.setSensorOffsets(offsets);
+  delay(25);
+
+  bno.setMode(OPERATION_MODE_NDOF);
+  delay(600);
+
+  println("Offsets cargados desde NVS y aplicados");
+  return true;
+}
+
+void saveOffsets() {
+  adafruit_bno055_offsets_t offsets;
+
+  bno.setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  bno.getSensorOffsets(offsets);
+
+  bno.getCalibration(
+    &bnoCalib.bnoSystemStatus,
+    &bnoCalib.bnoGyroStatus,
+    &bnoCalib.bnoAccStatus,
+    &bnoCalib.bnoMagStatus
+  );
+
+  preferences.begin(NVS_NAMESPACE, false);
+  preferences.putUChar(VERSION_KEY, OFFSETS_VERSION);
+  preferences.putBytes(OFFSETS_KEY, &offsets, sizeof(offsets));
+  preferences.putBytes(CAL_LEVELS_KEY, &bnoCalib, sizeof(bnoCalib));
+  preferences.end();
+
+  Serial.println("Offsets guardados en NVS:");
+  Serial.print("  SYS: "); Serial.print(bnoCalib.bnoSystemStatus);
+  Serial.print("  GYR: "); Serial.print(bnoCalib.bnoGyroStatus);
+  Serial.print("  ACC: "); Serial.print(bnoCalib.bnoAccStatus);
+  Serial.print("  MAG: "); Serial.println(bnoCalib.bnoMagStatus);
+
+  bno.setMode(OPERATION_MODE_NDOF);
+  delay(100);
+}
+
+void manualCalibrationBNO055() {
+
+    Serial.println("\nMANUAL CALIBRATION REQUIRED");
+    Serial.println("Move the sensor until the calibration levels increase as much as possible.\n");
+
+  while (!bno.isFullyCalibrated()) {
+
+    bno.getCalibration(
+      &bnoCalib.bnoSystemStatus,
+      &bnoCalib.bnoGyroStatus,
+      &bnoCalib.bnoAccStatus,
+      &bnoCalib.bnoMagStatus
+    );
+
+    Serial.print("SYS: "); Serial.print(bnoCalib.bnoSystemStatus);
+    Serial.print("/3 | GYR: "); Serial.print(bnoCalib.bnoGyroStatus);
+    Serial.print("/3 | ACC: "); Serial.print(bnoCalib.bnoAccStatus);
+    Serial.print("/3 | MAG: "); Serial.print(bnoCalib.bnoMagStatus);
+    Serial.println("/3");
+
+    if (bnoCalib.bnoGyroStatus < 3)
+        println("GYROSCOPE: keep stationary");
+
+    if (bnoCalib.bnoAccStatus < 3)
+        println("ACCELEROMETER: orient in different positions");
+
+    if (bnoCalib.bnoMagStatus < 3)
+        println("MAGNETOMETER: move in a figure-8 pattern");
+
+    Serial.println();
+    delay(500);
+  }
+
+  println("Manual calibration completed");
+  calibSensor.calibBNO = 1;
+}
+
 
 void calibrateSensors() {
     float gSumX = 0, gSumY = 0, gSumZ = 0;
@@ -219,10 +332,27 @@ void calibrateSensors() {
     bmeCalib.bmePresRef = pSumBME / float(numReadings);
 
     // BNO055 calibration
-    ///bno.getCalibration(&sys, &gyro, &acc, &mag);
+    if (bno.isFullyCalibrated()) {
+        println("BNO Sensor already calibrated");
+        bno.setMode(OPERATION_MODE_NDOF);
+        return;
+    }
+
+    println("Sensor not calibrated. Searching for offsets in NVS...");
+    if (loadOffsets()) {
+        println("The last calibration stored in NVS was applied");
+        calibSensor.calibBNO = 1;
+        return;
+    }
+
+    println("Sensor not calibrated. Searching for offsets in NVS...");
+    manualCalibrationBNO055();
+    saveOffsets();
+
 
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
+    uint32_t gpsStartTime = millis();
     while(!GPSConected){
         while (gpsSerial.available() > 0) {
             gps.encode(gpsSerial.read());
@@ -230,6 +360,10 @@ void calibrateSensors() {
         if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
             GPSConected = true;
             calibSensor.calibGPS = 1;
+        }
+        if (millis() - gpsStartTime > 30000) {
+            criticalErrorSensor("GPS connection failed");
+            break;
         }
     }
 }

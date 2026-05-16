@@ -126,6 +126,13 @@
 
 #define BLINK 500
 
+
+#define OFFSETS_KEY     "bno_offsets"
+#define CAL_LEVELS_KEY  "bno_cal_lvl"
+#define NVS_NAMESPACE   "bno_data"
+#define OFFSETS_VERSION 1
+#define VERSION_KEY     "bno_version"
+
 // =======================
 // SENSOR DATA STRUCTURES
 // =======================

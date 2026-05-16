@@ -189,7 +189,7 @@ void flightComputerInit() {
     altitudeFilter.verticalAccel = 0.0f;
     altitudeFilter.alpha = 0.9f;
 
-    gState = STATE_PAD;
+    gState = STATE_IDLE;
     println("PAD MODE");
 }
 

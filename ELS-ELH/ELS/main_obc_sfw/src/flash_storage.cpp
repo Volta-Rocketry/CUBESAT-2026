@@ -52,6 +52,7 @@ void flashInit() {
     uint8_t capacity     = hspi.transfer(0x00);
 
     digitalWrite(FLASH_CS, HIGH);
+
     if (manufacturer == 0xEF && memType == 0x40 && capacity == 0x16) {
         println("Initialized FLASH");
         initSensor.initFlash = 1;
@@ -123,15 +124,15 @@ void verifyFlashContent() {
     uint32_t countSlow = 0;
     uint32_t countCorrupt = 0;
 
-    Serial.println("TYPE,Timestamp_ms,"
-                "MPU_ax,MPU_ay,MPU_az,"
-                "MPU_gx,MPU_gy,MPU_gz,MPU_temp,"
-                "BNO_ax,BNO_ay,BNO_az,"
-                "BNO_gx,BNO_gy,BNO_gz,"
+    Serial.println("TYPE,Packet_TS,"
+                "MPU_TS,MPU_ax,MPU_ay,MPU_az,MPU_gx,MPU_gy,MPU_gz,MPU_temp,"
+                "QMC_TS,QMC_mx,QMC_my,QMC_mz,"
+                "Madg_q0,Madg_q1,Madg_q2,Madg_q3,Madg_beta,"
+                "BMP_TS,BMP_temp,BMP_pres,BMP_alt,"
+                "BNO_TS,BNO_ax,BNO_ay,BNO_az,BNO_gx,BNO_gy,BNO_gz,"
                 "BNO_mx,BNO_my,BNO_mz,"
                 "BNO_qw,BNO_qx,BNO_qy,BNO_qz,"
                 "BNO_gax,BNO_gay,BNO_gaz,"
-                "Madg_q0,Madg_q1,Madg_q2,Madg_q3,Madg_beta,"
                 "Filt_Alt,Filt_Vel,Filt_Acc,Filt_Alpha,CRC_Status");
     
     Serial.println("TYPE,Timestamp_ms,"
@@ -153,19 +154,28 @@ void verifyFlashContent() {
             uint16_t crc_calc = crc16CCITT((uint8_t*)&p, sizeof(FastFlightPacket) - 2);
             bool ok = (p.checksum == crc_calc);
 
-            Serial.printf("FAST,%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.4f,%.4f,%.4f,%.4f,%.2f,%.2f,%.2f,%.4f,%.4f,%.4f,%.4f,%.4f,%.2f,%.2f,%.2f,%.3f,%d\n",
-                            p.timestamp_ms,
-                            p.mpu.MPU_ax, p.mpu.MPU_ay, p.mpu.MPU_az,
-                            p.mpu.MPU_gx, p.mpu.MPU_gy, p.mpu.MPU_gz, p.mpu.MPU_temp,
-                            p.bno.BNO_ax, p.bno.BNO_ay, p.bno.BNO_az,
-                            p.bno.BNO_gx, p.bno.BNO_gy, p.bno.BNO_gz,
-                            p.bno.BNO_mx, p.bno.BNO_my, p.bno.BNO_mz,
-                            p.bno.BNO_qw, p.bno.BNO_qx, p.bno.BNO_qy, p.bno.BNO_qz,
-                            p.bno.BNO_global_ax, p.bno.BNO_global_ay, p.bno.BNO_global_az,
-                            p.madgwick.q0, p.madgwick.q1, p.madgwick.q2, p.madgwick.q3, p.madgwick.beta,
-                            p.filter.filteredAltitude, p.filter.verticalVelocity, p.filter.verticalAccel, p.filter.alpha,
-                            ok ? 1 : 0);
-            
+            Serial.printf("FAST,%lu,"
+                          "%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f," // MPU
+                          "%lu,%.2f,%.2f,%.2f,"                     // QMC
+                          "%.4f,%.4f,%.4f,%.4f,%.4f,"               // Madgwick
+                          "%lu,%.2f,%.2f,%.2f,"                     // BMP
+                          "%lu,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.4f,%.4f,%.4f,%.4f,%.2f,%.2f,%.2f," // BNO
+                          "%.2f,%.2f,%.2f,%.3f,%d\n",               // Filter + CRC
+                          p.timestamp_ms,
+                          // MPU6050
+                          p.mpu.timestamp, p.mpu.MPU_ax, p.mpu.MPU_ay, p.mpu.MPU_az, p.mpu.MPU_gx, p.mpu.MPU_gy, p.mpu.MPU_gz, p.mpu.MPU_temp,
+                          // QMC5883L
+                          p.qmc.timestamp, p.qmc.QMC_mx, p.qmc.QMC_my, p.qmc.QMC_mz,
+                          // Madgwick
+                          p.madgwick.q0, p.madgwick.q1, p.madgwick.q2, p.madgwick.q3, p.madgwick.beta,
+                          // BMP180
+                          p.bmp.timestamp, p.bmp.temp, p.bmp.pressure, p.bmp.altitude,
+                          // BNO055
+                          p.bno.timestamp, p.bno.BNO_ax, p.bno.BNO_ay, p.bno.BNO_az, p.bno.BNO_gx, p.bno.BNO_gy, p.bno.BNO_gz, p.bno.BNO_mx, p.bno.BNO_my, p.bno.BNO_mz, p.bno.BNO_qw, p.bno.BNO_qx, p.bno.BNO_qy, p.bno.BNO_qz, p.bno.BNO_global_ax, p.bno.BNO_global_ay, p.bno.BNO_global_az,
+                          // Filter & Status
+                          p.filter.filteredAltitude, p.filter.verticalVelocity, p.filter.verticalAccel, p.filter.alpha,
+                          ok ? 1 : 0);
+
             if (!ok) countCorrupt++;
             countFast++;
             currentAddr += sizeof(FastFlightPacket);

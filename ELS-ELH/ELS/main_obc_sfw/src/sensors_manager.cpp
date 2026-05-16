@@ -17,6 +17,7 @@
 #include <HardwareSerial.h>
 #include <Preferences.h>
 #include "BluetoothSerial.h"
+#include "flash_storage.h"
 
 extern SPIClass hspi;
 extern BluetoothSerial SerialBT;

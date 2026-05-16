@@ -372,8 +372,10 @@ typedef struct {
     uint8_t packet_id;
     uint32_t timestamp_ms;
     StructMPU6050 mpu;
-    StructBNO055 bno;
+    StructQMC5883L qmc;
     MadgwickState madgwick;
+    StructBMP180 bmp;
+    StructBNO055 bno;
     AltitudeFilter filter;
     uint16_t checksum;
 } FastFlightPacket;

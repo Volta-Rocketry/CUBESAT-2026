@@ -15,6 +15,8 @@ uint32_t currentMilis;
 
 void setup() {
     Serial.begin(BAUD_RATE);
+    hspi.begin(18, 19, 23, -1);
+    delay(100);
     SerialBT.begin("ESP32_Robot"); 
     initLedBuzzerActuators();
     initPCB();

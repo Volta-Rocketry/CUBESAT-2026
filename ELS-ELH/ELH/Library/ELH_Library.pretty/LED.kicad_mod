@@ -1,0 +1,128 @@
+(footprint "LED"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at -0.26851 -4.214426 0)
+		(layer "F.SilkS")
+		(hide yes)
+		(uuid "0a99c19f-f40b-4b57-aa7b-9eb6da8ae180")
+		(effects
+			(font
+				(size 0.641222 0.641222)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "LED"
+		(at 0 1.8 0)
+		(layer "F.SilkS")
+		(uuid "f28c8670-4de0-4e44-bec0-a5bfad0daaaf")
+		(effects
+			(font
+				(size 0.640372 0.640372)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "65d1277c-f5b2-419c-bf59-988bf1ac9355")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "b05de106-b8f2-4edb-81ba-2e41ff39bcb7")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr through_hole)
+	(fp_circle
+		(center -2.9 -1.6)
+		(end -2.773 -1.6)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill yes)
+		(layer "F.SilkS")
+		(uuid "03fdc7f9-1939-4910-9709-960d658fce60")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 2.5 0)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "ced3cd20-59b9-408f-b59f-2da6131b0047")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 2.95 0)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+		(uuid "fff46e3c-f477-417f-9b5a-58e75b7a134f")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 3.6 0)
+		(stroke
+			(width 0.127)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "a04e6abe-1cd5-4806-9188-80aa3def3921")
+	)
+	(pad "A" thru_hole circle
+		(at 1.27 0)
+		(size 1.508 1.508)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "64036fce-340d-4a74-9113-4bb7518a96ee")
+	)
+	(pad "C" thru_hole rect
+		(at -1.27 0)
+		(size 1.508 1.508)
+		(drill 1)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+		(solder_mask_margin 0.102)
+		(uuid "6b402de4-4930-42d0-9776-658b8ce41da2")
+	)
+	(embedded_fonts no)
+	(model "C:/Users/sofia/Downloads/WP7113ID/WP7113ID.step"
+		(offset
+			(xyz 0 0 2)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz -90 -0 -0)
+		)
+	)
+)

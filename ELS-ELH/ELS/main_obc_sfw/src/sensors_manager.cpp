@@ -462,8 +462,7 @@ void readMPU6050(){
     mpuData.MPU_gy = gy_deg * 0.0174533;
     mpuData.MPU_gz = gz_deg * 0.0174533;
 }
-
-void readQMC5883L(){
+void ReadQMC5883L(){
     Wire.beginTransmission(0x0D);
     Wire.write(0x00);
     Wire.endTransmission();
@@ -491,6 +490,14 @@ void readQMC5883L(){
         qmcData.QMC_mz = (correctedZ / 3000.0f) * 1e-4f;
 */
     }
+}
+void ReadBMP180(){
+    float pressurePad1 = bmpCalib.bmpPresRef / 100.0;
+    bmpData.timestamp = millis();
+    bmpData.temp = bmp.readTemperature();
+    bmpData.pressure = bmp.readPressure();
+    bmpData.altitude = bmp.readAltitude(pressurePad1);
+
 }
 void readBNO055() {
     // Code to read data from BNO055 sensor

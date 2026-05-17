@@ -10,9 +10,6 @@
 
 BluetoothSerial SerialBT;
 
-uint32_t previousTelemetry = 0;
-uint32_t currentMilis;
-
 void setup() {
     Serial.begin(BAUD_RATE);
     hspi.begin(18, 19, 23, -1);
@@ -25,7 +22,6 @@ void setup() {
 }
 
 void loop() {
-    currentMilis = millis();
     flightComputerUpdate();
     delay(1);
 }

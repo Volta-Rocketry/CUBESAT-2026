@@ -109,7 +109,7 @@ void flightComputerInit() {
 
     uint32_t time1= millis();
 
-    while (!initCom.comControl || !initCom.comCamera) {
+    while (!initCom.comControl && !initCom.comCamera) {
 
         if (!initCom.comControl) {
             memset(&dataToInit, 0, sizeof(CommsInitData));
@@ -148,7 +148,7 @@ void flightComputerInit() {
     }
 
     uint32_t time2= millis();
-    while (!initSensor.initBNO || !initSensor.initMPU) {
+    while (!initSensor.initBNO && !initSensor.initMPU) {
         flashInit();
         initMPU6050();
         initBMP180();
@@ -220,7 +220,7 @@ void flightComputerUpdate() {
     switch (gState) {
 
     case STATE_IDLE: {
-
+        colorRGB(0, 0, 0);
         colorRGB(0, 0, 255);
 
         if (Serial.available() > 0) {

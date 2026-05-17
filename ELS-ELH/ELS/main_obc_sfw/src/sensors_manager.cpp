@@ -368,7 +368,7 @@ void calibrateSensors() {
     }
 }
 
-void calibratMagnetometer() {
+void calibrateMagnetometer() {
     float magMin[3] = {32767, 32767, 32767};
     float magMax[3] = {-32768, -32768, -32768};
 

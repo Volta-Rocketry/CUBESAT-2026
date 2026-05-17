@@ -72,8 +72,9 @@ void recordFastPacket() {
     fast_pkt.packet_id = 0x01;
     fast_pkt.timestamp_ms = millis();
     fast_pkt.mpu = mpuData;
-    fast_pkt.bno = bnoData;
+    fast_pkt.qmc = qmcData;
     fast_pkt.madgwick = madgwickState;
+    fast_pkt.bno = bnoData;
     fast_pkt.filter = altitudeFilter;
 
     fast_pkt.checksum = crc16CCITT((uint8_t*)&fast_pkt, sizeof(FastFlightPacket) - sizeof(uint16_t));
@@ -92,6 +93,7 @@ void recordSlowPacket() {
     slow_pkt.packet_id = 0x02;
     slow_pkt.timestamp_ms = millis();
     slow_pkt.bme = bmeData;
+    slow_pkt.bmp = bmpData;
     slow_pkt.gps = ubloxData;
 
     slow_pkt.checksum = crc16CCITT((uint8_t*)&slow_pkt, sizeof(SlowFlightPacket) - sizeof(uint16_t));
@@ -219,18 +221,7 @@ void flightComputerUpdate() {
 
     case STATE_IDLE: {
 
-        println("CURRENT STATE: IDLE");
-
         colorRGB(0, 0, 255);
-
-        if ( now - lastSlowSample >= 1000) {
-            lastSlowSample = now;
-            readBME280();
-            readUblox();
-            readBNO055();
-        }
-
-        println("Write a command: ");
 
         if (Serial.available() > 0) {
             String cmd = Serial.readStringUntil('\n');
@@ -238,11 +229,11 @@ void flightComputerUpdate() {
 
             if (cmd == "SLOW DATA") {
                 Serial.println("Saving SLOW packet");
-                recordSlowPacket();
+                processSlowSensors();
             }
             else if (cmd == "FAST DATA") {
                 Serial.println("Saving FAST packet");
-                recordFastPacket();
+                processFastSensors();
             }
             else if (cmd == "ERASE") {
                 Serial.println("Erasing FLASH");

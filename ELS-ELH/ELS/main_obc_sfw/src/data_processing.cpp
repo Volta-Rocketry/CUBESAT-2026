@@ -17,7 +17,7 @@ void processSlowSensors() {
     readUblox();
     flightState = flightComputerGetState();
     if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
-        recordFastPacket(); // falta agregar bmp al parquete y creo q qmc tmb
+        recordSlowPacket();
     }
 }
 
@@ -28,17 +28,16 @@ float processFastSensors() {
     FlightState flightState;
 
     uint32_t now = millis();
-    float dt = ( now - lastTime ) / 1000.0f;
-
-    if ( lastTime == 0 || dt < 0.001f || dt > 0.1f ) {
-        dt = 0.01f;
-    }
+    float dt = ( now - lastTime ) / 1000.0f; 
 
     lastTime = now;
 
     if (initSensor.initBNO) {
         readBNO055();
-        readBME280();
+        readMPU6050();
+        readQMC5883L();
+        readBMP180();
+
         flightState = flightComputerGetState();
 
         verticalVelocity += bnoData.BNO_global_az * dt;
@@ -64,7 +63,6 @@ float processFastSensors() {
             bnoData.BNO_az * bnoData.BNO_az);
 
         if (initSensor.initMPU) {
-            readMPU6050();
             madgwickUpdate(&madgwickState, &mpuData, dt);
         }
 
@@ -74,8 +72,10 @@ float processFastSensors() {
     }
 
     else if (initSensor.initMPU && !initSensor.initBNO) {
-        readMPU6050(); 
-        readBME280();
+        readMPU6050();
+        readQMC5883L();
+        readBMP180();
+
         flightState = flightComputerGetState();
         madgwickUpdate(&madgwickState, &mpuData, dt);
 

@@ -381,7 +381,6 @@ typedef struct {
     StructMPU6050 mpu;
     StructQMC5883L qmc;
     MadgwickState madgwick;
-    StructBMP180 bmp;
     StructBNO055 bno;
     AltitudeFilter filter;
     uint16_t checksum;
@@ -397,7 +396,7 @@ typedef struct {
     uint8_t packet_id;    
     uint32_t timestamp_ms;  
     StructBME280 bme;
-    StructBMP180 bmpData;        
+    StructBMP180 bmp;        
     StructUblox gps;           
     uint16_t checksum;      
 } SlowFlightPacket;

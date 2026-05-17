@@ -1,13 +1,13 @@
 #include "sensors_manager.h"
 
-#include "constants.h"
-#include "error_warning.h"
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
+#include "constants.h"
+#include "error_warning.h"
+#include "signals.h"
 #include <Adafruit_BNO055.h>
 #include <Adafruit_BME280.h>
-#include <Adafruit_PCF8574.h>
 #include <MPU6050_light.h>
 #include <DFRobot_QMC5883.h>
 #include <Adafruit_BMP085.h>
@@ -17,16 +17,16 @@
 #include <HardwareSerial.h>
 #include <Preferences.h>
 #include "BluetoothSerial.h"
+#include "flash_storage.h"
 
+extern SPIClass hspi;
 extern BluetoothSerial SerialBT;
 MPU6050 mpu(Wire);
 Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
-Adafruit_BME280 bme(BME_CS);
+Adafruit_BME280 bme(BME_CS, &hspi);
 TinyGPSPlus gps;
 HardwareSerial gpsSerial(2);
-
-extern Adafruit_PCF8574 pcf;
 
 StructMPU6050 mpuData;
 StructQMC5883L qmcData;
@@ -41,57 +41,47 @@ CalibrationDataBMP bmpCalib;
 CalibrationDataBNO bnoCalib;
 CalibrationDataBME bmeCalib;
 
+StructInitSensor initSensor;
+StructCalibSensor calibSensor;
+
 Preferences preferences;
 
-int numCalib = 0;
+bool offsetsLoaded = false;
+bool offsetsSaved = false;
 
-void InitExtencionBoard() {
-    Wire.begin(21, 22);
-    Wire.setTimeOut(100);
-    delay(100); 
+void initLedBuzzerActuators(){
+ledcSetup(RED_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+    ledcSetup(GREEN_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+    ledcSetup(BLUE_CHANNEL, PWM_FREQ, PWM_RESOLUTION);
+    ledcSetup(BUZZER_CHANNEL, 2000, 8); 
 
-    if (!pcf.begin(0x20, &Wire)) {
-        CriticalErrorSensor("PCF8574 initialization failed");
-    } else {
-        Serial.println("PCF8574 I/O expander initialized successfully.");
-        pcf.pinMode(ACTUATOR1_PIN, OUTPUT);
-        pcf.pinMode(ACTUATOR2_PIN, OUTPUT);
-        pcf.pinMode(SD_CS, OUTPUT);
-        pcf.pinMode(BUZZER_PIN, OUTPUT);
-        pcf.pinMode(LED_RED_PIN, OUTPUT);
-        pcf.pinMode(LED_GREEN_PIN, OUTPUT);
-        pcf.pinMode(LED_BLUE_PIN, OUTPUT);
-
-        // Aseguramos que los PINES inicien apagados por seguridad
-        pcf.digitalWrite(ACTUATOR1_PIN, LOW);
-        pcf.digitalWrite(ACTUATOR2_PIN, LOW);
-        pcf.digitalWrite(BUZZER_PIN, HIGH);
-        pcf.digitalWrite(LED_RED_PIN, LOW);
-        pcf.digitalWrite(LED_GREEN_PIN, LOW);
-        pcf.digitalWrite(LED_BLUE_PIN, LOW);
-
-        Serial.println("PCF8574 pins configured successfully.");
-        SerialBT.println("PCF8574 pins configured successfully.");
-    }
+    ledcAttachPin(LED_RED_PIN, RED_CHANNEL);
+    ledcAttachPin(LED_GREEN_PIN, GREEN_CHANNEL);
+    ledcAttachPin(LED_BLUE_PIN, BLUE_CHANNEL);
+    ledcAttachPin(BUZZER_PIN, BUZZER_CHANNEL);
+    
+    pinMode(ACTUATOR1_PIN, OUTPUT);
+    pinMode(ACTUATOR2_PIN, OUTPUT);
 }
 
-// Sensor initialization function
-void InitMPU6050(){
+void initMPU6050(){
+    Wire.begin();
     byte status = mpu.begin();
     if (status != 0) {
-        CriticalErrorSensor("MPU6050 initialization failed");
+        criticalErrorSensor("MPU6050 initialization failed");
+        initSensor.initMPU = 0;
     } else {
-        Serial.println("MPU6050 sensor initialized successfully.");
-        SerialBT.println("MPU6050 sensor initialized successfully.");
+        println("MPU6050 sensor initialized successfully");
+        initSensor.initMPU = 1;
     };
 }
-void InitQMC5883L(){
+void initQMC5883L(){
     Wire.beginTransmission(0x68); 
     Wire.write(0x37);
     Wire.write(0x02); 
     if (Wire.endTransmission() != 0) {
-        CriticalErrorSensor("Failed to open MPU6050 Bypass");
-        SerialBT.println("Failed to open MPU6050 Bypass");
+        criticalErrorSensor("Failed to open MPU6050 Bypass");
+        initSensor.initQMC = 0;
         return;
     }
 
@@ -105,39 +95,42 @@ void InitQMC5883L(){
     Wire.write(0x01); 
     
     if (Wire.endTransmission() != 0) {
-        CriticalErrorSensor("QMC5883L not found on 0x0D");
+        criticalErrorSensor("QMC5883L not found on 0x0D");
+        initSensor.initQMC = 0;
     } else {
-        Serial.println("QMC5883L initialized successfully.");
-        SerialBT.println("QMC5883L initialized successfully.");
+        println("QMC5883L initialized successfully");
+        initSensor.initQMC = 1;
     }
 }
-void InitBMP180(){
+void initBMP180(){
+    Wire.begin();
     if (!bmp.begin()) {
-	    CriticalErrorSensor("BMP180 initialization failed");
+	    criticalErrorSensor("BMP180 initialization failed");
+        initSensor.initBMP = 0;
     } else {
-        Serial.println("BMP180 sensor initialized successfully.");
-        SerialBT.println("BMP180 sensor initialized successfully.");
+        println("BMP180 sensor initialized successfully");
+        initSensor.initBMP = 1;
     };
 }
-void InitBNO055() {
-    // Code to initialize BNO055 sensor
+void initBNO055() {
     if (!bno.begin()) {
-        CriticalErrorSensor("BNO055 initialization failed");
+        criticalErrorSensor("BNO055 initialization failed");
+        initSensor.initBNO = 0;
     } else {
-        Serial.println("BNO055 sensor initialized successfully.");
-        SerialBT.println("BNO055 sensor initialized successfully.");
+        println("BNO055 sensor initialized successfully");
+        initSensor.initBNO = 1;
     };
 }
-void InitBME280() {
-    // Code to initialize BME280 sensor
+void initBME280() {
     if (!bme.begin()) {
-        CriticalErrorSensor("BME280 initialization failed");
+        criticalErrorSensor("BME280 initialization failed");
+        initSensor.initBME = 0;
     } else {
-        Serial.println("BME280 sensor initialized successfully.");
-        SerialBT.println("BME280 sensor initialized successfully.");
+        println("BME280 sensor initialized successfully");
+        initSensor.initBME = 1;
     }
 }
-void InitUblox() {
+void initUblox() {
     gpsSerial.begin(GPS_BAUD, SERIAL_8N1, UBLOX_RX, UBLOX_TX);
 
     unsigned long startTime = millis();
@@ -155,15 +148,129 @@ void InitUblox() {
         }
     }
     if (!GPSInitialized) {
-        CriticalErrorSensor("Ublox initialization failed");
+        criticalErrorSensor("Ublox initialization failed");
+        initSensor.initGPS = 0;
     } else {
-        Serial.println("Ublox sensor initialized successfully.");
-        SerialBT.println("Ublox sensor initialized successfully.");
+        println("Ublox sensor initialized successfully");
+        initSensor.initGPS = 1;
     }
 }
-// Sensor calibration functions
-void CalibrateSensors() {
-    // Variables temporales para el proceso de calibración
+
+bool loadOffsets() {
+  preferences.begin(NVS_NAMESPACE, true);
+
+  uint8_t version = preferences.getUChar(VERSION_KEY, 0);
+  if (version != OFFSETS_VERSION) {
+    criticalErrorSensor("Offset version mismatch, discarding data...");
+    preferences.end();
+    return false;
+  }
+
+  size_t offsetsLen = preferences.getBytesLength(OFFSETS_KEY);
+  size_t calLen     = preferences.getBytesLength(CAL_LEVELS_KEY);
+
+  if (offsetsLen != sizeof(adafruit_bno055_offsets_t) ||
+      calLen     != sizeof(CalibrationDataBNO)) {
+    criticalErrorSensor("Incomplete or corrupted data in NVS");
+    preferences.end();
+    return false;
+  }
+
+  adafruit_bno055_offsets_t offsets;
+
+  preferences.getBytes(OFFSETS_KEY, &offsets, sizeof(offsets));
+  preferences.getBytes(CAL_LEVELS_KEY, &bnoCalib, sizeof(bnoCalib));
+  preferences.end();
+  
+  Serial.println("Offsets encontrados en NVS:");
+  Serial.print("  SYS: ");  Serial.print(bnoCalib.bnoSystemStatus);
+  Serial.print("  GYR: ");  Serial.print(bnoCalib.bnoGyroStatus);
+  Serial.print("  ACC: ");  Serial.print(bnoCalib.bnoAccStatus);
+  Serial.print("  MAG: ");  Serial.println(bnoCalib.bnoMagStatus);
+
+  bno.setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  bno.setSensorOffsets(offsets);
+  delay(25);
+
+  bno.setMode(OPERATION_MODE_NDOF);
+  delay(600);
+
+  println("Offsets cargados desde NVS y aplicados");
+  return true;
+}
+
+void saveOffsets() {
+  adafruit_bno055_offsets_t offsets;
+
+  bno.setMode(OPERATION_MODE_CONFIG);
+  delay(25);
+
+  bno.getSensorOffsets(offsets);
+
+  bno.getCalibration(
+    &bnoCalib.bnoSystemStatus,
+    &bnoCalib.bnoGyroStatus,
+    &bnoCalib.bnoAccStatus,
+    &bnoCalib.bnoMagStatus
+  );
+
+  preferences.begin(NVS_NAMESPACE, false);
+  preferences.putUChar(VERSION_KEY, OFFSETS_VERSION);
+  preferences.putBytes(OFFSETS_KEY, &offsets, sizeof(offsets));
+  preferences.putBytes(CAL_LEVELS_KEY, &bnoCalib, sizeof(bnoCalib));
+  preferences.end();
+
+  Serial.println("Offsets guardados en NVS:");
+  Serial.print("  SYS: "); Serial.print(bnoCalib.bnoSystemStatus);
+  Serial.print("  GYR: "); Serial.print(bnoCalib.bnoGyroStatus);
+  Serial.print("  ACC: "); Serial.print(bnoCalib.bnoAccStatus);
+  Serial.print("  MAG: "); Serial.println(bnoCalib.bnoMagStatus);
+
+  bno.setMode(OPERATION_MODE_NDOF);
+  delay(100);
+}
+
+void manualCalibrationBNO055() {
+
+    Serial.println("\nMANUAL CALIBRATION REQUIRED");
+    Serial.println("Move the sensor until the calibration levels increase as much as possible.\n");
+
+  while (!bno.isFullyCalibrated()) {
+
+    bno.getCalibration(
+      &bnoCalib.bnoSystemStatus,
+      &bnoCalib.bnoGyroStatus,
+      &bnoCalib.bnoAccStatus,
+      &bnoCalib.bnoMagStatus
+    );
+
+    Serial.print("SYS: "); Serial.print(bnoCalib.bnoSystemStatus);
+    Serial.print("/3 | GYR: "); Serial.print(bnoCalib.bnoGyroStatus);
+    Serial.print("/3 | ACC: "); Serial.print(bnoCalib.bnoAccStatus);
+    Serial.print("/3 | MAG: "); Serial.print(bnoCalib.bnoMagStatus);
+    Serial.println("/3");
+
+    if (bnoCalib.bnoGyroStatus < 3)
+        println("GYROSCOPE: keep stationary");
+
+    if (bnoCalib.bnoAccStatus < 3)
+        println("ACCELEROMETER: orient in different positions");
+
+    if (bnoCalib.bnoMagStatus < 3)
+        println("MAGNETOMETER: move in a figure-8 pattern");
+
+    Serial.println();
+    delay(500);
+  }
+
+  println("Manual calibration completed");
+  calibSensor.calibBNO = 1;
+}
+
+
+void calibrateSensors() {
     float gSumX = 0, gSumY = 0, gSumZ = 0;
     float aSumX = 0, aSumY = 0, aSumZ = 0;
     float tSum = 0;
@@ -175,8 +282,7 @@ void CalibrateSensors() {
     uint32_t previousCalibMilis = millis();
 
     // Data collection loop for calibration
-    Serial.println("Calibration loop");
-    SerialBT.println("Calibration loop");
+    println("Calibration loop.");
     while (numReadings < MAX_MU) {
         uint32_t calibMilis = millis();
         if (calibMilis - previousCalibMilis >= 150) {
@@ -199,8 +305,11 @@ void CalibrateSensors() {
 
             numReadings++;
         }
-        SerialBT.print("Numbers of readings: ");
-        SerialBT.println(numReadings);
+        if (numReadings == 1000){
+            calibSensor.calibMPU = 1;
+            calibSensor.calibBME = 1;
+            calibSensor.calibBMP =1;
+        }
     }
 
     // MPU6050 calibration
@@ -213,170 +322,130 @@ void CalibrateSensors() {
 
     // Temperature calibration
     mpuCalib.tempRef = tSum / float(numReadings);
-    mpuCalib.gyroTCO = 0.5; // 0.5 deg/s 
-    mpuCalib.accTCO = 0.0015;  // 1.5 mg = 0.0015 G
-
-    Serial.println("MPU6050 calibration completed successfully.");
+    mpuCalib.gyroTCO = 0.5; 
+    mpuCalib.accTCO = 0.0015;
 
     // BMP180 calibration
     bmpCalib.bmpPresRef = pSumBMP / float(numReadings);
-    Serial.println("BME280 calibration completed successfully.");
-/*
-    // Get calibration from BNO055
-    bool calibrated = false;
-    bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
-    Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
-    if (bno.isFullyCalibrated() && !calibrated) {
-        Serial.println("BNO055 sensor fully calibrated.");
-        adafruit_bno055_offsets_t newOffsets;
-        preferences.begin("bno_data", false);
-        bno.getSensorOffsets(newOffsets);
-        preferences.putBytes("bno_offsets", &newOffsets, sizeof(newOffsets));
-        preferences.end();
-        Serial.println("BNO055 calibration data saved to preferences.");
-        calibrated = true;
-    }
-    if (!bno.isFullyCalibrated()) {
-        preferences.begin("bno_data", true);
-        size_t dataLength = preferences.getBytesLength("bno_offsets");
-        if (dataLength > 0 ){
-            adafruit_bno055_offsets_t savedOffsets;
-            preferences.getBytes("bno_offsets", &savedOffsets, sizeof(savedOffsets));
-            bno.setSensorOffsets(savedOffsets);
-            Serial.println("BNO055 calibration data loaded.");
-            preferences.end();
-        } 
-    else {
-        Serial.println("No BNO055 calibration data found.");
-        }
-    }
-*/
-
-/*
-    while (!bno.isFullyCalibrated()) {
-        bno.getCalibration(&bnoCalib.bnoSystemStatus, &bnoCalib.bnoGyroStatus, &bnoCalib.bnoAccStatus, &bnoCalib.bnoMagStatus);
-        Serial.printf("BNO055 calibration status - System: %d, Gyro: %d, Accel: %d, Mag: %d\n", bnoCalib.bnoSystemStatus, bnoCalib.bnoGyroStatus, bnoCalib.bnoAccStatus, bnoCalib.bnoMagStatus);
-        Serial.println("Calibrating BNO055... Please follow the calibration procedure.");
-        if (bnoCalib.bnoGyroStatus < 3){
-            Serial.println("Calibrate Gyroscope: Keep the sensor stationary on a flat surface.");
-        }
-        else if (bnoCalib.bnoGyroStatus == 3){
-            Serial.println("Gyroscope calibrated.");
-        }
-        else if (bnoCalib.bnoMagStatus < 3){
-            Serial.println("Calibrate Magnetometer: Move the sensor in a figure-eight pattern.");
-        }
-        else if (bnoCalib.bnoMagStatus == 3){
-            Serial.println("Magnetometer calibrated.");
-        } 
-        if (bnoCalib.bnoAccStatus < 3){
-            Serial.println("Calibrate Accelerometer: Move the sensor in different positions.");
-        }
-        else if (bnoCalib.bnoAccStatus == 3){
-            Serial.println("Accelerometer calibrated.");
-        }
-        delay(1000);
-    }
-    if (bno.isFullyCalibrated()){
-        Serial.println("BNO055 sensor fully calibrated.");
-    }
-    */
-
 
     // BME280 calibration
     bmeCalib.bmePresRef = pSumBME / float(numReadings);
-    Serial.println("BME280 calibration completed successfully.");
-    SerialBT.println("BME280 calibration completed successfully.");
-    // numCalib = 1;
+
+    // BNO055 calibration
+    if (bno.isFullyCalibrated()) {
+        println("BNO Sensor already calibrated");
+        bno.setMode(OPERATION_MODE_NDOF);
+        return;
+    }
+
+    println("Sensor not calibrated. Searching for offsets in NVS...");
+    if (loadOffsets()) {
+        println("The last calibration stored in NVS was applied");
+        calibSensor.calibBNO = 1;
+        return;
+    }
+
+    println("Sensor not calibrated. Searching for offsets in NVS...");
+    manualCalibrationBNO055();
+    saveOffsets();
+
 
     // GPS connection check
     gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
-    while (gpsSerial.available() > 0) {
-        gps.encode(gpsSerial.read());
-    }
-    if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
-        GPSConected = true;
-        // numCalib = 2;
-        Serial.println("GPS connected successfully.");
-        SerialBT.println("GPS connected successfully.");
-    } else if (!GPSConected) {
-        Serial.println("GPS connection failed during calibration.");
-        SerialBT.println("GPS connection failed during calibration.");
+    uint32_t gpsStartTime = millis();
+    while(!GPSConected){
+        while (gpsSerial.available() > 0) {
+            gps.encode(gpsSerial.read());
+        }
+        if (!GPSConected && gps.location.isValid() && gps.satellites.value() > 3) {
+            GPSConected = true;
+            calibSensor.calibGPS = 1;
+        }
+        if (millis() - gpsStartTime > 30000) {
+            criticalErrorSensor("GPS connection failed");
+            break;
+        }
     }
 }
 
-void CalibratMagnetometer() {
+void calibrateMagnetometer() {
     float magMin[3] = {32767, 32767, 32767};
     float magMax[3] = {-32768, -32768, -32768};
 
-    uint32_t previousCalibMagMillis = millis();
+    uint32_t previousCalibMagMillis = 0;
+    uint32_t startTime = millis();
+
     bool calibrated = false;
-    while (!calibrated) {
-        uint32_t calibMagSec = millis();
-        if (calibMagSec - previousCalibMagMillis >= 500) {
-            previousCalibMagMillis = calibMagSec;
+
+     while (!calibrated) {
+
+        uint32_t calibMag = millis();
+
+        if (calibMag - previousCalibMagMillis >= 500) {
+
+            previousCalibMagMillis = calibMag;
 
             Wire.beginTransmission(0x0D);
             Wire.write(0x00);
             Wire.endTransmission();
+
             Wire.requestFrom(0x0D, 6);
 
             if (Wire.available() == 6) {
 
-                float mx = (int16_t)(Wire.read() | (Wire.read() << 8));
-                float my = (int16_t)(Wire.read() | (Wire.read() << 8));
-                float mz = (int16_t)(Wire.read() | (Wire.read() << 8));
+                int16_t rawX = (int16_t)(Wire.read() | (Wire.read() << 8));
+                int16_t rawY = (int16_t)(Wire.read() | (Wire.read() << 8));
+                int16_t rawZ = (int16_t)(Wire.read() | (Wire.read() << 8));
 
-                if (mx < magMin[0]) magMin[0] = mx;
-                if (my < magMin[1]) magMin[1] = my;
-                if (mz < magMin[2]) magMin[2] = mz;
+                // ===== UPDATE MIN =====
+                if (rawX < magMin[0]) magMin[0] = rawX;
+                if (rawY < magMin[1]) magMin[1] = rawY;
+                if (rawZ < magMin[2]) magMin[2] = rawZ;
 
-                if (mx > magMax[0]) magMax[0] = mx;
-                if (my > magMax[1]) magMax[1] = my;
-                if (mz > magMax[2]) magMax[2] = mz;
-            }
-            if (previousCalibMagMillis == 30000){
-                calibrated = true;
+                // ===== UPDATE MAX =====
+                if (rawX > magMax[0]) magMax[0] = rawX;
+                if (rawY > magMax[1]) magMax[1] = rawY;
+                if (rawZ > magMax[2]) magMax[2] = rawZ;
+
             }
         }
+
+        if (millis() - startTime >= 30000) {
+            calibrated = true;
+            calibSensor.calibQMC = 1;
+        }
+
+        delay(1);
     }
-    qmcCalib.qmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0;
-    qmcCalib.qmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0;
-    qmcCalib.qmcMagOffsetZ = (magMax[2] + magMin[2]) / 2.0;
 
-    float radioX = (magMax[0] - magMin[0]) / 2.0;
-    float radioY = (magMax[1] - magMin[1]) / 2.0;
-    float radioZ = (magMax[2] - magMin[2]) / 2.0;
+    qmcCalib.qmcMagOffsetX = (magMax[0] + magMin[0]) / 2.0f;
+    qmcCalib.qmcMagOffsetY = (magMax[1] + magMin[1]) / 2.0f;
+    qmcCalib.qmcMagOffsetZ = (magMax[2] + magMin[2]) / 2.0f;
 
-    float radioPromedio = (radioX + radioY + radioZ) / 3.0;
+    float radioX = (magMax[0] - magMin[0]) / 2.0f;
+    float radioY = (magMax[1] - magMin[1]) / 2.0f;
+    float radioZ = (magMax[2] - magMin[2]) / 2.0f;
+
+    if (radioX == 0) radioX = 1;
+    if (radioY == 0) radioY = 1;
+    if (radioZ == 0) radioZ = 1;
+
+    float radioPromedio = (radioX + radioY + radioZ) / 3.0f;
 
     qmcCalib.qmcMagScaleX = radioPromedio / radioX;
     qmcCalib.qmcMagScaleY = radioPromedio / radioY;
     qmcCalib.qmcMagScaleZ = radioPromedio / radioZ;
 
-    Serial.println("Magnetometer connected successfully.");
-    SerialBT.println("Magnetometer connected successfully.");
 }
 
 
-// Sensor reading functions
-void ReadMPU6050(){
+void readMPU6050(){
     mpu.update();
     mpuData.timestamp = millis();
 
     mpuData.MPU_temp = mpu.getTemp();
     float deltaTemp = mpuData.MPU_temp - mpuCalib.tempRef;
 
-    mpuData.MPU_ax = mpu.getAccX();
-    mpuData.MPU_ay = mpu.getAccY(); 
-    mpuData.MPU_az = mpu.getAccZ();
-    
-    mpuData.MPU_gx = mpu.getGyroX();
-    mpuData.MPU_gy = mpu.getGyroY();
-    mpuData.MPU_gz = mpu.getGyroZ();
-
-    // Codigo calibrado y en m/s2 y rad/s
-    /*
     float ax_g = mpu.getAccX() - mpuCalib.mpuAccBiasX - (mpuCalib.accTCO * deltaTemp);
     float ay_g = mpu.getAccY() - mpuCalib.mpuAccBiasY - (mpuCalib.accTCO * deltaTemp);
     float az_g = mpu.getAccZ() - mpuCalib.mpuAccBiasZ - (mpuCalib.accTCO * deltaTemp);
@@ -392,7 +461,6 @@ void ReadMPU6050(){
     mpuData.MPU_gx = gx_deg * 0.0174533;
     mpuData.MPU_gy = gy_deg * 0.0174533;
     mpuData.MPU_gz = gz_deg * 0.0174533;
-    */
 }
 void ReadQMC5883L(){
     Wire.beginTransmission(0x0D);
@@ -411,9 +479,9 @@ void ReadQMC5883L(){
         qmcData.QMC_mz = (rawZ / 3000.0f) * 1e-4f;
 
 /*
-        float correctedX = (rawX - hmcCalib.qmcMagOffsetX) * hmcCalib.qmcMagScaleX;
-        float correctedY = (rawY - hmcCalib.qmcMagOffsetY) * hmcCalib.qmcMagScaleY;
-        float correctedZ = (rawZ - hmcCalib.qmcMagOffsetZ) * hmcCalib.qmcMagScaleZ;
+        float correctedX = (rawX - qmcCalib.qmcMagOffsetX) * qmcCalib.qmcMagScaleX;
+        float correctedY = (rawY - qmcCalib.qmcMagOffsetY) * qmcCalib.qmcMagScaleY;
+        float correctedZ = (rawZ - qmcCalib.qmcMagOffsetZ) * qmcCalib.qmcMagScaleZ;
 
         qmcData.timestamp = millis();
 
@@ -431,7 +499,7 @@ void ReadBMP180(){
     bmpData.altitude = bmp.readAltitude(pressurePad1);
 
 }
-void ReadBNO055() {
+void readBNO055() {
     // Code to read data from BNO055 sensor
     bnoData.timestamp = millis();
     imu::Vector<3> lin_accel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
@@ -451,18 +519,54 @@ void ReadBNO055() {
     bnoData.BNO_qx = quat.x();
     bnoData.BNO_qy = quat.y();
     bnoData.BNO_qz = quat.z();
+
+    float ax = bnoData.BNO_ax;
+    float ay = bnoData.BNO_ay;
+    float az = bnoData.BNO_az;
+
+    float qw = bnoData.BNO_qw;
+    float qx = bnoData.BNO_qx;
+    float qy = bnoData.BNO_qy;
+    float qz = bnoData.BNO_qz;
+
+    float R11 = 1.0f - 2.0f*qy*qy - 2.0f*qz*qz;
+    float R12 = 2.0f*qx*qy - 2.0f*qz*qw;
+    float R13 = 2.0f*qx*qz + 2.0f*qy*qw;
+
+    float R21 = 2.0f*qx*qy + 2.0f*qz*qw;
+    float R22 = 1.0f - 2.0f*qx*qx - 2.0f*qz*qz;
+    float R23 = 2.0f*qy*qz - 2.0f*qx*qw;
+
+    float R31 = 2.0f*qx*qz - 2.0f*qy*qw;
+    float R32 = 2.0f*qy*qz + 2.0f*qx*qw;
+    float R33 = 1.0f - 2.0f*qx*qx - 2.0f*qy*qy;
+
+    bnoData.BNO_global_ax =
+        R11*ax + R12*ay + R13*az;
+
+    bnoData.BNO_global_ay =
+        R21*ax + R22*ay + R23*az;
+
+    bnoData.BNO_global_az =
+        R31*ax + R32*ay + R33*az;
 }
-void ReadBME280() {
-    // Code to read data from BME sensor
-    float pressurePad2 = bmeCalib.bmePresRef / 100.0; 
+void readBMP180(){
+    float pressurePad1 = bmpCalib.bmpPresRef;
+    bmpData.timestamp = millis();
+    bmpData.temp = bmp.readTemperature();
+    bmpData.pressure = bmp.readPressure();
+    bmpData.altitude = bmp.readAltitude(pressurePad1);
+
+}
+void readBME280() {
+    float pressurePad2 = bmeCalib.bmePresRef / 100.0f; 
     bmeData.timestamp = millis();
     bmeData.temp = bme.readTemperature();
     bmeData.humidity = bme.readHumidity();
     bmeData.pressure = bme.readPressure();
     bmeData.altitude = bme.readAltitude(pressurePad2);
 }
-void ReadUblox() {
-    // Code to read data from Ublox sensor
+void readUblox() {
     ubloxData.timestamp = millis();
     while (gpsSerial.available() > 0) {
         gps.encode(gpsSerial.read());
@@ -499,25 +603,19 @@ void ReadUblox() {
     ubloxData.valid = gps.location.isValid();
 }
 
-
-// Actuator control functions
-void OpenActuators1Voltage() {
-    // Code to send voltage to actuators
-    pcf.digitalWrite(ACTUATOR1_PIN, HIGH);
-    pcf.digitalWrite(LED_GREEN_PIN, HIGH);
+void openActuators1Voltage() {
+    digitalWrite(ACTUATOR1_PIN, HIGH);
+    digitalWrite(LED_GREEN_PIN, HIGH);
 }
-void CloseActuators1Voltage() {
-    // Code to stop voltage to actuators
-    pcf.digitalWrite(ACTUATOR1_PIN, LOW);
-    pcf.digitalWrite(LED_GREEN_PIN, LOW);
+void closeActuators1Voltage() {
+    digitalWrite(ACTUATOR1_PIN, LOW);
+    digitalWrite(LED_GREEN_PIN, LOW);
 }
-void OpenActuators2Voltage() {
-    // Code to send voltage to actuators
-    pcf.digitalWrite(ACTUATOR2_PIN, HIGH);
-    pcf.digitalWrite(LED_GREEN_PIN, HIGH);
+void openActuators2Voltage() {
+    digitalWrite(ACTUATOR2_PIN, HIGH);
+    digitalWrite(LED_GREEN_PIN, HIGH);
 }
-void CloseActuators2Voltage() {
-    // Code to stop voltage to actuators
-    pcf.digitalWrite(ACTUATOR2_PIN, LOW);
-    pcf.digitalWrite(LED_GREEN_PIN, LOW);
+void closeActuators2Voltage() {
+    digitalWrite(ACTUATOR2_PIN, LOW);
+    digitalWrite(LED_GREEN_PIN, LOW);
 }

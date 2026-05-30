@@ -457,8 +457,6 @@ void flightComputerUpdate() {
             readUblox();
         }
 
-        commsTick(); 
-
         break;
     }
 

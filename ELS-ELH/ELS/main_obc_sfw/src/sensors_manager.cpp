@@ -462,7 +462,7 @@ void readMPU6050(){
     mpuData.MPU_gy = gy_deg * 0.0174533;
     mpuData.MPU_gz = gz_deg * 0.0174533;
 }
-void ReadQMC5883L(){
+void readQMC5883L(){
     Wire.beginTransmission(0x0D);
     Wire.write(0x00);
     Wire.endTransmission();
@@ -491,7 +491,7 @@ void ReadQMC5883L(){
 */
     }
 }
-void ReadBMP180(){
+void readBMP180(){
     float pressurePad1 = bmpCalib.bmpPresRef / 100.0;
     bmpData.timestamp = millis();
     bmpData.temp = bmp.readTemperature();

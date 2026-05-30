@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "comm_manager.h"
 #include "signals.h"
+#include "flight_computer.h"
 
 CommsCtrData ctrData;
 CommsCamData camData;
@@ -322,11 +323,14 @@ bool commsInit(HardwareSerial& serialPort, int rxPin, int txPin, const CommsInit
 void commsTick() {
     uint32_t now = millis();
 
-    if (now - lastCtrSendMs >= CTR_TP_INTERVAL_MS) {
-        lastCtrSendMs += CTR_TP_INTERVAL_MS;
-        sendCtrFrame();
-    }
+    FlightState flightState = flightComputerGetState();
 
+    if (flightState == STATE_CONTROL) {
+        if (now - lastCtrSendMs >= CTR_TP_INTERVAL_MS) {
+            lastCtrSendMs += CTR_TP_INTERVAL_MS;
+            sendCtrFrame();
+        }
+    }
     if (now - lastCamSendMs >= CAM_TP_INTERVAL_MS) {
         lastCamSendMs += CAM_TP_INTERVAL_MS;
         sendCamFrame();

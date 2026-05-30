@@ -108,7 +108,7 @@
 #define ID_FLIGHT_SP 0X20            ///< ID of the flight package
 #define ID_INIT_CMD 0XF0
 #define CTR_TP_PAYLOAD_LEN 53        ///< Length of the control package payload data
-#define CAM_TP_PAYLOAD_LEN 28        ///< Length of the camera package payload data
+#define CAM_TP_PAYLOAD_LEN 32        ///< Length of the camera package payload data
 #define FLIGHT_SP_PAYLOAD_LEN 9      ///< Length of the flight package payload data
 #define INIT_SP_PAYLOAD_LEN 1
 #define CTR_TP_FRAME_SIZE (2 + 1 + 1 + CTR_TP_PAYLOAD_LEN + 2)       ///< Length of the control package frame
@@ -426,6 +426,7 @@ struct CommsCtrData{
  */
 struct CommsCamData{
     uint32_t timestamp; // Timestamp
+    float altitude; // BME280 altitude
     float ax, ay, az; // BNO055 acceleration on the X, Y and Z axis
     float gx, gy, gz; // BNO055 angular velocity on the X, Y and Z axis
 };

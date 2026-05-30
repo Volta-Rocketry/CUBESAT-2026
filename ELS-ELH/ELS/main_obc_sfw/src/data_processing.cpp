@@ -36,7 +36,6 @@ float processFastSensors() {
         readBNO055();
         readMPU6050();
         readQMC5883L();
-        readBMP180();
 
         flightState = flightComputerGetState();
 
@@ -50,7 +49,7 @@ float processFastSensors() {
 
         altitudeFilterUpdate(dt);
 
-        commsUpdateCAM(bnoData.timestamp, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
+        commsUpdateCAM(bnoData.timestamp, bmeData.altitude, bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
                        bnoData.BNO_gx, bnoData.BNO_gy, bnoData.BNO_gz);
         commsUpdateCTR(bnoData.timestamp, bmeData.altitude, verticalVelocity, 
                         bnoData.BNO_ax, bnoData.BNO_ay, bnoData.BNO_az,
@@ -74,7 +73,6 @@ float processFastSensors() {
     else if (initSensor.initMPU && !initSensor.initBNO) {
         readMPU6050();
         readQMC5883L();
-        readBMP180();
 
         flightState = flightComputerGetState();
         madgwickUpdate(&madgwickState, &mpuData, dt);
@@ -91,7 +89,7 @@ float processFastSensors() {
 
         altitudeFilterUpdate(dt);
 
-        commsUpdateCAM(mpuData.timestamp, mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
+        commsUpdateCAM(mpuData.timestamp, bmeData.altitude, mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,
                        mpuData.MPU_gx, mpuData.MPU_gy, mpuData.MPU_gz);
         commsUpdateCTR(mpuData.timestamp, bmeData.altitude, verticalVelocity, 
                         mpuData.MPU_ax, mpuData.MPU_ay, mpuData.MPU_az,

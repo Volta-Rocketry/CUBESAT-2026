@@ -161,6 +161,7 @@ static void buildCamFrame(uint8_t* frame, const CommsCamData* d) {
     uint8_t payload_start = pos;
 
     pos = writeU32Le(frame, pos, d->timestamp);
+    pos = writeFloatLe(frame, pos, d->altitude); 
     pos = writeFloatLe(frame, pos, d->ax);          
     pos = writeFloatLe(frame, pos, d->ay);               
     pos = writeFloatLe(frame, pos, d->az);            
@@ -247,11 +248,12 @@ void commsUpdateCTR(uint32_t timestamp, float altitude, float vertical_velocity,
     ctrData.flight_state = state;
 }
 
-void commsUpdateCAM(uint32_t timestamp,
+void commsUpdateCAM(uint32_t timestamp, float altitude
                       float ax, float ay, float az,
                       float gx, float gy, float gz) {
 
     camData.timestamp = timestamp;
+    camData.altitude = altitude;
     camData.ax = ax; camData.ay = ay; camData.az = az;
     camData.gx = gx; camData.gy = gy; camData.gz = gz;
 }
@@ -321,12 +323,12 @@ void commsTick() {
     uint32_t now = millis();
 
     if (now - lastCtrSendMs >= CTR_TP_INTERVAL_MS) {
-        lastCtrSendMs = now;
+        lastCtrSendMs += CTR_TP_INTERVAL_MS;
         sendCtrFrame();
     }
 
     if (now - lastCamSendMs >= CAM_TP_INTERVAL_MS) {
-        lastCamSendMs = now;
+        lastCamSendMs += CAM_TP_INTERVAL_MS;
         sendCamFrame();
     }
 

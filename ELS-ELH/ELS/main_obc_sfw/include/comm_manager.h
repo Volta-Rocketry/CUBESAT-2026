@@ -17,6 +17,7 @@ void commsUpdateCTR(uint32_t timestamp,
                     FlightState state);
 
 void commsUpdateCAM(uint32_t timestamp,
+                    float altitude,
                     float ax, float ay, float az,
                     float gx, float gy, float gz);
 

@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "comm_manager.h"
 #include "signals.h"
+#include "flight_computer.h"
 
 CommsCtrData ctrData;
 CommsCamData camData;
@@ -248,7 +249,7 @@ void commsUpdateCTR(uint32_t timestamp, float altitude, float vertical_velocity,
     ctrData.flight_state = state;
 }
 
-void commsUpdateCAM(uint32_t timestamp, float altitude
+void commsUpdateCAM(uint32_t timestamp, float altitude,
                       float ax, float ay, float az,
                       float gx, float gy, float gz) {
 

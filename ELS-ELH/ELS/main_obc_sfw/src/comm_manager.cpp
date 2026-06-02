@@ -214,9 +214,9 @@ static void sendCtrFrame() {
  * prior to the call.
  */
 static void sendCamFrame() {
-    uint8_t frame[CAM_TP_FRAME_SIZE];         
-    buildCamFrame(frame, &camData);
-    Serial2.write(frame, CAM_TP_FRAME_SIZE);   
+    uint8_t frame[CTR_TP_FRAME_SIZE];         
+    buildCtrFrame(frame, &ctrData);
+    Serial2.write(frame, CTR_TP_FRAME_SIZE);   
 }
 
 static void sendTestFrame(HardwareSerial& serialPort, const CommsInitData* d) {

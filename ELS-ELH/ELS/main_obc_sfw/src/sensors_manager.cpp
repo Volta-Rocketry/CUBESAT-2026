@@ -491,14 +491,7 @@ void readQMC5883L(){
 */
     }
 }
-void readBMP180(){
-    float pressurePad1 = bmpCalib.bmpPresRef / 100.0;
-    bmpData.timestamp = millis();
-    bmpData.temp = bmp.readTemperature();
-    bmpData.pressure = bmp.readPressure();
-    bmpData.altitude = bmp.readAltitude(pressurePad1);
 
-}
 void readBNO055() {
     // Code to read data from BNO055 sensor
     bnoData.timestamp = millis();

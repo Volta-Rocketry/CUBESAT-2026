@@ -28,8 +28,13 @@ float processFastSensors() {
     FlightState flightState;
 
     uint32_t now = millis();
-    float dt = ( now - lastTime ) / 1000.0f; 
 
+    if (lastTime == 0) {
+        lastTime = now;
+        return 0.0f;
+    }
+
+    float dt = (now - lastTime) / 1000.0f;
     lastTime = now;
 
     if (initSensor.initBNO) {

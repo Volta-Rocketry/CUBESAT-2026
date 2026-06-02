@@ -128,7 +128,7 @@ void flightComputerInit() {
 
         if (!initCom.comCamera) {
             memset(&dataToInit, 0, sizeof(CommsInitData)); 
-            dataToInit.id_to_init = ID_CAM_TP;
+            dataToInit.id_to_init = ID_CTR_TP;
             bool camOk = commsInit(Serial2, CAM_RX, CAM_TX, &dataToInit);
 
             if (camOk) {
@@ -148,8 +148,12 @@ void flightComputerInit() {
     }
 
     uint32_t time2= millis();
+
+    flashInit();
+    gFlashWriteAddr = 0;
+    gPageBufIdx = 0;
+
     while (!initSensor.initBNO && !initSensor.initMPU) {
-        flashInit();
         initMPU6050();
         initBMP180();
         initQMC5883L();
@@ -162,9 +166,6 @@ void flightComputerInit() {
             break;
         }
     }
-
-    gFlashWriteAddr = 0;
-    gPageBufIdx = 0;
 
     uint32_t time3= millis();
     while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
@@ -212,8 +213,7 @@ void flightComputerUpdate() {
     static uint32_t drainStartMs   = 0;
     static uint32_t landedStartMs  = 0;
     static float    lastLandedAlt  = 0.0f;
-    float totalAccel = 0.0f;
-    float totalGyro = 0.0f;
+    static float totalAccel = 0.0f;
 
     unsigned long now = millis();
 
@@ -370,7 +370,7 @@ void flightComputerUpdate() {
             stableStartMs = now;
         }
         
-        if (now - stableStartMs > 5000) {
+        if (now - stableStartMs > 2500) {
             gState = STATE_CONTROL;
             
             colorRGB(0, 0, 0);

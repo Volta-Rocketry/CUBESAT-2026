@@ -9,3 +9,4 @@ void recordSlowPacket();
 void flightComputerInit();
 void flightComputerUpdate();
 FlightState flightComputerGetState();
+void silReadSerial();

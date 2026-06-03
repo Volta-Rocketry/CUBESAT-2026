@@ -9,7 +9,13 @@
  * memory configuration (Flash, SD), actuators, and the necessary structures to store telemetry and calibration data.
  */
 
-/** @name Baud Rates */ 
+// ============================
+// SIL MODE (Software-in-the-Loop)
+// Set to true to bypass sensors and read injected data from Serial
+// ============================
+constexpr bool sil_command = false;
+
+/** @name Baud Rates */
 #define BAUD_RATE 115200  ///< Baude rate for the main serial monitor
 #define GPS_BAUD 9600  ///< Baud rate for the Ublox GPS module
 

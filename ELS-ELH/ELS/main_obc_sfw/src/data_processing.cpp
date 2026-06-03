@@ -11,6 +11,13 @@
 #include <Arduino.h>
 
 void processSlowSensors() {
+    if (sil_command) {
+        FlightState flightState = flightComputerGetState();
+        if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
+            recordSlowPacket();
+        }
+        return;
+    }
     FlightState flightState;
     readBME280();
     readBMP180();
@@ -36,6 +43,18 @@ float processFastSensors() {
 
     float dt = (now - lastTime) / 1000.0f;
     lastTime = now;
+
+    if (sil_command) {
+        silReadSerial();
+        flightState = flightComputerGetState();
+        currentAccel = sqrtf(bnoData.BNO_ax * bnoData.BNO_ax +
+                             bnoData.BNO_ay * bnoData.BNO_ay +
+                             bnoData.BNO_az * bnoData.BNO_az);
+        if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
+            recordFastPacket();
+        }
+        return currentAccel;
+    }
 
     if (initSensor.initBNO) {
         readBNO055();

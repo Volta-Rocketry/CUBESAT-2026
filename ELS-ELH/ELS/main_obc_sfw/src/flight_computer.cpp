@@ -8,6 +8,7 @@
 #include "data_processing.h"
 #include "madgwick_filter.h"
 #include <Arduino.h>
+#include "BluetoothSerial.h"
 #include <SD.h>
 #include <math.h>
 #include <string.h>
@@ -15,6 +16,7 @@
 
 CommsInitData dataToInit;
 StructInitCom initCom;
+extern BluetoothSerial SerialBT;
 
 uint32_t gFlashWriteAddr = 0;
 static FlightState gState = STATE_INIT;
@@ -106,9 +108,40 @@ void recordSlowPacket() {
  * * Verifies flash space avaiable and initial flight state.
  */
 void flightComputerInit() {
+    uint32_t time2= millis();
 
+    println("Initializing Flight Computer...");
+    flashInit();
+    gFlashWriteAddr = 0;
+    gPageBufIdx = 0;
+
+    while (!initSensor.initBNO && !initSensor.initMPU) {
+        initMPU6050();
+        initBMP180();
+        initQMC5883L();
+        initBNO055();
+        initBME280();
+        initUblox();
+        delay(1);
+        if (millis() - time2 >= 5000) {
+            criticalErrorSensor("Sensor initialization failed");
+            break;
+        }
+    }
+
+    delay(2000);
+
+    uint32_t time3= millis();
+    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
+        calibrateSensors();
+        delay(1);
+        if (millis() - time3 >= 5000) {
+            criticalErrorSensor("Sensor calibration failed");
+            break;
+        }
+    }
+    
     uint32_t time1= millis();
-
     while (!initCom.comControl && !initCom.comCamera) {
 
         if (!initCom.comControl) {
@@ -147,35 +180,6 @@ void flightComputerInit() {
         }
     }
 
-    uint32_t time2= millis();
-
-    flashInit();
-    gFlashWriteAddr = 0;
-    gPageBufIdx = 0;
-
-    while (!initSensor.initBNO && !initSensor.initMPU) {
-        initMPU6050();
-        initBMP180();
-        initQMC5883L();
-        initBNO055();
-        initBME280();
-        initUblox();
-        delay(1);
-        if (millis() - time2 >= 5000) {
-            criticalErrorSensor("Sensor initialization failed");
-            break;
-        }
-    }
-
-    uint32_t time3= millis();
-    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
-        calibrateSensors();
-        delay(1);
-        if (millis() - time3 >= 5000) {
-            criticalErrorSensor("Sensor calibration failed");
-            break;
-        }
-    }
 
     if (initSensor.initFlash && initCom.comControl && initCom.comCamera &&
         initSensor.initMPU && initSensor.initBMP && initSensor.initQMC &&
@@ -184,6 +188,28 @@ void flightComputerInit() {
     } else {
         criticalErrorSensor("Initialization failed for one or more components");
     }
+
+    SerialBT.print("Initialization BNO: ");
+    SerialBT.println(initSensor.initBNO ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization MPU: ");
+    SerialBT.println(initSensor.initMPU ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization BMP: ");
+    SerialBT.println(initSensor.initBMP ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization BME: ");
+    SerialBT.println(initSensor.initBME ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization QMC: ");
+    SerialBT.println(initSensor.initQMC ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization GPS: ");
+    SerialBT.println(initSensor.initGPS ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization Flash: ");
+    SerialBT.println(initSensor.initFlash ? "OK" : "FAIL");
+
     
     madgwickInit(&madgwickState, beta);
 
@@ -192,7 +218,7 @@ void flightComputerInit() {
     altitudeFilter.verticalAccel = 0.0f;
     altitudeFilter.alpha = 0.9f;
 
-    gState = STATE_IDLE;
+    gState = STATE_PAD;
     println("PAD MODE");
 }
 

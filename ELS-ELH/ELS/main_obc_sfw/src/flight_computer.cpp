@@ -9,6 +9,7 @@
 #include "madgwick_filter.h"
 #include <Arduino.h>
 #include "BluetoothSerial.h"
+#include <MPU6050_light.h>
 #include <SD.h>
 #include <math.h>
 #include <string.h>
@@ -17,6 +18,7 @@
 CommsInitData dataToInit;
 StructInitCom initCom;
 extern BluetoothSerial SerialBT;
+MPU6050 mpu(Wire);
 
 uint32_t gFlashWriteAddr = 0;
 static FlightState gState = STATE_INIT;
@@ -134,13 +136,18 @@ void flightComputerInit() {
 
     delay(2000);
 
-    uint32_t time3= millis();
+
     while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
-        calibrateSensors();
-        delay(1);
-        if (millis() - time3 >= 5000) {
-            criticalErrorSensor("Sensor calibration failed");
-            break;
+        mpu.update();
+        float ax = mpu.getAccX();
+        float ay = mpu.getAccY();
+        float az = mpu.getAccZ();
+        if (abs(ax) < 1.0f && abs(ay) < 1.0f && abs(az - 1.0f) < 0.1f) {
+            println("Device is stable, starting calibration...");
+            calibrateSensors();
+        } else {
+            println("Waiting for stable position to start calibration...");
+            delay(100);
         }
     }
     

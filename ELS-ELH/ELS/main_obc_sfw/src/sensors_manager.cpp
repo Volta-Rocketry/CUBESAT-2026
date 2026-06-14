@@ -21,7 +21,7 @@
 
 extern SPIClass hspi;
 extern BluetoothSerial SerialBT;
-MPU6050 mpu(Wire);
+extern MPU6050 mpu;
 Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS, &hspi);

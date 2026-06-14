@@ -108,6 +108,9 @@ void recordSlowPacket() {
  * * Verifies flash space avaiable and initial flight state.
  */
 void flightComputerInit() {
+    PWMBuzzer(3500, 1000);
+    delay(1000);
+    PWMBuzzer(0, 0);
     uint32_t time2= millis();
 
     println("Initializing Flight Computer...");
@@ -217,6 +220,8 @@ void flightComputerInit() {
     altitudeFilter.verticalVelocity = 0.0f;    
     altitudeFilter.verticalAccel = 0.0f;
     altitudeFilter.alpha = 0.9f;
+
+    SerialBT.println("Flight Computer Initialized");
 
     gState = STATE_PAD;
     println("PAD MODE");

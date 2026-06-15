@@ -230,7 +230,8 @@ void flightComputerInit() {
 
     SerialBT.println("Flight Computer Initialized");
 
-    gState = STATE_PAD;
+    suspendSensors();
+    gState = STATE_IDLE;
     println("PAD MODE");
 }
 
@@ -303,38 +304,52 @@ void flightComputerUpdate() {
         break;
     }
 
-    case STATE_PAD: { 
+    case STATE_PAD: {
         colorRGB(0, 0, 0);
         colorRGB(255, 0, 0);
 
-        madgwickState.beta = 0.05f;
-        altitudeFilter.alpha= 0.9f;
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
+            if (initSensor.initBNO) {
+                readBNO055();
+                totalAccel = sqrtf(bnoData.BNO_ax * bnoData.BNO_ax +
+                                   bnoData.BNO_ay * bnoData.BNO_ay +
+                                   bnoData.BNO_az * bnoData.BNO_az);
+            } else {
+                readMPU6050();
+                totalAccel = sqrtf(mpuData.MPU_ax * mpuData.MPU_ax +
+                                   mpuData.MPU_ay * mpuData.MPU_ay +
+                                   mpuData.MPU_az * mpuData.MPU_az);
+            }
+        }
 
-        if ( now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
-            lastSlowSample =  now;
+        static uint32_t lastDebugPrint = 0;
+        if (now - lastDebugPrint >= 200) {
+            lastDebugPrint = now;
+        }
+
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
+            processFastSensors();
+        }
+
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
             processSlowSensors();
-        }
 
-        if ( now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
-            lastFastSample =  now;
-            totalAccel = processFastSensors(); 
-        }
-        
         commsTick();
 
         if (totalAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
             if (accelStartMs == 0) {
-                accelStartMs =  now;
+                accelStartMs = now;
             }
-            
-            if (( now - accelStartMs) >= 500) { 
+            if ((now - accelStartMs) >= 500) {
+                wakeupSensors();
                 gState = STATE_ASCENT;
                 colorRGB(0, 0, 0);
                 colorRGB(0, 255, 0);
             }
-        }
-
-        else {
+        } else {
             accelStartMs = 0;
         }
 
@@ -342,7 +357,7 @@ void flightComputerUpdate() {
     }
 
     case STATE_ASCENT: {
-
+        println("ASCENT MODE");
         madgwickState.beta = 0.005f;
         altitudeFilter.alpha= 1.0f;        
 

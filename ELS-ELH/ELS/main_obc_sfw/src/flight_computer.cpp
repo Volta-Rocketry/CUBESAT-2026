@@ -230,7 +230,6 @@ void flightComputerInit() {
 
     SerialBT.println("Flight Computer Initialized");
 
-    suspendSensors();
     gState = STATE_IDLE;
     println("PAD MODE");
 }
@@ -308,6 +307,8 @@ void flightComputerUpdate() {
         colorRGB(0, 0, 0);
         colorRGB(255, 0, 0);
 
+        suspendSensors();
+        
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
             if (initSensor.initBNO) {
@@ -336,6 +337,7 @@ void flightComputerUpdate() {
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
             lastSlowSample = now;
             processSlowSensors();
+        }
 
         commsTick();
 
@@ -526,5 +528,5 @@ void flightComputerUpdate() {
  * * Obtains the current flight state.
  */
 FlightState flightComputerGetState() { 
-    return gState; 
+    return gState;
 }

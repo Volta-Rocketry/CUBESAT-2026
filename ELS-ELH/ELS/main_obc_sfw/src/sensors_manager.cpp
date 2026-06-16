@@ -598,19 +598,18 @@ void readUblox() {
 
 void suspendSensors() {
     if (initSensor.initBNO) {
-        Wire.beginTransmission(0x68);
-        Wire.write(0x6B);
-        Wire.write(0x40); // SLEEP = 1
-        Wire.endTransmission();
-    } else {
         bno.setMode(OPERATION_MODE_CONFIG);
         delay(25);
         Wire.beginTransmission(0x28);
         Wire.write(0x3E);
         Wire.write(0x02); // SUSPEND
         Wire.endTransmission();
-    }
 
+        Wire.beginTransmission(0x68);
+        Wire.write(0x6B);
+        Wire.write(0x40);
+        Wire.endTransmission();
+    }
 
     bme.setSampling(Adafruit_BME280::MODE_SLEEP);
 
@@ -626,12 +625,6 @@ void suspendSensors() {
 
 void wakeupSensors() {
     if (initSensor.initBNO) {
-        Wire.beginTransmission(0x68);
-        Wire.write(0x6B);
-        Wire.write(0x00);
-        Wire.endTransmission();
-        delay(100);
-    } else {
         Wire.beginTransmission(0x28);
         Wire.write(0x3E);
         Wire.write(0x00); // NORMAL
@@ -639,6 +632,12 @@ void wakeupSensors() {
         delay(400);
         bno.setMode(OPERATION_MODE_NDOF);
         delay(600);
+
+        Wire.beginTransmission(0x68);
+        Wire.write(0x6B);
+        Wire.write(0x00); // WAKE
+        Wire.endTransmission();
+        delay(100);
     }
 
     bme.setSampling(Adafruit_BME280::MODE_NORMAL);

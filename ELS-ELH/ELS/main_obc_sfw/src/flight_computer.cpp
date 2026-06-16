@@ -8,6 +8,8 @@
 #include "data_processing.h"
 #include "madgwick_filter.h"
 #include <Arduino.h>
+#include "BluetoothSerial.h"
+#include <MPU6050_light.h>
 #include <SD.h>
 #include <Preferences.h>
 #include <math.h>
@@ -16,6 +18,8 @@
 
 CommsInitData dataToInit;
 StructInitCom initCom;
+extern BluetoothSerial SerialBT;
+MPU6050 mpu(Wire);
 
 uint32_t gFlashWriteAddr = 0;
 static FlightState gState = STATE_INIT;
@@ -122,6 +126,31 @@ void recordSlowPacket() {
  * * Verifies flash space avaiable and initial flight state.
  */
 void flightComputerInit() {
+    PWMBuzzer(3500, 1000);
+    delay(1000);
+    PWMBuzzer(0, 0);
+    uint32_t time2= millis();
+
+    println("Initializing Flight Computer...");
+    flashInit();
+    gFlashWriteAddr = 0;
+    gPageBufIdx = 0;
+
+    while (!initSensor.initBNO && !initSensor.initMPU) {
+        initMPU6050();
+        initBMP180();
+        initQMC5883L();
+        initBNO055();
+        initBME280();
+        initUblox();
+        delay(1);
+        if (millis() - time2 >= 5000) {
+            criticalErrorSensor("Sensor initialization failed");
+            break;
+        }
+    }
+
+    delay(2000);
 
     ledcWriteTone(BUZZER_CHANNEL, 2700);
     delay(5000);
@@ -166,6 +195,21 @@ void flightComputerInit() {
     
     uint32_t time1= millis();
 
+    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
+        mpu.update();
+        float ax = mpu.getAccX();
+        float ay = mpu.getAccY();
+        float az = mpu.getAccZ();
+        if (abs(ax) < 1.0f && abs(ay) < 1.0f && abs(az - 1.0f) < 0.1f) {
+            println("Device is stable, starting calibration...");
+            calibrateSensors();
+        } else {
+            println("Waiting for stable position to start calibration...");
+            delay(100);
+        }
+    }
+    
+    uint32_t time1= millis();
     while (!initCom.comControl && !initCom.comCamera) {
 
         if (!initCom.comControl) {
@@ -204,6 +248,37 @@ void flightComputerInit() {
         }
     }
 
+
+    if (initSensor.initFlash && initCom.comControl && initCom.comCamera &&
+        initSensor.initMPU && initSensor.initBMP && initSensor.initQMC &&
+        initSensor.initBNO && initSensor.initBME && initSensor.initGPS) {
+        println("All systems initialized successfully");
+    } else {
+        criticalErrorSensor("Initialization failed for one or more components");
+    }
+
+    SerialBT.print("Initialization BNO: ");
+    SerialBT.println(initSensor.initBNO ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization MPU: ");
+    SerialBT.println(initSensor.initMPU ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization BMP: ");
+    SerialBT.println(initSensor.initBMP ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization BME: ");
+    SerialBT.println(initSensor.initBME ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization QMC: ");
+    SerialBT.println(initSensor.initQMC ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization GPS: ");
+    SerialBT.println(initSensor.initGPS ? "OK" : "FAIL");
+
+    SerialBT.print("Initialization Flash: ");
+    SerialBT.println(initSensor.initFlash ? "OK" : "FAIL");
+
+    
     madgwickInit(&madgwickState, beta);
 
     altitudeFilter.filteredAltitude = 0.0f;
@@ -301,39 +376,56 @@ void flightComputerUpdate() {
         break;
     }
 
-    case STATE_PAD: { 
+    case STATE_PAD: {
         colorRGB(0, 0, 0);
         colorRGB(255, 0, 0);
 
-        madgwickState.beta = 0.05f;
-        altitudeFilter.alpha= 0.9f;
+        suspendSensors();
+        
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
+            if (initSensor.initBNO) {
+                readBNO055();
+                totalAccel = sqrtf(bnoData.BNO_ax * bnoData.BNO_ax +
+                                   bnoData.BNO_ay * bnoData.BNO_ay +
+                                   bnoData.BNO_az * bnoData.BNO_az);
+            } else {
+                readMPU6050();
+                totalAccel = sqrtf(mpuData.MPU_ax * mpuData.MPU_ax +
+                                   mpuData.MPU_ay * mpuData.MPU_ay +
+                                   mpuData.MPU_az * mpuData.MPU_az);
+            }
+        }
 
-        if ( now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
-            lastSlowSample =  now;
+        static uint32_t lastDebugPrint = 0;
+        if (now - lastDebugPrint >= 200) {
+            lastDebugPrint = now;
+        }
+
+        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
+            lastFastSample = now;
+            processFastSensors();
+        }
+
+        if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
+            lastSlowSample = now;
             processSlowSensors();
         }
 
-        if ( now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) { 
-            lastFastSample =  now;
-            totalAccel = processFastSensors(); 
-        }
-        
         commsTick();
 
         if (totalAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
             if (accelStartMs == 0) {
-                accelStartMs =  now;
+                accelStartMs = now;
             }
-            
-            if (( now - accelStartMs) >= 500) {
+            if ((now - accelStartMs) >= 500) {
+                wakeupSensors();
                 gState = STATE_ASCENT;
                 flightStateSave(STATE_ASCENT, maxAltitude);
                 colorRGB(0, 0, 0);
                 colorRGB(0, 255, 0);
             }
-        }
-
-        else {
+        } else {
             accelStartMs = 0;
         }
 
@@ -341,7 +433,7 @@ void flightComputerUpdate() {
     }
 
     case STATE_ASCENT: {
-
+        println("ASCENT MODE");
         madgwickState.beta = 0.005f;
         altitudeFilter.alpha= 1.0f;        
 
@@ -515,5 +607,5 @@ void flightComputerUpdate() {
  * * Obtains the current flight state.
  */
 FlightState flightComputerGetState() { 
-    return gState; 
+    return gState;
 }

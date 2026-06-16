@@ -11,6 +11,7 @@
 #include "BluetoothSerial.h"
 #include <MPU6050_light.h>
 #include <SD.h>
+#include <Preferences.h>
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -25,6 +26,15 @@ static FlightState gState = STATE_INIT;
 static uint8_t gPageBuf[FLASH_PAGE_SIZE];
 static uint16_t gPageBufIdx = 0;
 static float beta = 0.3;
+static float maxAltitude = -999.0f;
+
+static void flightStateSave(FlightState state, float maxAlt) {
+    Preferences prefs;
+    prefs.begin(FLIGHT_NVS_NAMESPACE, false);
+    prefs.putUChar(FLIGHT_STATE_NVS_KEY, (uint8_t)state);
+    prefs.putFloat(FLIGHT_ALT_NVS_KEY, maxAlt);
+    prefs.end();
+}
 
 /**
  * @brief Page Buffer Execution.
@@ -42,6 +52,12 @@ static void pageBufFlush() {
     flashWrite(gFlashWriteAddr, gPageBuf, gPageBufIdx);
     gFlashWriteAddr += gPageBufIdx;
     gPageBufIdx = 0;
+
+    static uint8_t flushCount = 0;
+    if (++flushCount >= 10) {
+        flushCount = 0;
+        flashSaveAddr();
+    }
 }
 
 /**
@@ -136,6 +152,48 @@ void flightComputerInit() {
 
     delay(2000);
 
+    ledcWriteTone(BUZZER_CHANNEL, 2700);
+    delay(5000);
+    ledcWriteTone(BUZZER_CHANNEL, 0);
+
+    uint32_t time2= millis();
+
+    flashInit();
+    gPageBufIdx = 0;
+
+    while (!initSensor.initBNO && !initSensor.initMPU) {
+        initMPU6050();
+        initBMP180();
+        initQMC5883L();
+        initBNO055();
+        initBME280();
+        initUblox();
+        delay(1);
+        if (millis() - time2 >= 5000) {
+            criticalErrorSensor("Sensor initialization failed");
+            break;
+        }
+    }
+
+    uint32_t time3= millis();
+    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
+        calibrateSensors();
+        delay(1);
+        if (millis() - time3 >= 5000) {
+            criticalErrorSensor("Sensor calibration failed");
+            break;
+        }
+    }
+
+    if (initSensor.initFlash && initCom.comControl && initCom.comCamera &&
+        initSensor.initMPU && initSensor.initBMP && initSensor.initQMC &&
+        initSensor.initBNO && initSensor.initBME && initSensor.initGPS) {
+        println("All systems initialized successfully");
+    } else {
+        criticalErrorSensor("Initialization failed for one or more components");
+    }
+    
+    uint32_t time1= millis();
 
     while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
         mpu.update();
@@ -228,9 +286,23 @@ void flightComputerInit() {
     altitudeFilter.verticalAccel = 0.0f;
     altitudeFilter.alpha = 0.9f;
 
-    SerialBT.println("Flight Computer Initialized");
+    gState = STATE_PAD;
 
-    gState = STATE_IDLE;
+    {
+        Preferences prefs;
+        prefs.begin(FLIGHT_NVS_NAMESPACE, true);
+        uint8_t savedState = prefs.getUChar(FLIGHT_STATE_NVS_KEY, (uint8_t)STATE_PAD);
+        maxAltitude = prefs.getFloat(FLIGHT_ALT_NVS_KEY, -999.0f);
+        prefs.end();
+
+        if (savedState == STATE_ASCENT  || savedState == STATE_EJECTION ||
+            savedState == STATE_CONTROL || savedState == STATE_CUTOFF   ||
+            savedState == STATE_RECOVERY) {
+            gState = (FlightState)savedState;
+            Serial.printf("Flight state restored: %d, maxAlt: %.1f m\n", savedState, maxAltitude);
+        }
+    }
+
     println("PAD MODE");
 }
 
@@ -243,9 +315,8 @@ void flightComputerUpdate() {
 
     static uint32_t lastFastSample = 0;
     static uint32_t lastSlowSample = 0;
-    static uint32_t accelStartMs   = 0; 
-    static uint32_t altitudeStartMs   = 0; 
-    static float    maxAltitude     = -999.0f;
+    static uint32_t accelStartMs   = 0;
+    static uint32_t altitudeStartMs   = 0;
     static uint8_t  apogeeCount     = 0;
     static uint32_t stableStartMs  = 0;
     static uint32_t drainStartMs   = 0;
@@ -278,6 +349,8 @@ void flightComputerUpdate() {
                 flashEraseChip();
                 gFlashWriteAddr = 0;
                 gPageBufIdx = 0;
+                maxAltitude = -999.0f;
+                flightStateSave(STATE_PAD, -999.0f);
             }
             else if (cmd == "DOWNLOAD") {
                 Serial.println("Downloading FLASH content");
@@ -348,6 +421,7 @@ void flightComputerUpdate() {
             if ((now - accelStartMs) >= 500) {
                 wakeupSensors();
                 gState = STATE_ASCENT;
+                flightStateSave(STATE_ASCENT, maxAltitude);
                 colorRGB(0, 0, 0);
                 colorRGB(0, 255, 0);
             }
@@ -382,6 +456,11 @@ void flightComputerUpdate() {
             
             if (altitudeFilter.filteredAltitude > maxAltitude) {
                 maxAltitude = altitudeFilter.filteredAltitude;
+                static float lastSavedMaxAlt = -999.0f;
+                if (maxAltitude - lastSavedMaxAlt > 10.0f) {
+                    lastSavedMaxAlt = maxAltitude;
+                    flightStateSave(STATE_ASCENT, maxAltitude);
+                }
             }
         }
 
@@ -394,8 +473,8 @@ void flightComputerUpdate() {
             }
             
             if (now - altitudeStartMs >= 500) {
-                gState = STATE_EJECTION; 
-
+                gState = STATE_EJECTION;
+                flightStateSave(STATE_EJECTION, maxAltitude);
                 colorRGB(0, 0, 0);
                 colorRGB(255, 255, 0);
             }
@@ -427,7 +506,7 @@ void flightComputerUpdate() {
         
         if (now - stableStartMs > 2500) {
             gState = STATE_CONTROL;
-            
+            flightStateSave(STATE_CONTROL, maxAltitude);
             colorRGB(0, 0, 0);
             colorRGB(0, 0, 255);
         }
@@ -454,7 +533,7 @@ void flightComputerUpdate() {
 
         if (bmeData.altitude < 50.0f) {
             gState = STATE_CUTOFF;
-            
+            flightStateSave(STATE_CUTOFF, maxAltitude);
             colorRGB(0, 0, 0);
             colorRGB(0, 255, 255);
         }
@@ -478,10 +557,10 @@ void flightComputerUpdate() {
                     landedStartMs = now;
                 }
             
-                if (now - landedStartMs > 10000) { 
+                if (now - landedStartMs > 10000) {
                     pageBufFlush();
                     gState = STATE_RECOVERY;
-                    
+                    flightStateSave(STATE_PAD, -999.0f);
                     colorRGB(0, 0, 0);
                     colorRGB(255, 0, 255);
                 }

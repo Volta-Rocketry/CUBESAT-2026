@@ -5,6 +5,7 @@
 #include "signals.h"
 #include <Arduino.h>
 #include <SPI.h>
+#include <Preferences.h>
 
 SPIClass hspi(HSPI);
 
@@ -40,11 +41,26 @@ static void flashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
     flashWaitBusy();
 }
 
+void flashSaveAddr() {}
+
+static uint32_t flashFindEndAddr() {
+    uint32_t addr = 0;
+    while (addr < FLASH_TOTAL_BYTES) {
+        uint8_t id;
+        flashRead(addr, &id, 1);
+        if (id == 0xFF)      break;
+        if (id == 0x01)      addr += sizeof(FastFlightPacket);
+        else if (id == 0x02) addr += sizeof(SlowFlightPacket);
+        else                 addr++;
+    }
+    return addr;
+}
+
 void flashInit() {
     pinMode(FLASH_CS, OUTPUT);
     digitalWrite(FLASH_CS, HIGH);
     delay(10);
-    
+
     digitalWrite(FLASH_CS, LOW);
     hspi.transfer(CMD_JEDEC_ID);
     uint8_t manufacturer = hspi.transfer(0x00);
@@ -60,7 +76,11 @@ void flashInit() {
     else {
         criticalErrorSensor("FLASH not found");
         initSensor.initFlash = 0;
+        return;
     }
+
+    gFlashWriteAddr = flashFindEndAddr();
+    Serial.printf("Flash write address: %lu bytes\n", gFlashWriteAddr);
 }
 
 void flashEraseChip() {
@@ -111,13 +131,13 @@ void flashRead(uint32_t addr, uint8_t* buf, uint32_t len) {
  */
 void verifyFlashContent() {
     println("Starting FLASH Verification");
-    
-    if (gFlashWriteAddr == 0) {
+
+    uint8_t firstByte = 0xFF;
+    flashRead(0, &firstByte, 1);
+    if (firstByte == 0xFF) {
         println("FLASH is empty");
         return;
     }
-
-    Serial.printf("Total written data: %lu bytes\n", gFlashWriteAddr);
 
     uint32_t currentAddr = 0;
     uint32_t countFast = 0;
@@ -141,10 +161,12 @@ void verifyFlashContent() {
                 "GPS_lat,GPS_lon,GPS_alt,GPS_speed,GPS_course,"
                 "GPS_sats,GPS_hdop,GPS_valid,CRC_Status");
 
-    while (currentAddr < gFlashWriteAddr) {
+    while (currentAddr < FLASH_TOTAL_BYTES) {
         uint8_t id = 0;
 
         flashRead(currentAddr, &id, 1);
+
+        if (id == 0xFF) break;
 
         if (id == 0x01) {
             FastFlightPacket f;
@@ -203,8 +225,7 @@ void verifyFlashContent() {
             currentAddr += sizeof(SlowFlightPacket);
         } 
         else {
-            Serial.printf("[?] Unknown byte in 0x%06lX: 0x%02X (Saltando...)\n", currentAddr, id);
-            currentAddr++; 
+            currentAddr++;
             countCorrupt++;
         }
 

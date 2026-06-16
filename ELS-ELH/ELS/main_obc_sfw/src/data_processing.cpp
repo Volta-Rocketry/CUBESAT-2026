@@ -16,9 +16,12 @@ void processSlowSensors() {
     readBMP180();
     readUblox();
     flightState = flightComputerGetState();
+    /*
     if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
         recordSlowPacket();
     }
+    */
+    recordSlowPacket();
 }
 
 float processFastSensors() {
@@ -70,9 +73,12 @@ float processFastSensors() {
             madgwickUpdate(&madgwickState, &mpuData, dt);
         }
 
+        /*
         if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
             recordFastPacket();
         }
+        */
+        recordFastPacket();
     }
 
     else if (initSensor.initMPU && !initSensor.initBNO) {
@@ -106,9 +112,12 @@ float processFastSensors() {
             mpuData.MPU_ay * mpuData.MPU_ay +
             mpuData.MPU_az * mpuData.MPU_az); 
         
+        /*
         if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
             recordFastPacket();
         }
+        */
+        recordFastPacket();
     }
 
     return currentAccel;

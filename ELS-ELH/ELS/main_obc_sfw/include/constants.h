@@ -133,6 +133,13 @@
 #define OFFSETS_VERSION 1
 #define VERSION_KEY     "bno_version"
 
+#define FLASH_NVS_NAMESPACE  "flash_ns"
+#define FLASH_ADDR_NVS_KEY   "wr_addr"
+
+#define FLIGHT_NVS_NAMESPACE "flight_ns"
+#define FLIGHT_STATE_NVS_KEY "state"
+#define FLIGHT_ALT_NVS_KEY   "max_alt"
+
 // =======================
 // SENSOR DATA STRUCTURES
 // =======================

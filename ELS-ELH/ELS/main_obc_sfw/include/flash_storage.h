@@ -11,4 +11,5 @@ void flashInit();
 void flashEraseChip();
 void flashWrite(uint32_t addr, const uint8_t* data, uint16_t len);
 void flashRead(uint32_t addr, uint8_t* buf, uint32_t len);
-void verifyFlashContent(); 
+void flashSaveAddr();
+void verifyFlashContent();

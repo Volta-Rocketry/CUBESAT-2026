@@ -436,6 +436,15 @@ void calibrateMagnetometer() {
     qmcCalib.qmcMagScaleY = radioPromedio / radioY;
     qmcCalib.qmcMagScaleZ = radioPromedio / radioZ;
 
+    Serial.println("Magnetometer calibration completed:");
+    Serial.print("Offsets: X="); Serial.print(qmcCalib.qmcMagOffsetX);
+    Serial.print(" Y="); Serial.print(qmcCalib.qmcMagOffsetY);
+    Serial.print(" Z="); Serial.println(qmcCalib.qmcMagOffsetZ);
+    Serial.print("Scales: X="); Serial.print(qmcCalib.qmcMagScaleX);
+    Serial.print(" Y="); Serial.print(qmcCalib.qmcMagScaleY);
+    Serial.print(" Z="); Serial.println(qmcCalib.qmcMagScaleZ);
+
+
 }
 
 
@@ -468,17 +477,19 @@ void readQMC5883L(){
     Wire.endTransmission();
     Wire.requestFrom(0x0D, 6);
 
+    qmcCalib.qmcMagOffsetX = 0;
+    qmcCalib.qmcMagOffsetY = 0;
+    qmcCalib.qmcMagOffsetZ = 0;
+
+    qmcCalib.qmcMagScaleX = 1;
+    qmcCalib.qmcMagScaleY = 1;
+    qmcCalib.qmcMagScaleZ = 1;
+
     if (Wire.available() == 6) {
         int16_t rawX = (int16_t)(Wire.read() | (Wire.read() << 8));
         int16_t rawY = (int16_t)(Wire.read() | (Wire.read() << 8));
         int16_t rawZ = (int16_t)(Wire.read() | (Wire.read() << 8));
 
-        qmcData.timestamp = millis();
-        qmcData.QMC_mx = (rawX / 3000.0f) * 1e-4f;
-        qmcData.QMC_my = (rawY / 3000.0f) * 1e-4f;
-        qmcData.QMC_mz = (rawZ / 3000.0f) * 1e-4f;
-
-/*
         float correctedX = (rawX - qmcCalib.qmcMagOffsetX) * qmcCalib.qmcMagScaleX;
         float correctedY = (rawY - qmcCalib.qmcMagOffsetY) * qmcCalib.qmcMagScaleY;
         float correctedZ = (rawZ - qmcCalib.qmcMagOffsetZ) * qmcCalib.qmcMagScaleZ;
@@ -488,7 +499,7 @@ void readQMC5883L(){
         qmcData.QMC_mx = (correctedX / 3000.0f) * 1e-4f;
         qmcData.QMC_my = (correctedY / 3000.0f) * 1e-4f;
         qmcData.QMC_mz = (correctedZ / 3000.0f) * 1e-4f;
-*/
+
     }
 }
 

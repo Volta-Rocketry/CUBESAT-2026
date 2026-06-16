@@ -156,7 +156,7 @@ void flightComputerInit() {
 
     uint32_t time2 = millis();
     while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
-        calibrateSensors();
+       calibrateSensors();
         delay(1);
         if (millis() - time2 >= 5000) {
             criticalErrorSensor("Sensor calibration failed");

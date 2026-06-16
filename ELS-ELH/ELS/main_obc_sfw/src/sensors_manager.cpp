@@ -477,13 +477,13 @@ void readQMC5883L(){
     Wire.endTransmission();
     Wire.requestFrom(0x0D, 6);
 
-    qmcCalib.qmcMagOffsetX = 0;
-    qmcCalib.qmcMagOffsetY = 0;
-    qmcCalib.qmcMagOffsetZ = 0;
+    qmcCalib.qmcMagOffsetX = 160.05;
+    qmcCalib.qmcMagOffsetY = 2354.00;
+    qmcCalib.qmcMagOffsetZ = -4279.00;
 
-    qmcCalib.qmcMagScaleX = 1;
-    qmcCalib.qmcMagScaleY = 1;
-    qmcCalib.qmcMagScaleZ = 1;
+    qmcCalib.qmcMagScaleX = 0.73;
+    qmcCalib.qmcMagScaleY = 0.87;
+    qmcCalib.qmcMagScaleZ = 2.08;
 
     if (Wire.available() == 6) {
         int16_t rawX = (int16_t)(Wire.read() | (Wire.read() << 8));

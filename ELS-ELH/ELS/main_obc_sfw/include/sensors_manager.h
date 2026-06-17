@@ -26,9 +26,6 @@ void readBNO055();
 void readBME280();
 void readUblox();
 
-void suspendSensors();
-void wakeupSensors();
-
 void openActuators1Voltage();
 void closeActuators1Voltage();
 void openActuators2Voltage();

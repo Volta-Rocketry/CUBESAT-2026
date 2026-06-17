@@ -607,44 +607,6 @@ void readUblox() {
     ubloxData.valid = gps.location.isValid();
 }
 
-void suspendSensors() {
-    if (initSensor.initMPU) {
-        Wire.beginTransmission(0x68);
-        Wire.write(0x6B);
-        Wire.write(0x40);
-        Wire.endTransmission();
-    }
-
-    bme.setSampling(Adafruit_BME280::MODE_SLEEP);
-
-    Wire.beginTransmission(0x0D);
-    Wire.write(0x09);
-    Wire.write(0x00);
-    Wire.endTransmission();
-
-    gpsSerial.println("$PMTK161,0*28");
-}
-
-void wakeupSensors() {
-    if (initSensor.initMPU) {
-        Wire.beginTransmission(0x68);
-        Wire.write(0x6B);
-        Wire.write(0x00);
-        Wire.endTransmission();
-        delay(100);
-    }
-
-    bme.setSampling(Adafruit_BME280::MODE_NORMAL);
-
-    Wire.beginTransmission(0x0D);
-    Wire.write(0x09);
-    Wire.write(0x1D);
-    Wire.endTransmission();
-
-    gpsSerial.write(0xFF);
-    delay(100);
-}
-
 void openActuators1Voltage() {
     digitalWrite(ACTUATOR1_PIN, HIGH);
     digitalWrite(LED_GREEN_PIN, HIGH);

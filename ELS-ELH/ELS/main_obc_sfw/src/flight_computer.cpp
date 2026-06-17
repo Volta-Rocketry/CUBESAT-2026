@@ -41,11 +41,16 @@ static void flightStateSave(FlightState state, float maxAlt) {
  * * Send the data to be written by flash when the 
  * buffer is already the size of a flash page.
  */
+static bool gFlashFull = false;
+
 static void pageBufFlush() {
+    if (gFlashFull) return;
     if (gPageBufIdx == 0) return;
 
     if (gFlashWriteAddr + gPageBufIdx > FLASH_TOTAL_BYTES) {
         println("Flash Full, Stopping recording");
+        gFlashFull = true;
+        gPageBufIdx = 0;
         return;
     }
 
@@ -66,6 +71,7 @@ static void pageBufFlush() {
  * it reaches the size of the Flash page.
  */
 static void pageBufWrite(const uint8_t* data, uint16_t len) {
+    if (gFlashFull) return;
     uint16_t written = 0;
     while (written < len) {
         uint16_t space = FLASH_PAGE_SIZE - gPageBufIdx;
@@ -303,6 +309,7 @@ void flightComputerUpdate() {
                 flashEraseChip();
                 gFlashWriteAddr = 0;
                 gPageBufIdx = 0;
+                flashSaveAddr();
                 maxAltitude = -999.0f;
                 flightStateSave(STATE_PAD, -999.0f);
             }
@@ -376,14 +383,11 @@ void flightComputerUpdate() {
 
     case STATE_ASCENT: {
         madgwickState.beta = 0.005f;
-        altitudeFilter.alpha= 1.0f;        
 
         if (altitudeFilter.verticalAccel > LAUNCH_ACCEL_THRESHOLD_MS2 || altitudeFilter.verticalVelocity > MACH_VELOCITY_THRESHOLD_MS2) {
-            altitudeFilter.alpha = 0.999f; 
-        }    
-
-        else {
-           altitudeFilter.alpha = 0.95f;
+            altitudeFilter.alpha = 0.999f;
+        } else {
+            altitudeFilter.alpha = 0.95f;
         }
 
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
@@ -446,6 +450,7 @@ void flightComputerUpdate() {
         }
         
         if (now - stableStartMs > 2500) {
+            stableStartMs = 0;
             gState = STATE_CONTROL;
             flightStateSave(STATE_CONTROL, maxAltitude);
             colorRGB(0, 0, 0);
@@ -501,7 +506,7 @@ void flightComputerUpdate() {
                 if (now - landedStartMs > 10000) {
                     pageBufFlush();
                     gState = STATE_RECOVERY;
-                    flightStateSave(STATE_PAD, -999.0f);
+                    flightStateSave(STATE_RECOVERY, maxAltitude);
                     colorRGB(0, 0, 0);
                     colorRGB(255, 0, 255);
                 }

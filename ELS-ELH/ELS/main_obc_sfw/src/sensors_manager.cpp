@@ -631,7 +631,6 @@ void suspendSensors() {
 
     gpsSerial.println("$PMTK161,0*28");
 
-    println("Sensors suspended");
 }
 
 void wakeupSensors() {
@@ -661,7 +660,6 @@ void wakeupSensors() {
     gpsSerial.write(0xFF);
     delay(100);
 
-    println("Sensors awake");
 }
 
 void openActuators1Voltage() {

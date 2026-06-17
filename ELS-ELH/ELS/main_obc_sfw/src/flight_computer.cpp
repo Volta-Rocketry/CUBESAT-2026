@@ -273,9 +273,7 @@ void flightComputerUpdate() {
     static uint32_t lastSlowSample = 0;
     static uint32_t accelStartMs   = 0;
     static uint32_t altitudeStartMs   = 0;
-    static uint8_t  apogeeCount     = 0;
     static uint32_t stableStartMs  = 0;
-    static uint32_t drainStartMs   = 0;
     static uint32_t landedStartMs  = 0;
     static float    lastLandedAlt  = 0.0f;
     static float totalAccel = 0.0f;
@@ -340,6 +338,7 @@ void flightComputerUpdate() {
         
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
+            processFastSensors();
             if (initSensor.initBNO) {
                 readBNO055();
                 totalAccel = sqrtf(bnoData.BNO_ax * bnoData.BNO_ax +
@@ -351,16 +350,6 @@ void flightComputerUpdate() {
                                    mpuData.MPU_ay * mpuData.MPU_ay +
                                    mpuData.MPU_az * mpuData.MPU_az);
             }
-        }
-
-        static uint32_t lastDebugPrint = 0;
-        if (now - lastDebugPrint >= 200) {
-            lastDebugPrint = now;
-        }
-
-        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
-            lastFastSample = now;
-            processFastSensors();
         }
 
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
@@ -389,7 +378,6 @@ void flightComputerUpdate() {
     }
 
     case STATE_ASCENT: {
-        println("ASCENT MODE");
         madgwickState.beta = 0.005f;
         altitudeFilter.alpha= 1.0f;        
 

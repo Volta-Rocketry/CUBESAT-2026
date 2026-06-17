@@ -14,7 +14,7 @@
 #include <Adafruit_Sensor.h> 
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
-#include <HardwareSerial.h>
+#include <SoftwareSerial.h>
 #include <Preferences.h>
 #include "BluetoothSerial.h"
 #include "flash_storage.h"
@@ -26,7 +26,7 @@ Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS, &hspi);
 TinyGPSPlus gps;
-HardwareSerial gpsSerial(2);
+SoftwareSerial gpsSerial(UBLOX_RX, UBLOX_TX);
 
 StructMPU6050 mpuData;
 StructQMC5883L qmcData;
@@ -131,7 +131,7 @@ void initBME280() {
     }
 }
 void initUblox() {
-    gpsSerial.begin(GPS_BAUD, SERIAL_8N1, UBLOX_RX, UBLOX_TX);
+    gpsSerial.begin(GPS_BAUD);
 
     unsigned long startTime = millis();
     bool GPSInitialized = false;
@@ -351,7 +351,7 @@ void calibrateSensors() {
 
 
     // GPS connection check
-    gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
+    gpsSerial.begin(GPS_BAUD);
     uint32_t gpsStartTime = millis();
     while(!GPSConected){
         while (gpsSerial.available() > 0) {

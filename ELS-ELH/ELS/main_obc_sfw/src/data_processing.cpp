@@ -109,7 +109,6 @@ float processFastSensors() {
         if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
             recordFastPacket();
         }
-        recordFastPacket();
     }
 
     return currentAccel;

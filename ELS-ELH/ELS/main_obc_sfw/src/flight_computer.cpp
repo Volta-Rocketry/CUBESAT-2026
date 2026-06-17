@@ -259,6 +259,8 @@ void flightComputerInit() {
         }
     }
 
+    suspendSensors();
+    
     println("PAD MODE");
 }
 
@@ -333,8 +335,6 @@ void flightComputerUpdate() {
     case STATE_PAD: {
         colorRGB(0, 0, 0);
         colorRGB(255, 0, 0);
-
-        suspendSensors();
         
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;

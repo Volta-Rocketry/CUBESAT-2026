@@ -41,7 +41,12 @@ static void flashWritePage(uint32_t addr, const uint8_t* data, uint16_t len) {
     flashWaitBusy();
 }
 
-void flashSaveAddr() {}
+void flashSaveAddr() {
+    Preferences prefs;
+    prefs.begin(FLASH_NVS_NAMESPACE, false);
+    prefs.putUInt(FLASH_ADDR_NVS_KEY, gFlashWriteAddr);
+    prefs.end();
+}
 
 static uint32_t flashFindEndAddr() {
     uint32_t addr = 0;
@@ -79,8 +84,20 @@ void flashInit() {
         return;
     }
 
-    gFlashWriteAddr = flashFindEndAddr();
-    Serial.printf("Flash write address: %lu bytes\n", gFlashWriteAddr);
+    {
+        Preferences prefs;
+        prefs.begin(FLASH_NVS_NAMESPACE, true);
+        uint32_t savedAddr = prefs.getUInt(FLASH_ADDR_NVS_KEY, 0);
+        prefs.end();
+
+        if (savedAddr > 0 && savedAddr < FLASH_TOTAL_BYTES) {
+            gFlashWriteAddr = savedAddr;
+            Serial.printf("Flash write address restored from NVS: %lu bytes\n", gFlashWriteAddr);
+        } else {
+            gFlashWriteAddr = flashFindEndAddr();
+            Serial.printf("Flash write address scanned: %lu bytes\n", gFlashWriteAddr);
+        }
+    }
 }
 
 void flashEraseChip() {

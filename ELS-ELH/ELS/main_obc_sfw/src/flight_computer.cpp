@@ -281,9 +281,8 @@ void flightComputerUpdate() {
     static uint32_t altitudeStartMs   = 0;
     static uint32_t stableStartMs  = 0;
     static uint32_t landedStartMs  = 0;
+    float currentAccel = 0.0f;
     static float    lastLandedAlt  = 0.0f;
-    static float totalAccel = 0.0f;
-
     unsigned long now = millis();
 
     switch (gState) {
@@ -343,17 +342,20 @@ void flightComputerUpdate() {
         
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            processFastSensors();
-            if (initSensor.initBNO) {
-                readBNO055();
-                totalAccel = sqrtf(bnoData.BNO_ax * bnoData.BNO_ax +
-                                   bnoData.BNO_ay * bnoData.BNO_ay +
-                                   bnoData.BNO_az * bnoData.BNO_az);
+            currentAccel = processFastSensors();
+
+            if (currentAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
+                if (accelStartMs == 0) {
+                    accelStartMs = now;
+                }
+                if ((now - accelStartMs) >= 500) {
+                    gState = STATE_ASCENT;
+                    flightStateSave(STATE_ASCENT, maxAltitude);
+                    colorRGB(0, 0, 0);
+                    colorRGB(0, 255, 0);
+                }
             } else {
-                readMPU6050();
-                totalAccel = sqrtf(mpuData.MPU_ax * mpuData.MPU_ax +
-                                   mpuData.MPU_ay * mpuData.MPU_ay +
-                                   mpuData.MPU_az * mpuData.MPU_az);
+                accelStartMs = 0;
             }
         }
 
@@ -363,20 +365,6 @@ void flightComputerUpdate() {
         }
 
         commsTick();
-
-        if (totalAccel > LAUNCH_ACCEL_THRESHOLD_MS2) {
-            if (accelStartMs == 0) {
-                accelStartMs = now;
-            }
-            if ((now - accelStartMs) >= 500) {
-                gState = STATE_ASCENT;
-                flightStateSave(STATE_ASCENT, maxAltitude);
-                colorRGB(0, 0, 0);
-                colorRGB(0, 255, 0);
-            }
-        } else {
-            accelStartMs = 0;
-        }
 
         break;
     }
@@ -392,7 +380,7 @@ void flightComputerUpdate() {
 
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            processFastSensors();
+            currentAccel = processFastSensors();
         }
 
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
@@ -435,7 +423,7 @@ void flightComputerUpdate() {
 
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            processFastSensors(); 
+            currentAccel = processFastSensors(); 
         }
 
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
@@ -467,7 +455,7 @@ void flightComputerUpdate() {
 
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            processFastSensors();
+            currentAccel = processFastSensors();
         }
         
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
@@ -490,7 +478,7 @@ void flightComputerUpdate() {
     case STATE_CUTOFF: {
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
-            processFastSensors();
+            currentAccel = processFastSensors();
         }
         
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {

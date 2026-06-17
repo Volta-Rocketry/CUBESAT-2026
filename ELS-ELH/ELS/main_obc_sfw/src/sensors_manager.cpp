@@ -608,14 +608,7 @@ void readUblox() {
 }
 
 void suspendSensors() {
-    if (initSensor.initBNO) {
-        bno.setMode(OPERATION_MODE_CONFIG);
-        delay(25);
-        Wire.beginTransmission(0x28);
-        Wire.write(0x3E);
-        Wire.write(0x02); // SUSPEND
-        Wire.endTransmission();
-
+    if (initSensor.initMPU) {
         Wire.beginTransmission(0x68);
         Wire.write(0x6B);
         Wire.write(0x40);
@@ -630,22 +623,13 @@ void suspendSensors() {
     Wire.endTransmission();
 
     gpsSerial.println("$PMTK161,0*28");
-
 }
 
 void wakeupSensors() {
-    if (initSensor.initBNO) {
-        Wire.beginTransmission(0x28);
-        Wire.write(0x3E);
-        Wire.write(0x00); // NORMAL
-        Wire.endTransmission();
-        delay(400);
-        bno.setMode(OPERATION_MODE_NDOF);
-        delay(600);
-
+    if (initSensor.initMPU) {
         Wire.beginTransmission(0x68);
         Wire.write(0x6B);
-        Wire.write(0x00); // WAKE
+        Wire.write(0x00);
         Wire.endTransmission();
         delay(100);
     }
@@ -659,7 +643,6 @@ void wakeupSensors() {
 
     gpsSerial.write(0xFF);
     delay(100);
-
 }
 
 void openActuators1Voltage() {

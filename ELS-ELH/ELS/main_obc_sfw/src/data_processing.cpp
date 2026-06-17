@@ -106,11 +106,9 @@ float processFastSensors() {
             mpuData.MPU_ay * mpuData.MPU_ay +
             mpuData.MPU_az * mpuData.MPU_az); 
         
-        /*
         if (flightState != STATE_PAD && flightState != STATE_RECOVERY) {
             recordFastPacket();
         }
-        */
         recordFastPacket();
     }
 

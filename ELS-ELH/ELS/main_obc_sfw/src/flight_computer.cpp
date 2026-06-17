@@ -126,14 +126,16 @@ void recordSlowPacket() {
  * * Verifies flash space avaiable and initial flight state.
  */
 void flightComputerInit() {
-    PWMBuzzer(3500, 1000);
-    delay(1000);
-    PWMBuzzer(0, 0);
-    uint32_t time2= millis();
 
     println("Initializing Flight Computer...");
+
+    ledcWriteTone(BUZZER_CHANNEL, 2700);
+    delay(5000);
+    ledcWriteTone(BUZZER_CHANNEL, 0);
+
+    uint32_t time1= millis();
+
     flashInit();
-    gFlashWriteAddr = 0;
     gPageBufIdx = 0;
 
     while (!initSensor.initBNO && !initSensor.initMPU) {
@@ -144,7 +146,7 @@ void flightComputerInit() {
         initBME280();
         initUblox();
         delay(1);
-        if (millis() - time2 >= 5000) {
+        if (millis() - time1 >= 5000) {
             criticalErrorSensor("Sensor initialization failed");
             break;
         }
@@ -152,64 +154,18 @@ void flightComputerInit() {
 
     delay(2000);
 
-    ledcWriteTone(BUZZER_CHANNEL, 2700);
-    delay(5000);
-    ledcWriteTone(BUZZER_CHANNEL, 0);
-
-    uint32_t time2= millis();
-
-    flashInit();
-    gPageBufIdx = 0;
-
-    while (!initSensor.initBNO && !initSensor.initMPU) {
-        initMPU6050();
-        initBMP180();
-        initQMC5883L();
-        initBNO055();
-        initBME280();
-        initUblox();
+    uint32_t time2 = millis();
+    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
+       calibrateSensors();
         delay(1);
         if (millis() - time2 >= 5000) {
-            criticalErrorSensor("Sensor initialization failed");
-            break;
-        }
-    }
-
-    uint32_t time3= millis();
-    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
-        calibrateSensors();
-        delay(1);
-        if (millis() - time3 >= 5000) {
             criticalErrorSensor("Sensor calibration failed");
             break;
         }
     }
-
-    if (initSensor.initFlash && initCom.comControl && initCom.comCamera &&
-        initSensor.initMPU && initSensor.initBMP && initSensor.initQMC &&
-        initSensor.initBNO && initSensor.initBME && initSensor.initGPS) {
-        println("All systems initialized successfully");
-    } else {
-        criticalErrorSensor("Initialization failed for one or more components");
-    }
     
-    uint32_t time1= millis();
+    uint32_t time3 = millis();
 
-    while (!calibSensor.calibBNO && !calibSensor.calibMPU && !calibSensor.calibBMP && !calibSensor.calibBME) {
-        mpu.update();
-        float ax = mpu.getAccX();
-        float ay = mpu.getAccY();
-        float az = mpu.getAccZ();
-        if (abs(ax) < 1.0f && abs(ay) < 1.0f && abs(az - 1.0f) < 0.1f) {
-            println("Device is stable, starting calibration...");
-            calibrateSensors();
-        } else {
-            println("Waiting for stable position to start calibration...");
-            delay(100);
-        }
-    }
-    
-    uint32_t time1= millis();
     while (!initCom.comControl && !initCom.comCamera) {
 
         if (!initCom.comControl) {
@@ -242,7 +198,7 @@ void flightComputerInit() {
             }
         }
 
-        if (millis() - time1 >= 5000) {
+        if (millis() - time3 >= 5000) {
             criticalErrorSensor("Communication initialization failed");
             break;
         }
@@ -303,6 +259,8 @@ void flightComputerInit() {
         }
     }
 
+    suspendSensors();
+    
     println("PAD MODE");
 }
 
@@ -317,9 +275,7 @@ void flightComputerUpdate() {
     static uint32_t lastSlowSample = 0;
     static uint32_t accelStartMs   = 0;
     static uint32_t altitudeStartMs   = 0;
-    static uint8_t  apogeeCount     = 0;
     static uint32_t stableStartMs  = 0;
-    static uint32_t drainStartMs   = 0;
     static uint32_t landedStartMs  = 0;
     static float    lastLandedAlt  = 0.0f;
     static float totalAccel = 0.0f;
@@ -379,11 +335,10 @@ void flightComputerUpdate() {
     case STATE_PAD: {
         colorRGB(0, 0, 0);
         colorRGB(255, 0, 0);
-
-        suspendSensors();
         
         if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
             lastFastSample = now;
+            processFastSensors();
             if (initSensor.initBNO) {
                 readBNO055();
                 totalAccel = sqrtf(bnoData.BNO_ax * bnoData.BNO_ax +
@@ -395,16 +350,6 @@ void flightComputerUpdate() {
                                    mpuData.MPU_ay * mpuData.MPU_ay +
                                    mpuData.MPU_az * mpuData.MPU_az);
             }
-        }
-
-        static uint32_t lastDebugPrint = 0;
-        if (now - lastDebugPrint >= 200) {
-            lastDebugPrint = now;
-        }
-
-        if (now - lastFastSample >= FAST_SAMPLE_INTERVAL_MS) {
-            lastFastSample = now;
-            processFastSensors();
         }
 
         if (now - lastSlowSample >= SLOW_SAMPLE_INTERVAL_MS) {
@@ -433,7 +378,6 @@ void flightComputerUpdate() {
     }
 
     case STATE_ASCENT: {
-        println("ASCENT MODE");
         madgwickState.beta = 0.005f;
         altitudeFilter.alpha= 1.0f;        
 

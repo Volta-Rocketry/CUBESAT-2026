@@ -14,7 +14,7 @@
 #include <Adafruit_Sensor.h> 
 #include <utility/imumaths.h>
 #include <TinyGPSplus.h> 
-#include <HardwareSerial.h>
+#include <SoftwareSerial.h>
 #include <Preferences.h>
 #include "BluetoothSerial.h"
 #include "flash_storage.h"
@@ -26,7 +26,7 @@ Adafruit_BMP085 bmp;
 Adafruit_BNO055 bno;
 Adafruit_BME280 bme(BME_CS, &hspi);
 TinyGPSPlus gps;
-HardwareSerial gpsSerial(2);
+SoftwareSerial gpsSerial(UBLOX_RX, UBLOX_TX);
 
 StructMPU6050 mpuData;
 StructQMC5883L qmcData;
@@ -131,7 +131,7 @@ void initBME280() {
     }
 }
 void initUblox() {
-    gpsSerial.begin(GPS_BAUD, SERIAL_8N1, UBLOX_RX, UBLOX_TX);
+    gpsSerial.begin(GPS_BAUD);
 
     unsigned long startTime = millis();
     bool GPSInitialized = false;
@@ -351,7 +351,7 @@ void calibrateSensors() {
 
 
     // GPS connection check
-    gpsSerial.begin(GPS_BAUD,SERIAL_8N1,UBLOX_RX,UBLOX_TX);
+    gpsSerial.begin(GPS_BAUD);
     uint32_t gpsStartTime = millis();
     while(!GPSConected){
         while (gpsSerial.available() > 0) {
@@ -436,6 +436,15 @@ void calibrateMagnetometer() {
     qmcCalib.qmcMagScaleY = radioPromedio / radioY;
     qmcCalib.qmcMagScaleZ = radioPromedio / radioZ;
 
+    Serial.println("Magnetometer calibration completed:");
+    Serial.print("Offsets: X="); Serial.print(qmcCalib.qmcMagOffsetX);
+    Serial.print(" Y="); Serial.print(qmcCalib.qmcMagOffsetY);
+    Serial.print(" Z="); Serial.println(qmcCalib.qmcMagOffsetZ);
+    Serial.print("Scales: X="); Serial.print(qmcCalib.qmcMagScaleX);
+    Serial.print(" Y="); Serial.print(qmcCalib.qmcMagScaleY);
+    Serial.print(" Z="); Serial.println(qmcCalib.qmcMagScaleZ);
+
+
 }
 
 
@@ -468,17 +477,19 @@ void readQMC5883L(){
     Wire.endTransmission();
     Wire.requestFrom(0x0D, 6);
 
+    qmcCalib.qmcMagOffsetX = 160.05;
+    qmcCalib.qmcMagOffsetY = 2354.00;
+    qmcCalib.qmcMagOffsetZ = -4279.00;
+
+    qmcCalib.qmcMagScaleX = 0.73;
+    qmcCalib.qmcMagScaleY = 0.87;
+    qmcCalib.qmcMagScaleZ = 2.08;
+
     if (Wire.available() == 6) {
         int16_t rawX = (int16_t)(Wire.read() | (Wire.read() << 8));
         int16_t rawY = (int16_t)(Wire.read() | (Wire.read() << 8));
         int16_t rawZ = (int16_t)(Wire.read() | (Wire.read() << 8));
 
-        qmcData.timestamp = millis();
-        qmcData.QMC_mx = (rawX / 3000.0f) * 1e-4f;
-        qmcData.QMC_my = (rawY / 3000.0f) * 1e-4f;
-        qmcData.QMC_mz = (rawZ / 3000.0f) * 1e-4f;
-
-/*
         float correctedX = (rawX - qmcCalib.qmcMagOffsetX) * qmcCalib.qmcMagScaleX;
         float correctedY = (rawY - qmcCalib.qmcMagOffsetY) * qmcCalib.qmcMagScaleY;
         float correctedZ = (rawZ - qmcCalib.qmcMagOffsetZ) * qmcCalib.qmcMagScaleZ;
@@ -488,7 +499,7 @@ void readQMC5883L(){
         qmcData.QMC_mx = (correctedX / 3000.0f) * 1e-4f;
         qmcData.QMC_my = (correctedY / 3000.0f) * 1e-4f;
         qmcData.QMC_mz = (correctedZ / 3000.0f) * 1e-4f;
-*/
+
     }
 }
 
@@ -620,7 +631,6 @@ void suspendSensors() {
 
     gpsSerial.println("$PMTK161,0*28");
 
-    println("Sensors suspended");
 }
 
 void wakeupSensors() {
@@ -650,7 +660,6 @@ void wakeupSensors() {
     gpsSerial.write(0xFF);
     delay(100);
 
-    println("Sensors awake");
 }
 
 void openActuators1Voltage() {

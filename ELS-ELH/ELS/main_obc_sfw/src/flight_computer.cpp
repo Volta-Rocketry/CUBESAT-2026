@@ -258,8 +258,6 @@ void flightComputerInit() {
             Serial.printf("Flight state restored: %d, maxAlt: %.1f m\n", savedState, maxAltitude);
         }
     }
-
-    suspendSensors();
     
     println("PAD MODE");
 }
@@ -364,7 +362,6 @@ void flightComputerUpdate() {
                 accelStartMs = now;
             }
             if ((now - accelStartMs) >= 500) {
-                wakeupSensors();
                 gState = STATE_ASCENT;
                 flightStateSave(STATE_ASCENT, maxAltitude);
                 colorRGB(0, 0, 0);

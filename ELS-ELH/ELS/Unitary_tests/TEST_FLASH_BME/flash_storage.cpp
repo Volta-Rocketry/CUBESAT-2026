@@ -13,14 +13,14 @@
 #define CMD_READ_DATA 0x03
 #define CMD_READ_STATUS 0x05
 #define CMD_JEDEC_ID 0x9F
-
+#define CMD_SECTOR_ERASE 0x20
 
 //Adafruit_BME280 bme(PIN_CS_BME);
 StructBME280 bmeData;
 
 // ──────────── CONSTANTS.H ────────────
 
-SPIClass hspi(VSPI);
+SPIClass hspi(HSPI);
 
 Adafruit_BME280 bme(PIN_CS_BME, &hspi);
 
@@ -28,52 +28,98 @@ Adafruit_BME280 bme(PIN_CS_BME, &hspi);
 
 static void flash_wait_busy() {
 
-    uint32_t last_dot = millis();
+    uint8_t status;
 
-    digitalWrite(PIN_CS_FLASH, LOW);
-    hspi.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0)); // Configurar para Flash
-    hspi.transfer(CMD_READ_STATUS);
-    while (hspi.transfer(0x00) & 0x01) {
-        if (millis() - last_dot > 1000) {
-            Serial.print("."); 
-            last_dot = millis();
-        }
-    }
-    hspi.endTransaction();
-    digitalWrite(PIN_CS_FLASH, HIGH);
+    do {
+
+        hspi.beginTransaction(
+            SPISettings(10000000, MSBFIRST, SPI_MODE0)
+        );
+
+        digitalWrite(PIN_CS_FLASH, LOW);
+
+        hspi.transfer(CMD_READ_STATUS);
+
+        status = hspi.transfer(0x00);
+
+        digitalWrite(PIN_CS_FLASH, HIGH);
+
+        hspi.endTransaction();
+
+    } while (status & 0x01);
 }
 
 //---------------------
 
 static void flash_write_enable() {
+
+    hspi.beginTransaction(
+        SPISettings(10000000, MSBFIRST, SPI_MODE0)
+    );
+
     digitalWrite(PIN_CS_FLASH, LOW);
-    hspi.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0)); // Configurar para Flash
+
     hspi.transfer(CMD_WRITE_ENABLE);
-    hspi.endTransaction();
+
     digitalWrite(PIN_CS_FLASH, HIGH);
+
+    hspi.endTransaction();
+
     delayMicroseconds(5);
 }
 
 //---------------------
 
-static void flash_write_page(uint32_t addr, const uint8_t* data, uint16_t len) {
+static void flash_write_page(uint32_t addr,
+                             const uint8_t* data,
+                             uint16_t len) {
+
     flash_write_enable();
 
+    hspi.beginTransaction(
+        SPISettings(10000000, MSBFIRST, SPI_MODE0)
+    );
+
     digitalWrite(PIN_CS_FLASH, LOW);
-    hspi.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0)); // Configurar para Flash
 
-    hspi.transfer(CMD_PAGE_PROGRAM); 
+    hspi.transfer(CMD_PAGE_PROGRAM);
 
-    hspi.transfer((addr >> 16) & 0xFF); 
-    hspi.transfer((addr >> 8) & 0xFF);   
-    hspi.transfer( addr & 0xFF);
+    hspi.transfer((addr >> 16) & 0xFF);
+    hspi.transfer((addr >> 8) & 0xFF);
+    hspi.transfer(addr & 0xFF);
 
     for (uint16_t i = 0; i < len; i++) {
         hspi.transfer(data[i]);
     }
 
-    hspi.endTransaction();
     digitalWrite(PIN_CS_FLASH, HIGH);
+
+    hspi.endTransaction();
+
+    flash_wait_busy();
+}
+
+
+void flash_erase_sector(uint32_t addr) {
+
+    flash_write_enable();
+
+    hspi.beginTransaction(
+        SPISettings(10000000, MSBFIRST, SPI_MODE0)
+    );
+
+    digitalWrite(PIN_CS_FLASH, LOW);
+
+    hspi.transfer(CMD_SECTOR_ERASE);
+
+    hspi.transfer((addr >> 16) & 0xFF);
+    hspi.transfer((addr >> 8) & 0xFF);
+    hspi.transfer(addr & 0xFF);
+
+    digitalWrite(PIN_CS_FLASH, HIGH);
+
+    hspi.endTransaction();
+
     flash_wait_busy();
 }
 
@@ -81,29 +127,40 @@ static void flash_write_page(uint32_t addr, const uint8_t* data, uint16_t len) {
 
 bool flash_init() {
 
-    Serial.println("[PRUEBA] INICIANDO FLASH");
+    Serial.println("[FLASH] INIT");
+
     pinMode(PIN_CS_FLASH, OUTPUT);
+
     digitalWrite(PIN_CS_FLASH, HIGH);
+
     delay(10);
 
+    hspi.beginTransaction(
+        SPISettings(10000000, MSBFIRST, SPI_MODE0)
+    );
+
     digitalWrite(PIN_CS_FLASH, LOW);
-    hspi.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0)); // Configurar para Flash
+
     hspi.transfer(CMD_JEDEC_ID);
 
     uint8_t manufacturer = hspi.transfer(0x00);
     uint8_t mem_type     = hspi.transfer(0x00);
     uint8_t capacity     = hspi.transfer(0x00);
 
-    hspi.endTransaction();
     digitalWrite(PIN_CS_FLASH, HIGH);
 
-    Serial.print("[FLASH] Manufacturer: 0x"); Serial.println(manufacturer, HEX);
-    Serial.print("[FLASH] Memory Type: 0x");  Serial.println(mem_type, HEX);
-    Serial.print("[FLASH] Capacity: 0x");     Serial.println(capacity, HEX);
+    hspi.endTransaction();
 
-    return (manufacturer == 0xEF && mem_type == 0x40 && capacity == 0x16);
+    Serial.printf("MFG: 0x%02X\n", manufacturer);
+    Serial.printf("TYPE: 0x%02X\n", mem_type);
+    Serial.printf("CAP: 0x%02X\n", capacity);
+
+    return (
+        manufacturer == 0xEF &&
+        mem_type == 0x40 &&
+        capacity == 0x16
+    );
 }
-
 //---------------------
 
 void flash_erase_chip() {
@@ -138,22 +195,30 @@ void flash_write(uint32_t addr, const uint8_t* data, uint16_t len) {
 
 //---------------------
 
-void flash_read(uint32_t addr, uint8_t* buf, uint32_t len) {
+void flash_read(uint32_t addr,
+                uint8_t* buf,
+                uint32_t len) {
+
+    hspi.beginTransaction(
+        SPISettings(10000000, MSBFIRST, SPI_MODE0)
+    );
+
     digitalWrite(PIN_CS_FLASH, LOW);
-    hspi.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0)); // Configurar para Flash
+
     hspi.transfer(CMD_READ_DATA);
 
     hspi.transfer((addr >> 16) & 0xFF);
-    hspi.transfer((addr >> 8)  & 0xFF);
-    hspi.transfer( addr & 0xFF);
+    hspi.transfer((addr >> 8) & 0xFF);
+    hspi.transfer(addr & 0xFF);
 
     for (uint32_t i = 0; i < len; i++) {
         buf[i] = hspi.transfer(0x00);
     }
-    hspi.endTransaction();
-    digitalWrite(PIN_CS_FLASH, HIGH);
-}
 
+    digitalWrite(PIN_CS_FLASH, HIGH);
+
+    hspi.endTransaction();
+}
 // ──────────── FUNCIONES BME ────────────
 
 void InitBME280() {

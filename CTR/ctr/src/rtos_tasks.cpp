@@ -14,14 +14,15 @@ TaskHandle_t btHandlingTaskHandle = NULL;
 BTS7960 motorController(L_EN_MOTOR, R_EN_MOTOR, L_PWM_MOTOR, R_PWM_MOTOR);
 
 
-bool enterCtr = false;
-bool enableCtr = false;
+bool enterCtr = true;
+bool enableCtr = true;
 bool enableDebugBt = true;
 float gzForDebug = 0.0f;
 float thresholdGz = 1.2f;
 
+int currentPWM = 0;
 
-void setMotorPWM(int pwm)
+/*void setMotorPWM(int pwm)
 {
     pwm = constrain(pwm, -255, 255);
 
@@ -38,6 +39,45 @@ void setMotorPWM(int pwm)
     else
     {
        motorController.Stop();       
+    }
+}*/
+
+void setMotorPWM(int targetPWM)
+{
+    targetPWM = constrain(targetPWM, -255, 255);
+
+    const int rampStep = 5;   // PWM por ciclo (10 ms)
+
+    // Incremento progresivo
+    if (currentPWM < targetPWM)
+    {
+        currentPWM += rampStep;
+
+        if (currentPWM > targetPWM)
+            currentPWM = targetPWM;
+    }
+    // Decremento progresivo
+    else if (currentPWM > targetPWM)
+    {
+        currentPWM -= rampStep;
+
+        if (currentPWM < targetPWM)
+            currentPWM = targetPWM;
+    }
+
+    if (currentPWM > 0)
+    {
+        motorController.Enable();
+        motorController.TurnRight(currentPWM);
+    }
+    else if (currentPWM < 0)
+    {
+        motorController.Enable();
+        motorController.TurnLeft(abs(currentPWM));
+    }
+    else
+    {
+        motorController.Stop();
     }
 }
 
@@ -81,6 +121,8 @@ void getDataTask(void *pvParameters)
     {        
         if (commsPoll(rxData))
         {
+            Serial.print("Received data: ");
+            Serial.println(rxData.gz);
             xQueueOverwrite(rawSensorQueue, &rxData);
             telemetryData = rxData;
             telemetryData.timestamp = millis();
@@ -283,6 +325,9 @@ void btHandlingTask(void *pvParameters)
 
         if (enableDebugBt)
         {
+            Serial.print("Debug info: ");
+            Serial.print("GZ: ");
+            Serial.println(gzForDebug);
             SerialBT.println("GZ: " + String(gzForDebug));
             SerialBT.println("GZ error: " + String(rwController.prev_error));
             SerialBT.println("GZ dt; " + String(rwController.prev_time));

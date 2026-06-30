@@ -21,8 +21,9 @@ extern SPIClass hspi;
 #define PIN_SCK  18
 #define PIN_MISO 19
 #define PIN_MOSI 23
-#define PIN_CS_FLASH 26
-#define PIN_CS_BME 5
+#define PIN_CS_FLASH 5
+#define PIN_CS_BME 26
+#define PIN_CS_LORA 33
 
 // ──────────── BME ────────────
 
@@ -38,6 +39,7 @@ extern StructBME280 bmeData;
 
 // ──────────── FUNCIONES GLOBALES ────────────
 
+void flash_erase_sector(uint32_t addr);
 bool flash_init();
 void flash_erase_chip();
 void flash_write(uint32_t addr, const uint8_t* data, uint16_t len);

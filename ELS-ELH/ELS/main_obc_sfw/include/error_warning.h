@@ -1,3 +1,3 @@
 # pragma once
 
-void CriticalErrorSensor(const char* message);
+void criticalErrorSensor(const char* message);
